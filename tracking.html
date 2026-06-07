@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Track Your Order – PakStyle BD</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0f0f1a;color:#eee;font-family:'Segoe UI',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px}
+  .logo{font-size:1.5rem;font-weight:800;color:#f9a825;margin-bottom:4px;letter-spacing:1px}
+  .tagline{font-size:0.78rem;color:#888;margin-bottom:32px}
+  .card{background:#1a1a2e;border-radius:16px;padding:28px 24px;width:100%;max-width:480px;box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+  h2{font-size:1.2rem;color:#f9a825;margin-bottom:18px}
+  .input-row{display:flex;gap:8px;margin-bottom:6px}
+  input[type=text]{flex:1;background:#0f0f1a;border:1.5px solid #333;border-radius:8px;padding:12px 14px;color:#eee;font-size:1rem;outline:none}
+  input[type=text]:focus{border-color:#f9a825}
+  button.track-btn{background:#f9a825;color:#1a1a2e;border:none;border-radius:8px;padding:12px 20px;font-weight:700;font-size:1rem;cursor:pointer;white-space:nowrap}
+  button.track-btn:hover{background:#e6971c}
+  .error-msg{color:#ff6b6b;font-size:0.82rem;min-height:18px;margin-bottom:12px}
+
+  /* Timeline */
+  .timeline{margin-top:24px}
+  .step{display:flex;align-items:flex-start;gap:14px;margin-bottom:0;position:relative}
+  .step-left{display:flex;flex-direction:column;align-items:center;min-width:32px}
+  .step-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;border:2.5px solid #333;background:#0f0f1a;transition:all 0.3s}
+  .step-line{width:2px;height:36px;background:#333;margin-top:0;flex-shrink:0;transition:background 0.3s}
+  .step:last-child .step-line{display:none}
+  .step-body{padding-top:4px;padding-bottom:20px}
+  .step-title{font-size:0.95rem;font-weight:600;color:#888;transition:color 0.3s}
+  .step-date{font-size:0.75rem;color:#666;margin-top:3px}
+  .step-note{font-size:0.78rem;color:#888;margin-top:4px;font-style:italic}
+
+  /* Active / done states */
+  .step.done .step-icon{background:#2ecc71;border-color:#2ecc71;color:#fff}
+  .step.done .step-line{background:#2ecc71}
+  .step.done .step-title{color:#eee}
+  .step.active .step-icon{background:#f9a825;border-color:#f9a825;color:#1a1a2e;animation:pulse 1.4s infinite}
+  .step.active .step-title{color:#f9a825;font-weight:700}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(249,168,37,0.5)}50%{box-shadow:0 0 0 8px rgba(249,168,37,0)}}
+
+  .order-meta{background:#0f0f1a;border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:0.82rem;color:#aaa;line-height:1.7}
+  .order-meta strong{color:#eee}
+  .badge{display:inline-block;background:#f9a825;color:#1a1a2e;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:700;margin-left:8px}
+  .loading{text-align:center;padding:32px;color:#888;font-size:0.9rem}
+  .not-found{text-align:center;padding:24px;color:#ff6b6b;font-size:0.9rem}
+  .footer{margin-top:32px;font-size:0.75rem;color:#555;text-align:center}
+  .footer a{color:#f9a825;text-decoration:none}
+
+  /* Refresh note */
+  .refresh-note{font-size:0.72rem;color:#555;text-align:right;margin-top:10px}
+</style>
+</head>
+<body>
+
+<div class="logo">PakStyle BD</div>
+<div class="tagline">Pakistani Fashion · Delivered to Bangladesh</div>
+
+<div class="card">
+  <h2>📦 Track Your Order</h2>
+  <div class="input-row">
+    <input type="text" id="orderInput" placeholder="Enter Order ID  e.g. PSB-LXYZ123" autocomplete="off" autocapitalize="characters"/>
+    <button class="track-btn" onclick="lookupOrder()">Track</button>
+  </div>
+  <div class="error-msg" id="errorMsg"></div>
+  <div id="resultArea"></div>
+</div>
+
+<div class="footer">
+  <a href="index.html">← Back to Order Form</a> &nbsp;·&nbsp;
+  Questions? WhatsApp us
+</div>
+
+<script>
+// ─── CONFIG ────────────────────────────────────────────────────────────────
+// Replace SHEET_ID with your Google Sheet ID after you create it.
+// The sheet must be published to the web (File → Share → Publish to web → CSV)
+// Sheet columns (Row 1 headers): order_id, buyer_name, whatsapp, status, status_date, notes
+// Status values must exactly match the keys in STEPS below.
+const SHEET_ID = '16v2e7pxwMPimVkOTFKID3S4dI-mPexlzNgUT3zN0CM0';
+const SHEET_GID = '0'; // tab index (0 = first sheet)
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`;
+
+const STEPS = [
+  { key:'order_received',      icon:'📋', label:'Order Received',              note:'Your order request is in our queue.' },
+  { key:'payment_received',    icon:'💰', label:'Payment Received',            note:'bKash / bank payment confirmed.' },
+  { key:'items_ordered',       icon:'🛒', label:'Items Ordered',               note:'All items purchased from brands.' },
+  { key:'at_karachi_warehouse',icon:'🏭', label:'At Karachi Warehouse',        note:'Items packed and ready for shipment.' },
+  { key:'received_in_dhaka',   icon:'✈️', label:'Received in Dhaka',           note:'Shipment cleared and in Dhaka.' },
+  { key:'delivered_to_buyer',  icon:'🎉', label:'Delivered to You',            note:'Order complete!' },
+];
+
+// ─── URL pre-fill ───────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if(id){
+    document.getElementById('orderInput').value = id.toUpperCase();
+    lookupOrder();
+  }
+  document.getElementById('orderInput').addEventListener('keydown', e => {
+    if(e.key === 'Enter') lookupOrder();
+  });
+});
+
+// ─── LOOKUP ─────────────────────────────────────────────────────────────────
+async function lookupOrder(){
+  const raw = document.getElementById('orderInput').value.trim().toUpperCase();
+  const errorEl = document.getElementById('errorMsg');
+  const resultEl = document.getElementById('resultArea');
+  errorEl.textContent = '';
+  resultEl.innerHTML = '';
+
+  if(!raw){ errorEl.textContent = 'Please enter your Order ID.'; return; }
+  if(!raw.startsWith('PSB-')){ errorEl.textContent = 'Order IDs start with PSB- (e.g. PSB-LXYZ123).'; return; }
+
+  // Check if sheet is configured
+  if(SHEET_ID === 'YOUR_GOOGLE_SHEET_ID_HERE'){
+    // Demo mode — show a sample timeline
+    renderResult({
+      order_id: raw,
+      buyer_name: 'Demo',
+      whatsapp: '',
+      status: 'at_karachi_warehouse',
+      status_date: '2026-06-05',
+      notes: 'Demo mode – Google Sheet not yet connected.'
+    });
+    resultEl.insertAdjacentHTML('afterbegin',
+      '<div style="background:#2a1f00;border:1px solid #f9a825;border-radius:8px;padding:10px 14px;font-size:0.78rem;color:#f9a825;margin-bottom:16px">⚠️ Demo mode: connect your Google Sheet to show live data.</div>'
+    );
+    return;
+  }
+
+  resultEl.innerHTML = '<div class="loading">Looking up your order…</div>';
+
+  try {
+    const proxy = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(CSV_URL);
+    const res = await fetch(proxy);
+    if(!res.ok) throw new Error('fetch failed');
+    const csv = await res.text();
+    const rows = parseCSV(csv);
+    if(rows.length < 2){ resultEl.innerHTML = '<div class="not-found">No orders found yet.</div>'; return; }
+
+    const headers = rows[0].map(h => h.trim().toLowerCase().replace(/\s+/g,'_'));
+    const dataRows = rows.slice(1);
+    const match = dataRows.find(r => {
+      const obj = toObj(headers, r);
+      return obj.order_id && obj.order_id.trim().toUpperCase() === raw;
+    });
+
+    if(!match){
+      resultEl.innerHTML = '<div class="not-found">Order not found. Please double-check your Order ID.<br><br>If you just placed the order, it may take a few minutes to appear.</div>';
+      return;
+    }
+
+    renderResult(toObj(headers, match));
+  } catch(e){
+    resultEl.innerHTML = '<div class="not-found">Could not reach the tracking server. Please try again in a moment.</div>';
+  }
+}
+
+function renderResult(order){
+  const resultEl = document.getElementById('resultArea');
+  const currentStepKey = order.status ? order.status.trim().toLowerCase() : 'order_received';
+  const currentIdx = STEPS.findIndex(s => s.key === currentStepKey);
+
+  const metaHtml = `
+    <div class="order-meta">
+      <strong>Order ID:</strong> ${order.order_id}
+      <span class="badge">${STEPS[currentIdx >= 0 ? currentIdx : 0].label}</span><br>
+      ${order.buyer_name ? `<strong>Name:</strong> ${order.buyer_name}<br>` : ''}
+      ${order.status_date ? `<strong>Last Updated:</strong> ${order.status_date}` : ''}
+      ${order.notes ? `<br><strong>Note:</strong> ${order.notes}` : ''}
+    </div>`;
+
+  const timelineHtml = STEPS.map((step, i) => {
+    let cls = '';
+    if(currentIdx < 0){
+      cls = i === 0 ? 'active' : '';
+    } else if(i < currentIdx){ cls = 'done'; }
+    else if(i === currentIdx){ cls = 'active'; }
+
+    const icon = cls === 'done' ? '✓' : step.icon;
+    return `
+      <div class="step ${cls}">
+        <div class="step-left">
+          <div class="step-icon">${icon}</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-body">
+          <div class="step-title">${step.label}</div>
+          ${cls === 'active' || cls === 'done' ? `<div class="step-note">${step.note}</div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+
+  resultEl.innerHTML = metaHtml + '<div class="timeline">' + timelineHtml + '</div>'
+    + '<div class="refresh-note">Last refreshed: ' + new Date().toLocaleTimeString() + '</div>';
+}
+
+// ─── CSV PARSER ──────────────────────────────────────────────────────────────
+function parseCSV(text){
+  const rows = [];
+  const lines = text.split('\n');
+  for(const line of lines){
+    if(!line.trim()) continue;
+    const cells = [];
+    let cur = '', inQ = false;
+    for(let i=0; i<line.length; i++){
+      const c = line[i];
+      if(c==='"'){ inQ=!inQ; continue; }
+      if(c===',' && !inQ){ cells.push(cur); cur=''; continue; }
+      cur += c;
+    }
+    cells.push(cur);
+    rows.push(cells.map(c => c.trim()));
+  }
+  return rows;
+}
+
+function toObj(headers, row){
+  const o = {};
+  headers.forEach((h,i) => o[h] = row[i] || '');
+  return o;
+}
+</script>
+</body>
+</html>
