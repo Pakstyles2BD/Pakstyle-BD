@@ -839,18 +839,6 @@
     const toggle = document.getElementById('weightGuideToggle');
     const open = g.style.display === 'none' || g.style.display === '';
     if(open){
-      // Rebuild table rows with live weights from localStorage
-      const tbody = document.getElementById('weightGuideBody');
-      if(tbody){
-        tbody.innerHTML = Object.keys(DEFAULT_WEIGHTS).map((key,i) => `
-          <tr ${i%2?'style="background:#f7f3ef"':''}>
-            <td style="padding:2px 4px">${WEIGHT_LABELS[key]}</td>
-            <td style="text-align:right;padding:2px 4px"><strong>${getWeight(key).toFixed(2)}</strong></td>
-          </tr>`).join('');
-      }
-    }
-    g.style.display = open ? 'blo    const open = g.style.display === 'none' || g.style.display === '';
-    if(open){
       const tbody = document.getElementById('weightGuideBody');
       if(tbody){
         tbody.innerHTML = Object.keys(DEFAULT_WEIGHTS).map((key,i) => `
@@ -1205,6 +1193,9 @@
     setTimeout(()=>{ document.getElementById('fetchStatus').textContent = ''; }, 5000);
   }
 
+  // Alias so HTML onclick="handleAddUrl()" works
+  function handleAddUrl(){ handleUrlInput(); }
+
   // Convert entered price to PKR
   function toPKR(inputVal){
     if(selectedCurrency === 'USD'){
@@ -1235,31 +1226,30 @@
     const commission  = Math.round(totalProduct * COMM_RATE);
     const total       = totalProduct + logistics + commission + TRANS_FEE;
 
-    // Build summary HTML
     const itemsHtml = cart.map((item,i) => `
       <div style="padding:8px 0;border-bottom:1px solid #eee;font-size:0.82rem">
         <strong>${item.brand}</strong> — ${item.catLabel}${item.size?' ('+item.size+')':''} × ${item.qty}<br>
-        <span style="color:#888">${item.currency==='USD'?'$'+item.enteredPrice+' USD':'PKR '+item.pkr.toLocaleString()} &nbsp;·&nbsp; ${item.weight.toFixed(2)} kg</span><br>
+        <span style="color:#888">${item.currency==='USD'?'$'+item.enteredPrice+' USD':'PKR '+item.pkr.toLocaleString()}  ·  ${item.weight.toFixed(2)} kg</span><br>
         <a href="${item.url}" target="_blank" style="font-size:0.75rem;color:#c9a96e">View product ↗</a>
       </div>`).join('');
 
-    document.getElementById('sum-name').textContent    = name;
-    document.getElementById('sum-wa').textContent      = wa;
-    document.getElementById('sum-address').textContent = address;
-    document.getElementById('sum-items').innerHTML     = itemsHtml;
-    document.getElementById('sum-subtotal').textContent = '৳ ' + totalProduct.toLocaleString();
+    // Populate summary overlay (uses IDs from HTML)
+    document.getElementById('summaryItems').innerHTML = itemsHtml;
+    document.getElementById('sum-pkr').textContent    = '৳ ' + totalProduct.toLocaleString();
     document.getElementById('sum-logistics').textContent = '৳ ' + logistics.toLocaleString();
-    document.getElementById('sum-fee').textContent     = '৳ 100';
-    document.getElementById('sum-total').textContent   = '৳ ' + total.toLocaleString();
+    document.getElementById('sum-total').textContent  = '৳ ' + total.toLocaleString();
+    document.getElementById('customerSummary').innerHTML =
+      `<p style="font-size:0.82rem;margin-bottom:4px"><strong>${name}</strong> &nbsp;|&nbsp; ${wa}</p>
+       <p style="font-size:0.78rem;color:#888">${address}</p>`;
 
-    document.getElementById('orderSummary').style.display = 'block';
-    document.getElementById('mainContainer').style.display = 'none';
-    window.scrollTo({top:0, behavior:'smooth'});
+    document.getElementById('summaryOverlay').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
   }
+  function openSummary(){ showSummary(); }
 
   function closeSummary(){
-    document.getElementById('orderSummary').style.display = 'none';
-    document.getElementById('mainContainer').style.display = 'block';
+    document.getElementById('summaryOverlay').style.display = 'none';
+    document.body.style.overflow = '';
   }
 
   async function submitOrder(){
@@ -1306,11 +1296,11 @@
       const fd   = new FormData(form);
       const resp = await fetch(form.action, { method:'POST', body:fd, headers:{'Accept':'application/json'} });
       if(resp.ok){
-        document.getElementById('orderSummary').style.display = 'none';
+        document.getElementById('summaryOverlay').style.display = 'none';
         const sc = document.getElementById('successScreen');
         sc.style.display = 'block';
-        document.getElementById('success-order-id').textContent = orderId;
-        document.getElementById('success-total').textContent = '৳ ' + total.toLocaleString();
+        document.getElementById('orderRef').textContent = orderId;
+        // success-total not present in HTML, skip
         document.getElementById('mainContainer').style.display = 'none';
         window.scrollTo({top:0, behavior:'smooth'});
       } else {
