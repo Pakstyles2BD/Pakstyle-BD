@@ -1,2 +1,2 @@
 # Pakstyle-BD
-its an website platform for Bangladeshi buyers of all the Pakistani brands
+its a platform for Bangladeshi buyers of all the Pakistani clothing brands
