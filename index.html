@@ -596,7 +596,26 @@
         font-size:0.82rem;cursor:pointer">✕ Close</button>
     </div>
 
+    <!-- Weight Chart Editor — shown first so it's immediately visible -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:0.75rem;letter-spacing:1.5px;color:#c9a96e;font-weight:700;margin-bottom:12px">
+        📦 WEIGHT CHART — kg per unit (edit &amp; save)
+      </div>
+      <div id="weightEditorGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 20px">
+        <!-- Populated by buildWeightEditor() -->
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="saveWeightsBtn" onclick="saveWeights()"
+          style="padding:9px 22px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:6px;font-weight:700;font-size:0.88rem;cursor:pointer">
+          Save Weights</button>
+        <button onclick="resetWeights()"
+          style="padding:9px 16px;background:transparent;color:#888;border:1px solid #555;border-radius:6px;font-size:0.82rem;cursor:pointer">
+          Reset to Defaults</button>
+      </div>
+    </div>
+
     <!-- Rates row -->
+    <div style="border-top:1px solid #333;padding-top:16px">
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:8px">
       <div>
         <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">PKR → BDT Rate</label>
@@ -622,26 +641,9 @@
         style="padding:8px 20px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:6px;
         font-weight:700;font-size:0.88rem;cursor:pointer;height:36px">Save Rates</button>
     </div>
-    <div style="font-size:0.7rem;color:#555;margin-bottom:20px">
+    <div style="font-size:0.7rem;color:#555;margin-bottom:8px">
       Rates saved in this browser. On a new device visit <strong style="color:#888">?admin</strong> in the URL to set again.
     </div>
-
-    <!-- Weight Chart Editor -->
-    <div style="border-top:1px solid #333;padding-top:16px">
-      <div style="font-size:0.75rem;letter-spacing:1.5px;color:#c9a96e;font-weight:700;margin-bottom:12px">
-        📦 WEIGHT CHART — kg per unit (edit &amp; save)
-      </div>
-      <div id="weightEditorGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 20px">
-        <!-- Populated by buildWeightEditor() -->
-      </div>
-      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-        <button id="saveWeightsBtn" onclick="saveWeights()"
-          style="padding:9px 22px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:6px;font-weight:700;font-size:0.88rem;cursor:pointer">
-          Save Weights</button>
-        <button onclick="resetWeights()"
-          style="padding:9px 16px;background:transparent;color:#888;border:1px solid #555;border-radius:6px;font-size:0.82rem;cursor:pointer">
-          Reset to Defaults</button>
-      </div>
     </div>
 
   </div>
@@ -1377,7 +1379,6 @@
     document.getElementById('mainContainer').style.display = 'block';
     window.scrollTo({top: 0, behavior: 'smooth'});
   }
-
 
   // Keyboard shortcut: type "psb" (not in an input) to open admin
   let _adminSeq = '';
