@@ -558,43 +558,55 @@
     </div>
   </div>
 
-  <!-- PAYMENT CONFIRMATION (Step 2) — separate visible card -->
+  <!-- PAYMENT CONFIRMATION (Step 2) -->
   <div style="width:100%;max-width:700px;margin:16px auto 0;background:#1a1a2e;border:1px solid #c9a96e44;border-radius:14px;padding:20px;text-align:left">
-    <p style="font-size:0.88rem;font-weight:700;color:#c9a96e;margin-bottom:4px;text-align:center">📸 Step 2 — Confirm Your Payment</p>
-    <p style="font-size:0.72rem;color:#888;margin-bottom:14px;text-align:center">Upload your payment screenshot so we can match and confirm faster.</p>
+    <p style="font-size:0.88rem;font-weight:700;color:#c9a96e;margin-bottom:4px;text-align:center">✅ Step 2 — Confirm Your Payment</p>
+    <p style="font-size:0.72rem;color:#888;margin-bottom:14px;text-align:center">Let us know once you've sent the payment so we can process your order.</p>
 
-    <div style="background:#0f0f1a;border-radius:8px;padding:8px 12px;margin-bottom:14px;text-align:center">
-      <div style="font-size:0.65rem;color:#888;margin-bottom:3px">Always mention this Order ID when making payment:</div>
-      <div style="font-size:1.05rem;font-weight:700;color:#f9a825;letter-spacing:1px" id="receiptOrderRef"></div>
+    <!-- Order ID reminder -->
+    <div style="background:#0f0f1a;border-radius:8px;padding:8px 12px;margin-bottom:16px;text-align:center">
+      <div style="font-size:0.65rem;color:#888;margin-bottom:3px">Your Order ID — mention this when paying:</div>
+      <div style="font-size:1.1rem;font-weight:700;color:#f9a825;letter-spacing:1px" id="receiptOrderRef"></div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-      <div>
-        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:5px">Payment Screenshot *</label>
-        <input type="file" id="receiptFile" accept="image/*"
-          style="width:100%;font-size:0.76rem;color:#ccc;background:#0f0f1a;border:1px dashed #444;border-radius:8px;padding:8px;cursor:pointer;box-sizing:border-box"/>
+    <!-- Primary confirmation button -->
+    <button onclick="confirmPaymentDone()" id="payDoneBtn"
+      style="width:100%;padding:13px;background:#2e7d32;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:1rem;cursor:pointer;margin-bottom:14px;letter-spacing:0.3px">
+      ✓ Yes, I Have Made the Payment
+    </button>
+
+    <!-- Optional extras — collapsed by default -->
+    <div style="border-top:1px solid #2a2a3e;padding-top:12px">
+      <div onclick="toggleReceiptExtras()" style="font-size:0.74rem;color:#888;cursor:pointer;text-align:center;user-select:none">
+        <span id="receiptExtrasToggle">＋ Add transaction ID or screenshot (optional)</span>
       </div>
-      <div>
-        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:5px">Transaction ID (optional)</label>
-        <input type="text" id="receiptTxnId" placeholder="e.g. TXN8841234"
-          style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid #333;background:#0f0f1a;color:#fff;font-size:0.85rem;box-sizing:border-box"/>
+      <div id="receiptExtras" style="display:none;margin-top:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div>
+            <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:5px">Transaction ID <span style="color:#555">(optional)</span></label>
+            <input type="text" id="receiptTxnId" placeholder="e.g. TXN8841234"
+              style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid #333;background:#0f0f1a;color:#fff;font-size:0.85rem;box-sizing:border-box"/>
+          </div>
+          <div>
+            <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:5px">Screenshot <span style="color:#555">(optional)</span></label>
+            <input type="file" id="receiptFile" accept="image/*"
+              style="width:100%;font-size:0.76rem;color:#ccc;background:#0f0f1a;border:1px dashed #333;border-radius:6px;padding:7px;cursor:pointer;box-sizing:border-box"/>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center">
-      <button onclick="submitReceipt()" id="receiptBtn"
-        style="padding:11px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer">
-        ✓ Submit Payment Confirmation
-      </button>
-      <a id="whatsappConfirmLink" href="https://wa.me/8801352018131" target="_blank"
-        style="display:block;text-align:center;padding:11px 14px;background:#25d36618;border:1px solid #25d36644;color:#25d366;border-radius:8px;font-weight:600;font-size:0.82rem;text-decoration:none;white-space:nowrap">
-        💬 WhatsApp
-      </a>
-    </div>
-    <div id="receiptStatus" style="font-size:0.74rem;color:#4caf50;margin-top:8px;text-align:center;min-height:16px"></div>
+    <div id="receiptStatus" style="font-size:0.74rem;color:#4caf50;margin-top:10px;text-align:center;min-height:16px"></div>
+
+    <!-- WhatsApp fallback -->
+    <div style="text-align:center;margin-top:10px;font-size:0.7rem;color:#555">— or confirm directly on WhatsApp —</div>
+    <a id="whatsappConfirmLink" href="https://wa.me/8801352018131" target="_blank"
+      style="display:block;text-align:center;margin-top:8px;padding:10px;background:#25d36618;border:1px solid #25d36644;color:#25d366;border-radius:8px;font-weight:600;font-size:0.82rem;text-decoration:none">
+      💬 Confirm via WhatsApp
+    </a>
   </div>
 
-  <p style="font-size:0.72rem;color:#555;margin-top:16px">Save your Order ID to track status anytime</p>
+    <p style="font-size:0.72rem;color:#555;margin-top:16px">Save your Order ID to track status anytime</p>
   <button onclick="resetForm()" style="margin-top:20px;background:none;border:1.5px solid #555;color:#888;padding:10px 24px;border-radius:8px;font-size:0.85rem;cursor:pointer;">← Place Another Order</button>
 </div>
 
@@ -1482,46 +1494,52 @@
     }
   }
 
-  async function submitReceipt(){
-    const btn    = document.getElementById('receiptBtn');
+  function toggleReceiptExtras(){
+    const box = document.getElementById('receiptExtras');
+    const lbl = document.getElementById('receiptExtrasToggle');
+    const open = box.style.display === 'none';
+    box.style.display = open ? 'block' : 'none';
+    lbl.textContent = open ? '− Hide optional details' : '＋ Add transaction ID or screenshot (optional)';
+  }
+
+  async function confirmPaymentDone(){
+    const btn    = document.getElementById('payDoneBtn');
     const status = document.getElementById('receiptStatus');
     const orderId = document.getElementById('receiptOrderRef').textContent;
-    const txnId   = document.getElementById('receiptTxnId').value.trim();
+    const txnId   = (document.getElementById('receiptTxnId')?.value || '').trim();
     const fileInput = document.getElementById('receiptFile');
 
-    if(!fileInput.files[0]){ status.style.color='#f9a825'; status.textContent='Please select a payment screenshot first.'; return; }
-
     btn.disabled = true;
-    btn.textContent = 'Submitting…';
+    btn.textContent = 'Sending confirmation…';
     status.style.color = '#c9a96e';
-    status.textContent = 'Uploading…';
+    status.textContent = '';
 
     const fd = new FormData();
-    fd.append('_subject', 'Payment Receipt — ' + orderId);
+    fd.append('_subject', 'Payment Confirmed — ' + orderId);
     fd.append('order_id', orderId);
+    fd.append('payment_confirmed', 'YES');
     fd.append('transaction_id', txnId || 'Not provided');
-    fd.append('type', 'payment_receipt');
-    fd.append('receipt_image', fileInput.files[0]);
+    fd.append('type', 'payment_confirmation');
+    if(fileInput && fileInput.files[0]) fd.append('receipt_image', fileInput.files[0]);
 
     try{
       const res = await fetch('https://formspree.io/f/xnjypzyl', {method:'POST', body:fd, headers:{Accept:'application/json'}});
       if(res.ok){
         status.style.color = '#4caf50';
-        status.textContent = '✓ Receipt received! We will verify and update your order status shortly.';
-        btn.textContent = '✓ Submitted';
-        btn.style.background = '#2e7d32';
-        btn.style.color = '#fff';
+        status.textContent = '✓ Payment confirmed! We will verify and process your order shortly.';
+        btn.textContent = '✓ Payment Confirmed';
+        btn.style.background = '#1b5e20';
       } else {
         status.style.color = '#f44336';
-        status.textContent = 'Upload failed. Please send receipt via WhatsApp instead.';
+        status.textContent = 'Could not send. Please confirm via WhatsApp.';
         btn.disabled = false;
-        btn.textContent = '✓ Submit Payment Confirmation';
+        btn.textContent = '✓ Yes, I Have Made the Payment';
       }
     } catch(e){
       status.style.color = '#f44336';
-      status.textContent = 'Network error. Please send receipt via WhatsApp instead.';
+      status.textContent = 'Network error. Please confirm via WhatsApp.';
       btn.disabled = false;
-      btn.textContent = '✓ Submit Payment Confirmation';
+      btn.textContent = '✓ Yes, I Have Made the Payment';
     }
   }
 
