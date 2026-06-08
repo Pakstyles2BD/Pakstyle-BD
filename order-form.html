@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PakStyle BD – Order</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:#f7f3ef;color:#2c2c2c;min-height:100vh}
+
+    header{background:#1a1a2e;color:#fff;padding:22px 20px 16px;text-align:center}
+    header h1{font-size:1.7rem;letter-spacing:1px}
+    header p{font-size:0.88rem;color:#c9a96e;margin-top:5px}
+
+    .how-bar{background:#c9a96e;display:flex;justify-content:center;flex-wrap:wrap;gap:0}
+    .how-bar span{padding:9px 16px;font-size:0.75rem;color:#1a1a2e;font-weight:700;letter-spacing:0.3px}
+
+    /* VPN notice bar */
+    .vpn-bar{background:#fff8e7;border-bottom:2px solid #f0c040;padding:10px 16px;font-size:0.8rem;color:#5a4000}
+    .vpn-bar-inner{max-width:700px;margin:0 auto;display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+    .vpn-bar strong{color:#3a2800}
+    .vpn-link{display:inline-block;padding:4px 12px;border-radius:14px;font-size:0.75rem;font-weight:700;
+      text-decoration:none;transition:opacity 0.15s}
+    .vpn-link:hover{opacity:0.85}
+    .vpn-free{background:#25d366;color:#fff}
+    .vpn-paid{background:#1a1a2e;color:#c9a96e}
+    .vpn-dismiss{background:none;border:none;cursor:pointer;color:#aaa;font-size:1rem;margin-left:auto;padding:0 4px}
+    .vpn-bar.hidden{display:none}
+
+    /* Price input with currency toggle */
+    .price-row{display:flex;gap:0}
+    .price-row input{flex:1;padding:9px 12px;border:1.5px solid #d9cfc4;border-radius:6px 0 0 6px;
+      font-size:0.88rem;background:#fff;border-right:none}
+    .price-row input:focus{outline:none;border-color:#c9a96e}
+    .currency-toggle{display:flex;border:1.5px solid #d9cfc4;border-radius:0 6px 6px 0;overflow:hidden}
+    .currency-toggle button{padding:9px 10px;border:none;background:#f7f3ef;font-size:0.78rem;font-weight:700;
+      cursor:pointer;color:#888;transition:all 0.15s;white-space:nowrap}
+    .currency-toggle button.active{background:#c9a96e;color:#1a1a2e}
+    .currency-toggle button:hover:not(.active){background:#ede5d8}
+
+    /* Auto-fetch loading state */
+    .fetch-status{font-size:0.72rem;color:#c9a96e;margin-top:6px;min-height:16px}
+    .fetch-status.ok{color:#2e7d32}
+    .fetch-status.err{color:#aaa}
+    .field input.loading{background:#faf7f2;color:#aaa}
+
+    /* Remember me / saved details */
+    .saved-indicator{display:none;align-items:center;gap:8px;font-size:0.75rem;
+      background:#f0faf3;border:1px solid #a8dbb0;border-radius:6px;padding:7px 12px;margin-bottom:12px}
+    .saved-indicator span{color:#2e7d32;font-weight:600}
+    .saved-indicator button{background:none;border:none;color:#888;cursor:pointer;font-size:0.72rem;
+      text-decoration:underline;padding:0}
+    .remember-row{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:0.8rem;color:#666}
+    .remember-row input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:#c9a96e}
+
+    .container{max-width:700px;margin:0 auto;padding:24px 14px 70px}
+
+    .section-label{font-size:0.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+      color:#c9a96e;margin:28px 0 12px;border-bottom:1px solid #e0d5c8;padding-bottom:6px}
+
+    /* Brand chips */
+    .brand-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+    .brand-chip{padding:6px 14px;background:#fff;border:1.5px solid #d9cfc4;border-radius:20px;
+      font-size:0.78rem;font-weight:600;color:#444;cursor:pointer;text-decoration:none;
+      transition:all 0.15s}
+    .brand-chip:hover{background:#1a1a2e;color:#c9a96e;border-color:#1a1a2e}
+    .brand-chip span{font-size:0.65rem;opacity:0.6;margin-left:2px}
+    .brand-chip.pk-chip{border-color:#2ecc71;color:#1a5e2a}
+    .brand-chip.pk-chip:hover{background:#1a3a1a;color:#2ecc71;border-color:#2ecc71}
+    .brand-group-hdr{width:100%;font-size:0.68rem;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;padding:6px 0 2px;margin-top:4px}
+    .brand-group-hdr.pkr{color:#2ecc71}
+    .brand-group-hdr.usd{color:#f9a825;margin-top:14px}
+    .brand-cat-label{font-size:0.68rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+      color:#aaa;margin:10px 0 5px;width:100%}
+    .show-more-btn{font-size:0.75rem;color:#c9a96e;background:none;border:none;cursor:pointer;
+      font-weight:600;padding:4px 0;text-decoration:underline}
+    #extraBrands{display:none}
+
+    /* URL input area */
+    .url-input-box{background:#fff;border:2px solid #c9a96e;border-radius:10px;padding:18px;margin-bottom:6px}
+    .url-input-box label{font-size:0.78rem;font-weight:700;color:#444;display:block;margin-bottom:8px}
+    .url-row{display:flex;gap:10px}
+    .url-row input{flex:1;padding:11px 14px;border:1.5px solid #d9cfc4;border-radius:7px;font-size:0.9rem}
+    .url-row input:focus{outline:none;border-color:#c9a96e}
+    .add-btn{padding:11px 20px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:7px;
+      font-weight:700;font-size:0.88rem;cursor:pointer;white-space:nowrap;transition:background 0.15s}
+    .add-btn:hover{background:#b8934d}
+
+    /* Item details panel (shown after URL added) */
+    .item-detail-panel{display:none;background:#f7f3ef;border:1.5px dashed #c9a96e;border-radius:8px;
+      padding:14px;margin-top:12px}
+    .item-detail-panel.active{display:block}
+    .detected-brand{display:inline-block;background:#1a1a2e;color:#c9a96e;font-size:0.72rem;
+      font-weight:700;padding:3px 10px;border-radius:12px;margin-bottom:10px}
+    .det-url{font-size:0.72rem;color:#888;word-break:break-all;margin-bottom:10px}
+    .row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    .field label{font-size:0.76rem;font-weight:600;color:#555;display:block;margin-bottom:4px}
+    .field input,.field select{width:100%;padding:9px 12px;border:1.5px solid #d9cfc4;border-radius:6px;
+      font-size:0.88rem;background:#fff}
+    .field input:focus,.field select:focus{outline:none;border-color:#c9a96e}
+    .save-item-btn{width:100%;margin-top:12px;padding:11px;background:#1a1a2e;color:#c9a96e;
+      border:none;border-radius:7px;font-weight:700;font-size:0.88rem;cursor:pointer;transition:background 0.15s}
+    .save-item-btn:hover{background:#2e2e4e}
+
+    /* Cart list */
+    .cart-empty{text-align:center;padding:28px;color:#aaa;font-size:0.85rem;
+      background:#fff;border-radius:8px;border:1.5px dashed #e0d5c8}
+    .cart-item{background:#fff;border:1.5px solid #e0d5c8;border-radius:8px;padding:14px;
+      margin-bottom:10px;display:flex;gap:12px;align-items:flex-start}
+    .item-num{background:#1a1a2e;color:#c9a96e;font-size:0.7rem;font-weight:700;
+      border-radius:4px;padding:3px 8px;white-space:nowrap;margin-top:2px}
+    .item-info{flex:1;min-width:0}
+    .item-brand{font-size:0.75rem;font-weight:700;color:#1a1a2e;margin-bottom:2px}
+    .item-url{font-size:0.72rem;color:#888;word-break:break-all;margin-bottom:6px}
+    .item-tags{display:flex;flex-wrap:wrap;gap:5px}
+    .item-tag{background:#f7f3ef;border:1px solid #e0d5c8;border-radius:12px;
+      font-size:0.7rem;color:#555;padding:2px 9px}
+    .item-price{font-size:0.88rem;font-weight:700;color:#1a1a2e;white-space:nowrap;text-align:right}
+    .item-bdt{font-size:0.7rem;color:#c9a96e;white-space:nowrap}
+    .remove-item{background:none;border:none;color:#ccc;cursor:pointer;font-size:1rem;
+      padding:2px 5px;border-radius:4px;margin-left:4px}
+    .remove-item:hover{color:#e74c3c;background:#fff0f0}
+
+    /* Running total */
+    .running-total{background:#1a1a2e;color:#fff;border-radius:10px;padding:18px;margin-top:16px}
+    .rt-row{display:flex;justify-content:space-between;font-size:0.85rem;padding:5px 0;
+      border-bottom:1px solid #2e2e4e;color:#ccc}
+    .rt-row:last-child{border:none}
+    .rt-total{display:flex;justify-content:space-between;font-size:1.05rem;font-weight:700;
+      padding:10px 0 4px;color:#c9a96e}
+    .rt-note{font-size:0.7rem;color:#666;text-align:center;margin-top:8px}
+
+    /* Personal details */
+    .details-form{background:#fff;border:1.5px solid #e0d5c8;border-radius:10px;padding:18px}
+    .details-form .field{margin-bottom:14px}
+
+    /* Summary modal */
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;
+      overflow-y:auto;padding:20px}
+    .overlay.active{display:flex;align-items:flex-start;justify-content:center}
+    .summary-box{background:#fff;border-radius:12px;max-width:640px;width:100%;padding:28px;margin:auto}
+    .summary-box h2{font-size:1.1rem;color:#1a1a2e;margin-bottom:4px}
+    .summary-box p{font-size:0.8rem;color:#888;margin-bottom:20px}
+    .summary-item{display:flex;justify-content:space-between;align-items:flex-start;
+      padding:10px 0;border-bottom:1px solid #f0e8dc;gap:10px}
+    .summary-item:last-child{border:none}
+    .si-left{flex:1}
+    .si-brand{font-size:0.75rem;font-weight:700;color:#1a1a2e}
+    .si-url{font-size:0.68rem;color:#aaa;word-break:break-all}
+    .si-tags{font-size:0.72rem;color:#888;margin-top:2px}
+    .si-price{text-align:right;white-space:nowrap}
+    .si-bdt{font-size:0.9rem;font-weight:700;color:#1a1a2e}
+    .si-pkr{font-size:0.7rem;color:#aaa}
+    .summary-total-box{background:#f7f3ef;border-radius:8px;padding:14px;margin:18px 0}
+    .st-row{display:flex;justify-content:space-between;font-size:0.85rem;color:#555;padding:3px 0}
+    .st-total{display:flex;justify-content:space-between;font-size:1.1rem;font-weight:700;
+      color:#1a1a2e;padding:10px 0 4px;border-top:2px solid #e0d5c8;margin-top:6px}
+    .customer-summary{background:#fff8f0;border:1px solid #e0d5c8;border-radius:6px;
+      padding:12px;font-size:0.82rem;color:#555;margin-bottom:18px}
+    .customer-summary strong{color:#1a1a2e}
+    .confirm-btn{width:100%;padding:14px;background:#c9a96e;color:#1a1a2e;border:none;
+      border-radius:8px;font-weight:700;font-size:0.95rem;cursor:pointer;transition:background 0.15s}
+    .confirm-btn:hover{background:#b8934d}
+    .back-btn{width:100%;padding:11px;background:#fff;color:#888;border:1.5px solid #e0d5c8;
+      border-radius:8px;font-weight:600;font-size:0.85rem;cursor:pointer;margin-top:8px}
+
+    .submit-btn{width:100%;padding:15px;background:#c9a96e;color:#1a1a2e;border:none;
+      border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;margin-top:20px;transition:background 0.15s}
+    .submit-btn:hover{background:#b8934d}
+    .submit-btn:disabled{background:#ddd;color:#aaa;cursor:not-allowed}
+
+    .review-btn{width:100%;padding:15px;background:#1a1a2e;color:#c9a96e;border:none;
+      border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;margin-top:20px;transition:background 0.15s}
+    .review-btn:hover{background:#2e2e4e}
+
+    .success-screen{display:none;text-align:center;padding:40px 20px}
+    .success-screen h2{color:#1a1a2e;font-size:1.4rem;margin-bottom:10px}
+    .success-screen p{color:#666;font-size:0.88rem}
+
+    .wa-note{text-align:center;margin-top:14px;font-size:0.8rem;color:#888}
+    .wa-note a{color:#25d366;font-weight:600;text-decoration:none}
+
+    @media(max-width:480px){
+      .row-2,.row-3{grid-template-columns:1fr}
+      .url-row{flex-direction:column}
+      .add-btn{width:100%}
+      .cart-item{flex-wrap:wrap}
+      .how-bar span{padding:7px 10px}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>PakStyle BD</h1>
+  <p>Pakistani Fashion · Delivered to Your Door in Bangladesh</p>
+</header>
+<div class="how-bar">
+  <span>① Browse Brand Site</span>
+  <span>→ ② Paste URLs Here</span>
+  <span>→ ③ Review & Submit</span>
+  <span>→ ④ Delivered in 2–3 Weeks</span>
+</div>
+
+<!-- VPN Notice Bar -->
+<div class="vpn-bar" id="vpnBar">
+  <div class="vpn-bar-inner">
+    <span>🇵🇰 <strong>Brand links above go directly to Pakistan (.pk) sites</strong> — PKR prices load automatically, no VPN needed.</span>
+    <span style="font-size:0.75rem;color:#888">Still seeing USD? Use the PKR/USD toggle when entering your price, or browse with a paid VPN:</span>
+    <a class="vpn-link vpn-paid" href="https://surfshark.com" target="_blank">🔒 Surfshark — ~$2.30/mo</a>
+    <button class="vpn-dismiss" onclick="document.getElementById('vpnBar').classList.add('hidden')" title="Dismiss">✕</button>
+  </div>
+</div>
+
+<div class="container" id="mainContainer">
+
+  <!-- STEP 1: ADD ITEMS -->
+  <div class="section-label">Step 1 — Browse a Brand & Paste Product Link</div>
+
+  <div class="brand-chips">
+
+    <!-- GROUP 1: Verified .pk / .com.pk domains — PKR prices load automatically -->
+    <div class="brand-group-hdr pkr">🟢 PKR Prices — No Toggle Needed (.pk domains)</div>
+    <a class="brand-chip pk-chip" href="https://pk.sapphireonline.pk" target="_blank">Sapphire <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://www.crossstitch.pk" target="_blank">Cross Stitch <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://generation.com.pk" target="_blank">Generation <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://outfitters.com.pk" target="_blank">Outfitters <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://beechtree.pk" target="_blank">Beechtree <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://breakout.com.pk" target="_blank">Breakout <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://diners.com.pk" target="_blank">Diners <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://monark.com.pk" target="_blank">Monark <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://shahnameh.pk" target="_blank">Shahnameh <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://nureh.pk" target="_blank">Nureh <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://alizeh.pk" target="_blank">Alizeh <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://jazmin.pk" target="_blank">Jazmin <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://www.limelight.pk" target="_blank">Limelight <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://www.baraekhanom.pk" target="_blank">Barae Khanom <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://laam.pk" target="_blank">LAAM (Multi-brand) <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://almirah.com.pk" target="_blank">Almirah <span>↗</span></a>
+
+    <!-- GROUP 2: .com domains — may show USD, use toggle when entering price -->
+    <div class="brand-group-hdr usd">💵 May Show USD — Use PKR/USD Toggle When Entering Price</div>
+    <a class="brand-chip" href="https://khaadi.com" target="_blank">Khaadi <span>↗</span></a>
+    <a class="brand-chip" href="https://gulahmedshop.com" target="_blank">Gul Ahmed <span>↗</span></a>
+    <a class="brand-chip" href="https://bonanzasatrangi.com" target="_blank">Bonanza Satrangi <span>↗</span></a>
+    <a class="brand-chip" href="https://mariab.com" target="_blank">Maria B <span>↗</span></a>
+    <a class="brand-chip" href="https://www.sanasafinaz.com" target="_blank">Sana Safinaz <span>↗</span></a>
+    <a class="brand-chip" href="https://nishatlinen.com" target="_blank">Nishat Linen <span>↗</span></a>
+    <a class="brand-chip" href="https://ethnic.com" target="_blank">Ethnic <span>↗</span></a>
+    <a class="brand-chip" href="https://asimjofa.com" target="_blank">Asim Jofa <span>↗</span></a>
+
+    <div id="extraBrands">
+      <a class="brand-chip" href="https://baroque.com" target="_blank">Baroque <span>↗</span></a>
+      <a class="brand-chip" href="https://elan.com" target="_blank">Elan <span>↗</span></a>
+      <a class="brand-chip" href="https://www.farahtalibaziz.com" target="_blank">Farah Talib Aziz <span>↗</span></a>
+      <a class="brand-chip" href="https://mtjonline.com" target="_blank">MTJ (Tariq Jameel) <span>↗</span></a>
+      <a class="brand-chip" href="https://uniworthshop.com" target="_blank">Uniworth <span>↗</span></a>
+      <a class="brand-chip" href="https://edenrobe.com" target="_blank">Edenrobe <span>↗</span></a>
+      <a class="brand-chip" href="https://mushq.com" target="_blank">Mushq <span>↗</span></a>
+      <a class="brand-chip" href="https://afrozeh.com" target="_blank">Afrozeh <span>↗</span></a>
+      <a class="brand-chip" href="https://zaha.com" target="_blank">Zaha by Elan <span>↗</span></a>
+      <a class="brand-chip" href="https://crimson.com" target="_blank">Crimson <span>↗</span></a>
+      <a class="brand-chip" href="https://mohsinnaveedranjha.com" target="_blank">Mohsin Naveed Ranjha <span>↗</span></a>
+      <a class="brand-chip" href="https://faizasaqlain.com" target="_blank">Faiza Saqlain <span>↗</span></a>
+      <a class="brand-chip" href="https://www.zarashahjahan.com" target="_blank">Zara Shahjahan <span>↗</span></a>
+      <a class="brand-chip" href="https://www.junaidjamshed.com" target="_blank">J. Junaid Jamshed <span>↗</span></a>
+      <a class="brand-chip" href="https://www.alkaramstudio.com" target="_blank">Alkaram <span>↗</span></a>
+      <a class="brand-chip" href="https://zellbury.com" target="_blank">Zellbury <span>↗</span></a>
+      <a class="brand-chip" href="https://houseofcharizma.com" target="_blank">Charizma <span>↗</span></a>
+      <a class="brand-chip" href="https://myrangja.com" target="_blank">Rang Ja <span>↗</span></a>
+      <a class="brand-chip" href="https://www.saadbinshahzad.com" target="_blank">Saad Bin Shahzad <span>↗</span></a>
+      <a class="brand-chip" href="https://sobianazir.net" target="_blank">Sobia Nazir <span>↗</span></a>
+      <a class="brand-chip" href="https://silayipret.com" target="_blank">Silya i Pret <span>↗</span></a>
+      <a class="brand-chip" href="https://tawakkalfabrics.co" target="_blank">Tawakkal Fabrics <span>↗</span></a>
+      <a class="brand-chip" href="https://binsaeedfabric.com" target="_blank">Bin Saeed <span>↗</span></a>
+      <a class="brand-chip" href="https://binilyas.com" target="_blank">Bin Ilyas <span>↗</span></a>
+      <a class="brand-chip" href="https://www.rangrasiya.com" target="_blank">Rang Rasiya <span>↗</span></a>
+      <a class="brand-chip" href="https://www.bareezepk.com" target="_blank">Bareeze <span>↗</span></a>
+      <a class="brand-chip" href="https://armasclothing.com" target="_blank">Armas <span>↗</span></a>
+      <a class="brand-chip" href="https://www.shopecs.com" target="_blank">ECS <span>↗</span></a>
+      <a class="brand-chip" href="https://ittehadtextiles.com" target="_blank">Ittehad <span>↗</span></a>
+      <a class="brand-chip" href="https://republicwomenswear.com" target="_blank">Republic <span>↗</span></a>
+    </div>
+
+    <button class="show-more-btn" onclick="toggleBrands(this)">+ Show all brands</button>
+  </div>
+
+  <div class="url-input-box">
+    <label>Copy a product link from any brand site and paste it here:</label>
+    <div class="url-row">
+      <input type="url" id="urlInput" placeholder="https://www.gulahmed.com/product/..." />
+      <button class="add-btn" onclick="handleAddUrl()">+ Add URL</button>
+    </div>
+
+    <div class="item-detail-panel" id="detailPanel">
+
+      <!-- URL list -->
+      <div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+          <label style="font-size:0.76rem;font-weight:600;color:#555">Product URLs
+            <span style="font-weight:400;color:#aaa;font-size:0.68rem;margin-left:4px">(category &amp; price apply to all)</span>
+          </label>
+        </div>
+        <div id="urlEntriesList"></div>
+        <div class="url-row" style="margin-top:6px">
+          <input type="url" id="panelUrlInput" placeholder="Paste another URL…" style="font-size:0.82rem"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();addUrlToPanel()}"/>
+          <button class="add-btn" style="padding:9px 14px;font-size:0.78rem;white-space:nowrap" onclick="addUrlToPanel()">+ Add URL</button>
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label>Category <span style="color:#aaa;font-weight:400">(sets weight — see guide ↓)</span></label>
+          <select id="det_category">
+            <option value="">Select category</option>
+            <optgroup label="☀️ Lawn / Summer / Everyday">
+              <option value="kurti_1pc">Kurti / Shirt – 1pc only</option>
+              <option value="shirt_dupatta_2pc">2-Piece – Shirt + Dupatta (no trouser)</option>
+              <option value="shirt_trouser_2pc">2-Piece Co-ord – Shirt + Trouser (no dupatta)</option>
+              <option value="lawn_3pc_unstitch">3-Piece Unstitched (shirt+dupatta+trouser fabric)</option>
+              <option value="pret_3pc">3-Piece Pret / Stitched</option>
+            </optgroup>
+            <optgroup label="❄️ Winter">
+              <option value="winter_2pc">Winter 2-Piece (karandi / khaddar / linen)</option>
+              <option value="winter_3pc">Winter 3-Piece (karandi / khaddar)</option>
+            </optgroup>
+            <optgroup label="✨ Formal / Designer">
+              <option value="formal_emb_2pc">Formal Embroidered 2-Piece (chiffon/net)</option>
+              <option value="formal_emb_3pc">Formal Embroidered 3-Piece (chiffon/net)</option>
+              <option value="heavy_formal_3pc">Heavy Formal 3-Piece (organza / silk)</option>
+              <option value="bridal">Bridal / Velvet / Full Embroidery</option>
+            </optgroup>
+            <optgroup label="➕ Separates">
+              <option value="dupatta_only">Dupatta / Stole / Scarf only</option>
+              <option value="accessories">Accessories / Jewellery</option>
+            </optgroup>
+          </select>
+          <div id="weightGuideToggle" style="font-size:0.68rem;color:#c9a96e;cursor:pointer;margin-top:4px;text-decoration:underline" onclick="toggleWeightGuide()">📦 How are weights estimated?</div>
+          <div id="weightGuide" style="display:none;background:#fff8f0;border:1px solid #e0d5c8;border-radius:8px;padding:10px 12px;margin-top:6px;font-size:0.72rem;color:#555;line-height:1.7">
+            <strong style="color:#1a1a2e">Weight Guide &mdash; incl. packaging (per unit &times; qty)</strong><br>
+            <table style="width:100%;border-collapse:collapse;margin-top:6px">
+              <tr style="color:#888;font-size:0.65rem"><th style="text-align:left;padding:2px 4px">Category</th><th style="text-align:right;padding:2px 4px">kg</th></tr>
+              <tbody id="weightGuideBody"></tbody>
+            </table>
+            <div style="margin-top:6px;color:#888">Includes ~20% packaging. Edit via admin panel (?admin). Confirmed at Karachi warehouse.</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Price — <span style="color:#c0392b;font-weight:700">use sale/discounted price if shown</span></label>
+          <div class="price-row">
+            <input type="number" id="det_pkr" placeholder="e.g. 4500 PKR" min="0" oninput="updatePriceHint()"/>
+            <div class="currency-toggle">
+              <button id="btn_pkr" class="active" onclick="setCurrency('PKR')">PKR</button>
+              <button id="btn_usd" onclick="setCurrency('USD')">USD</button>
+            </div>
+          </div>
+          <div id="currencyNote" style="display:none;margin-top:5px;font-size:0.72rem;font-weight:600;
+            padding:4px 8px;border-radius:5px"></div>
+          <div id="priceHint" style="font-size:0.72rem;color:#c9a96e;margin-top:4px;min-height:16px"></div>
+        </div>
+      </div>
+      <div id="sizeQtySection" style="display:none;margin-top:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <label style="font-size:0.76rem;font-weight:600;color:#555">Sizes &amp; Quantities
+            <span style="font-weight:400;color:#aaa;font-size:0.68rem;margin-left:4px">(same price for all adult sizes)</span>
+          </label>
+          <button type="button" onclick="addSizeRow()"
+            style="font-size:0.72rem;color:#c9a96e;background:none;border:1.5px solid #c9a96e;
+            border-radius:12px;padding:3px 12px;cursor:pointer;font-weight:700">+ Add size</button>
+        </div>
+        <div id="sizeRowsContainer"></div>
+        <div id="sizeReminder" style="display:none;margin-top:6px;font-size:0.72rem;font-weight:700;
+          color:#c0392b;background:#fff0f0;border:1px solid #f5c6c6;border-radius:5px;padding:4px 8px">
+          ⚠️ Please select a size in every row before saving.
+        </div>
+      </div>
+      <div id="fetchStatus" class="fetch-status"></div>
+      <button class="save-item-btn" id="saveItemBtn" onclick="saveItem()">✓ Save to Order List</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: CART -->
+  <div class="section-label">Step 2 — Your Order List <span id="itemCountBadge" style="font-size:0.75rem;background:#c9a96e;color:#1a1a2e;border-radius:10px;padding:2px 8px;margin-left:6px;display:none">0 items</span></div>
+
+  <div id="cartList">
+    <div class="cart-empty" id="cartEmpty">No items yet. Paste a product link above to start your order.</div>
+  </div>
+
+  <div id="runningTotal" style="display:none">
+    <div class="running-total">
+      <div class="rt-row"><span>Products (<span id="rt-item-count">0</span> items)</span><span id="rt-pkr">PKR —</span></div>
+      <div class="rt-row"><span>Logistics (est. weight × ৳1,600/kg)</span><span id="rt-logistics">৳ —</span></div>
+      <div class="rt-row"><span>Transaction Fee</span><span>৳ 100</span></div>
+      <div class="rt-total"><span>ESTIMATED TOTAL</span><span id="rt-total">৳ —</span></div>
+      <div class="rt-note">* Final confirmed price sent via WhatsApp before payment.</div>
+      <div class="rt-note" style="margin-top:6px;color:#f9a825">⚖️ Weight calculations are approximate. If actual weight differs significantly, a revised logistics charge will be communicated via WhatsApp before payment.</div>
+    </div>
+  </div>
+
+  <!-- STEP 3: YOUR DETAILS -->
+  <div class="section-label">Step 3 — Your Details</div>
+  <div class="details-form">
+
+    <div class="saved-indicator" id="savedIndicator">
+      <span>✓ Details saved on this device</span>
+      <button onclick="clearSavedDetails()">Clear saved info</button>
+    </div>
+
+    <div class="row-2">
+      <div class="field">
+        <label>Full Name *</label>
+        <input type="text" id="buyerName" placeholder="e.g. Fatima Rahman"/>
+      </div>
+      <div class="field">
+        <label>WhatsApp Number *</label>
+        <input type="tel" id="buyerWA" placeholder="+880 17XXXXXXXX"/>
+      </div>
+    </div>
+    <div class="row-2">
+      <div class="field">
+        <label>Email <span style="color:#aaa;font-weight:400">(optional — for order updates)</span></label>
+        <input type="email" id="buyerEmail" placeholder="your@email.com"/>
+      </div>
+      <div class="field">
+        <label>Delivery Address in Bangladesh *</label>
+        <input type="text" id="buyerAddress" placeholder="Flat, Road, Area, City, Dhaka 1209"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Notes (optional)</label>
+      <input type="text" id="buyerNotes" placeholder="Alternate sizes, special instructions..."/>
+    </div>
+
+    <div class="remember-row">
+      <input type="checkbox" id="rememberMe" checked/>
+      <label for="rememberMe">Remember my details on this device (so you don't fill this again next time)</label>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:center;gap:8px;background:#fff8e7;border:1.5px solid #f0c040;border-radius:8px;padding:11px 16px;margin-top:16px;font-size:0.82rem;color:#5a4000">
+    <span style="font-size:1.1rem">🚚</span>
+    <span><strong>Estimated Delivery: 2–3 Weeks</strong> from order confirmation to your door.</span>
+  </div>
+
+  <button class="review-btn" onclick="openSummary()">Review My Order →</button>
+
+  <div class="wa-note">
+    Questions? <a href="https://wa.me/923XXXXXXXXX" target="_blank">Chat on WhatsApp</a>
+  </div>
+
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div class="success-screen" id="successScreen">
+  <div style="font-size:3rem;margin-bottom:12px">✅</div>
+  <h2>Order Request Submitted!</h2>
+  <p style="margin-top:8px;color:#888;font-size:0.88rem">We'll confirm your price quote on WhatsApp within a few hours.</p>
+
+  <div style="background:#ff6b0015;border:1px solid #ff6b0055;border-radius:8px;padding:10px 14px;margin:14px auto 0;max-width:380px;font-size:0.78rem;color:#ffaa55;text-align:left">
+    ⚠️ <strong style="color:#ffcc88">Stock Notice:</strong> Pakistani fashion items sell out fast. If any item in your order goes out of stock before we place it, we will notify you on WhatsApp immediately and suggest alternatives or a refund.
+  </div>
+
+  <p style="margin-top:20px;font-size:0.85rem;color:#aaa">Your Order ID:</p>
+  <p style="font-size:1.3rem;font-weight:700;color:#f9a825;letter-spacing:1px;margin:6px 0 16px" id="orderRef"></p>
+  <a id="trackOrderLink" href="tracking.html" style="display:inline-block;background:#f9a825;color:#1a1a2e;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.95rem;margin-bottom:24px">📦 Track My Order</a>
+
+  <!-- PAYMENT DETAILS -->
+  <div style="background:#1a1a2e;border-radius:14px;padding:20px 18px;text-align:left;max-width:360px;margin:0 auto">
+    <p style="font-size:0.95rem;font-weight:700;color:#f9a825;margin-bottom:14px;text-align:center">💳 Payment Details</p>
+    <p style="font-size:0.75rem;color:#888;margin-bottom:14px;text-align:center">Send payment only after receiving your confirmed price quote on WhatsApp.</p>
+
+    <!-- bKash Payment -->
+    <div style="background:#e2136e18;border:1px solid #e2136e55;border-radius:10px;padding:12px 14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:1.2rem">🟣</span>
+        <span style="font-weight:700;color:#e2136e;font-size:0.9rem">bKash</span>
+        <span style="background:#e2136e;color:#fff;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">PAYMENT</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01352-018131</span>
+        <button onclick="copyNum('01352018131',this)" style="background:#e2136e22;border:1px solid #e2136e55;color:#e2136e;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+      </div>
+    </div>
+
+    <!-- bKash Send Money -->
+    <div style="background:#e2136e10;border:1px solid #e2136e33;border-radius:10px;padding:12px 14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:1.2rem">🟣</span>
+        <span style="font-weight:700;color:#e2136e;font-size:0.9rem">bKash</span>
+        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
+        <button onclick="copyNum('01851948690',this)" style="background:#e2136e22;border:1px solid #e2136e55;color:#e2136e;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+      </div>
+    </div>
+
+    <!-- Nagad -->
+    <div style="background:#f7941d15;border:1px solid #f7941d44;border-radius:10px;padding:12px 14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:1.2rem">🟠</span>
+        <span style="font-weight:700;color:#f7941d;font-size:0.9rem">Nagad</span>
+        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
+        <button onclick="copyNum('01851948690',this)" style="background:#f7941d22;border:1px solid #f7941d55;color:#f7941d;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+      </div>
+    </div>
+
+    <!-- Upay -->
+    <div style="background:#6c3cff15;border:1px solid #6c3cff44;border-radius:10px;padding:12px 14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:1.2rem">🟤</span>
+        <span style="font-weight:700;color:#a87aff;font-size:0.9rem">Upay</span>
+        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
+        <button onclick="copyNum('01851948690',this)" style="background:#6c3cff22;border:1px solid #6c3cff55;color:#a87aff;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+      </div>
+    </div>
+
+    <!-- Rocket -->
+    <div style="background:#8b189115;border:1px solid #8b189155;border-radius:10px;padding:12px 14px;margin-bottom:0">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:1.2rem">🚀</span>
+        <span style="font-weight:700;color:#c060cc;font-size:0.9rem">Rocket</span>
+        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
+        <button onclick="copyNum('01851948690',this)" style="background:#8b189122;border:1px solid #8b189155;color:#c060cc;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+      </div>
+    </div>
+
+    <!-- City Bank -->
+    <div style="background:#00529b15;border:1px solid #00529b44;border-radius:10px;padding:12px 14px;margin-top:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:1.2rem">🏦</span>
+        <span style="font-weight:700;color:#4a9fd4;font-size:0.9rem">City Bank</span>
+        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">BANK TRANSFER</span>
+      </div>
+      <div style="font-size:0.78rem;color:#aaa;margin-bottom:4px">Account Name: <strong style="color:#eee">Moors Attire</strong></div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:0.68rem;color:#888">A/C No</div>
+          <div style="font-size:1rem;font-weight:700;color:#eee;letter-spacing:0.5px">1324897775001</div>
+        </div>
+        <button onclick="copyNum('1324897775001',this)" style="background:#00529b22;border:1px solid #00529b55;color:#4a9fd4;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+      </div>
+    </div>
+
+    <!-- UCBL -->
+    <div style="background:#00529b15;border:1px solid #00529b44;border-radius:10px;padding:12px 14px;margin-top:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:1.2rem">🏦</span>
+        <span style="font-weight:700;color:#4a9fd4;font-size:0.9rem">UCBL</span>
+        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">BANK TRANSFER</span>
+      </div>
+      <div style="font-size:0.78rem;color:#aaa;margin-bottom:4px">Account Name: <strong style="color:#eee">Moors Attire</strong></div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:0.68rem;color:#888">A/C No</div>
+          <div style="font-size:1rem;font-weight:700;color:#eee;letter-spacing:0.5px">7862141003465221</div>
+        </div>
+        <button onclick="copyNum('7862141003465221',this)" style="background:#00529b22;border:1px solid #00529b55;color:#4a9fd4;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+      </div>
+    </div>
+
+    <p style="font-size:0.7rem;color:#666;margin-top:14px;text-align:center">After payment, send your transaction ID on WhatsApp to confirm.</p>
+  </div>
+
+  <p style="font-size:0.72rem;color:#555;margin-top:16px">Save your Order ID to track status anytime</p>
+  <button onclick="resetForm()" style="margin-top:20px;background:none;border:1.5px solid #555;color:#888;padding:10px 24px;border-radius:8px;font-size:0.85rem;cursor:pointer;">← Place Another Order</button>
+</div>
+
+<!-- SUMMARY OVERLAY -->
+<div class="overlay" id="summaryOverlay">
+  <div class="summary-box">
+    <h2>Order Summary</h2>
+    <p>Review before submitting. We'll confirm the final price on WhatsApp.</p>
+
+    <div id="summaryItems"></div>
+
+    <div class="summary-total-box">
+      <div class="st-row"><span>Products (PKR value)</span><span id="sum-pkr"></span></div>
+      <div class="st-row"><span>Logistics (est. weight × ৳1,600/kg)</span><span id="sum-logistics"></span></div>
+      <div class="st-row"><span>Transaction Fee</span><span>৳ 100</span></div>
+      <div class="st-total"><span>ESTIMATED TOTAL (BDT)</span><span id="sum-total"></span></div>
+    </div>
+
+    <div class="customer-summary" id="customerSummary"></div>
+
+    <div style="background:#fff8ec;border:1px solid #f0c040;border-radius:7px;padding:9px 13px;font-size:0.75rem;color:#7a5000;margin-bottom:14px">
+      ⚠️ Items are subject to availability. If anything goes out of stock, we'll contact you on WhatsApp before proceeding.
+    </div>
+
+    <button class="confirm-btn" id="confirmSubmitBtn" onclick="submitOrder()">Confirm & Submit Order</button>
+    <button class="back-btn" onclick="closeSummary()">← Edit Order</button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL — visible only via ?admin in URL -->
+<div id="adminPanel" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;
+  color:#fff;padding:16px 20px;z-index:999;border-top:3px solid #c9a96e;font-family:inherit">
+  <div style="max-width:500px;margin:0 auto">
+    <div style="font-size:0.7rem;letter-spacing:2px;color:#c9a96e;font-weight:700;margin-bottom:10px">
+      🔒 ADMIN — RATE SETTINGS (not visible to buyers)
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+      <div>
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">PKR → BDT Rate</label>
+        <input id="adm_conv" type="number" step="0.01" placeholder="e.g. 0.42"
+          style="width:120px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Logistics Rate (BDT/kg)</label>
+        <input id="adm_log" type="number" placeholder="e.g. 1600"
+          style="width:120px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">USD → PKR Rate</label>
+        <input id="adm_usd_pkr" type="number" placeholder="e.g. 278"
+          style="width:120px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Commission</label>
+        <input type="text" value="1pc=20% · 2-3pc=18% · 4+pc=15%" readonly
+          style="width:160px;padding:8px 10px;border-radius:6px;border:none;font-size:0.78rem;background:#2e2e4e;color:#888"/>
+      </div>
+      <button id="saveRatesBtn" onclick="saveRates()"
+        style="padding:8px 20px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:6px;
+        font-weight:700;font-size:0.88rem;cursor:pointer;height:36px">
+        Save Rates
+      </button>
+    </div>
+    <div style="font-size:0.7rem;color:#666;margin-top:8px">
+      Rates saved in this browser. To update on a new device, visit <em>your-form-url<strong>?admin</strong></em> and save again.
+    </div>
+
+    <!-- Weight Chart Editor -->
+    <div style="margin-top:16px;border-top:1px solid #333;padding-top:14px">
+      <div style="font-size:0.7rem;letter-spacing:1.5px;color:#c9a96e;font-weight:700;margin-bottom:10px">
+        📦 WEIGHT CHART (kg per unit — edit &amp; save)
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;max-width:600px" id="weightEditorGrid">
+        <!-- Populated by JS -->
+      </div>
+      <button onclick="saveWeights()"
+        style="margin-top:12px;padding:8px 20px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:6px;font-weight:700;font-size:0.88rem;cursor:pointer"
+        id="saveWeightsBtn">Save Weights</button>
+      <button onclick="resetWeights()"
+        style="margin-top:12px;margin-left:8px;padding:8px 16px;background:transparent;color:#888;border:1px solid #555;border-radius:6px;font-size:0.82rem;cursor:pointer">
+        Reset to Defaults</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden form for Formspree -->
+<form id="hiddenForm" action="https://formspree.io/f/xnjypzyl" method="POST" style="display:none">
+  <input type="hidden" name="_subject" id="hf_subject" value="New PakStyle BD Order"/>
+  <input type="hidden" name="_replyto" id="hf_replyto"/>
+  <input type="hidden" name="order_id" id="hf_order_id"/>
+  <input type="hidden" name="buyer_name" id="hf_name"/>
+  <input type="hidden" name="whatsapp" id="hf_wa"/>
+  <input type="hidden" name="email" id="hf_email"/>
+  <input type="hidden" name="delivery_address" id="hf_address"/>
+  <input type="hidden" name="notes" id="hf_notes"/>
+  <input type="hidden" name="estimated_total_bdt" id="hf_total"/>
+  <input type="hidden" name="item_count" id="hf_count"/>
+  <input type="hidden" name="order_items" id="hf_items"/>
+  <input type="hidden" name="cart_links" id="hf_cart_links"/>
+  <input type="hidden" name="payment_info" value="bKash Payment: 01352018131 | bKash/Nagad/Upay/Rocket Send Money: 01851948690 | City Bank – Moors Attire A/C: 1324897775001 | UCBL – Moors Attire A/C: 7862141003465221"/>
+</form>
+
+<script>
+  // --- ADMIN RATE MANAGEMENT ---
+  // Rates stored in localStorage, editable only via ?admin URL
+  function getRates(){
+    return {
+      CONV_RATE : parseFloat(localStorage.getItem('psb_conv') || '0.42'),
+      LOG_RATE  : parseFloat(localStorage.getItem('psb_log')  || '1600'),
+      COMM_RATE : 0.10,
+      TRANS_FEE : 100
+    };
+  }
+
+  // --- REMEMBER ME (localStorage) ---
+  function loadSavedDetails(){
+    try{
+      const saved = JSON.parse(localStorage.getItem('psb_buyer') || 'null');
+      if(saved && saved.name){
+        document.getElementById('buyerName').value    = saved.name    || '';
+        document.getElementById('buyerWA').value      = saved.wa      || '';
+        document.getElementById('buyerEmail').value   = saved.email   || '';
+        document.getElementById('buyerAddress').value = saved.address || '';
+        document.getElementById('rememberMe').checked = true;
+        document.getElementById('savedIndicator').style.display = 'flex';
+      }
+    }catch(e){}
+  }
+  function saveBuyerDetails(){
+    if(!document.getElementById('rememberMe').checked){
+      localStorage.removeItem('psb_buyer'); return;
+    }
+    localStorage.setItem('psb_buyer', JSON.stringify({
+      name:    document.getElementById('buyerName').value.trim(),
+      wa:      document.getElementById('buyerWA').value.trim(),
+      email:   document.getElementById('buyerEmail').value.trim(),
+      address: document.getElementById('buyerAddress').value.trim()
+    }));
+  }
+  function clearSavedDetails(){
+    localStorage.removeItem('psb_buyer');
+    document.getElementById('buyerName').value    = '';
+    document.getElementById('buyerWA').value      = '';
+    document.getElementById('buyerEmail').value   = '';
+    document.getElementById('buyerAddress').value = '';
+    document.getElementById('rememberMe').checked = false;
+    document.getElementById('savedIndicator').style.display = 'none';
+  }
+  loadSavedDetails();
+
+  // Show admin panel — via ?admin URL OR Ctrl+Shift+A keyboard shortcut
+  function openAdminPanel(){
+    const panel = document.getElementById('adminPanel');
+    panel.style.display = 'block';
+    const r = getRates();
+    document.getElementById('adm_conv').value    = r.CONV_RATE;
+    document.getElementById('adm_log').value     = r.LOG_RATE;
+    document.getElementById('adm_usd_pkr').value = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
+    buildWeightEditor();
+    panel.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  (function(){
+    if(window.location.search.includes('admin')) openAdminPanel();
+  })();
+
+  document.addEventListener('keydown', function(e){
+    if(e.ctrlKey && e.shiftKey && e.key === 'A'){
+      e.preventDefault();
+      const panel = document.getElementById('adminPanel');
+      if(panel.style.display === 'none') openAdminPanel();
+      else panel.style.display = 'none';
+    }
+  });
+
+  function saveRates(){
+    const conv   = parseFloat(document.getElementById('adm_conv').value);
+    const log    = parseFloat(document.getElementById('adm_log').value);
+    const usdPkr = parseFloat(document.getElementById('adm_usd_pkr').value);
+    if(!conv || !log){ alert('Please enter valid numbers.'); return; }
+    localStorage.setItem('psb_conv', conv);
+    localStorage.setItem('psb_log',  log);
+    if(usdPkr > 0) localStorage.setItem('psb_usd_pkr', usdPkr);
+    const btn = document.getElementById('saveRatesBtn');
+    btn.textContent = '✓ Saved!';
+    btn.style.background = '#2e7d32';
+    setTimeout(()=>{ btn.textContent='Save Rates'; btn.style.background=''; }, 2000);
+  }
+
+  const TRANS_FEE = 100;
+
+  // ── WEIGHT SYSTEM ────────────────────────────────────────────────────────
+  // Keys match dropdown option values and detectCategory() returns.
+  // Weights include ~20% packaging allowance.
+  const DEFAULT_WEIGHTS = {
+    kurti_1pc         : 0.34,
+    shirt_dupatta_2pc : 0.46,
+    shirt_trouser_2pc : 0.58,
+    lawn_3pc_unstitch : 0.66,
+    pret_3pc          : 0.74,
+    winter_2pc        : 0.70,
+    winter_3pc        : 0.90,
+    formal_emb_2pc    : 0.86,
+    formal_emb_3pc    : 1.08,
+    heavy_formal_3pc  : 1.32,
+    bridal            : 2.00,
+    dupatta_only      : 0.22,
+    accessories       : 0.24,
+  };
+
+  const WEIGHT_LABELS = {
+    kurti_1pc         : 'Kurti / Shirt (1pc)',
+    shirt_dupatta_2pc : 'Shirt + Dupatta (2pc)',
+    shirt_trouser_2pc : 'Shirt + Trouser (2pc co-ord)',
+    lawn_3pc_unstitch : '3pc Unstitched',
+    pret_3pc          : '3pc Pret / Stitched',
+    winter_2pc        : 'Winter 2pc (karandi/khaddar)',
+    winter_3pc        : 'Winter 3pc (karandi/khaddar)',
+    formal_emb_2pc    : 'Formal Embroidered 2pc',
+    formal_emb_3pc    : 'Formal Embroidered 3pc',
+    heavy_formal_3pc  : 'Heavy Formal 3pc (organza/silk)',
+    bridal            : 'Bridal / Velvet / Full Embroidery',
+    dupatta_only      : 'Dupatta / Stole only',
+    accessories       : 'Accessories / Jewellery',
+  };
+
+  function getWeight(key){
+    try{
+      const saved = JSON.parse(localStorage.getItem('psb_weights') || '{}');
+      if(saved[key] > 0) return saved[key];
+    }catch(e){}
+    return DEFAULT_WEIGHTS[key] || 0.66;
+  }
+
+  function buildWeightEditor(){
+    const grid = document.getElementById('weightEditorGrid');
+    if(!grid) return;
+    let saved = {};
+    try{ saved = JSON.parse(localStorage.getItem('psb_weights') || '{}'); }catch(e){}
+    grid.innerHTML = Object.keys(DEFAULT_WEIGHTS).map(key => {
+      const val = saved[key] || DEFAULT_WEIGHTS[key];
+      return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #2a2a3e">
+        <span style="font-size:0.72rem;color:#ccc;flex:1">${WEIGHT_LABELS[key]}</span>
+        <input type="number" step="0.01" min="0.01" id="wt_${key}" value="${val}"
+          style="width:70px;padding:4px 6px;border-radius:5px;border:1px solid #444;background:#0f0f1a;color:#fff;font-size:0.82rem;text-align:right"/>
+        <span style="font-size:0.68rem;color:#666">kg</span>
+      </div>`;
+    }).join('');
+  }
+
+  function saveWeights(){
+    const weights = {};
+    Object.keys(DEFAULT_WEIGHTS).forEach(key => {
+      const el = document.getElementById('wt_' + key);
+      if(el){ const v = parseFloat(el.value); if(v > 0) weights[key] = v; }
+    });
+    localStorage.setItem('psb_weights', JSON.stringify(weights));
+    const btn = document.getElementById('saveWeightsBtn');
+    btn.textContent = '✓ Weights Saved!';
+    btn.style.background = '#2e7d32';
+    setTimeout(()=>{ btn.textContent='Save Weights'; btn.style.background=''; }, 2000);
+  }
+
+  function resetWeights(){
+    localStorage.removeItem('psb_weights');
+    buildWeightEditor();
+  }
+
+  // Currency toggle for price input
+  let selectedCurrency = 'PKR';
+  function setCurrency(cur){
+    const usdRate = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
+    const input   = document.getElementById('det_pkr');
+    const val     = parseFloat(input.value);
+    // Convert existing value when toggling so user never has to retype
+    if(val > 0){
+      if(selectedCurrency === 'PKR' && cur === 'USD'){
+        input.value = (val / usdRate).toFixed(2);
+      } else if(selectedCurrency === 'USD' && cur === 'PKR'){
+        input.value = Math.round(val * usdRate);
+      }
+    }
+    selectedCurrency = cur;
+    document.getElementById('btn_pkr').classList.toggle('active', cur==='PKR');
+    document.getElementById('btn_usd').classList.toggle('active', cur==='USD');
+    input.placeholder = cur==='USD' ? 'e.g. 42 (USD)' : 'e.g. 4500 (PKR)';
+    updatePriceHint();
+  }
+
+  function updatePriceHint(){
+    const val = parseFloat(document.getElementById('det_pkr').value);
+    const hint = document.getElementById('priceHint');
+    const usdRate = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
+    if(!val || val <= 0){ hint.textContent = ''; return; }
+    if(selectedCurrency === 'PKR'){
+      const usd = (val / usdRate).toFixed(2);
+      hint.innerHTML = `≈ <strong>$${usd} USD</strong> &nbsp;·&nbsp; rate: 1 USD = ${usdRate} PKR`;
+    } else {
+      const pkr = Math.round(val * usdRate).toLocaleString();
+      hint.innerHTML = `≈ <strong>PKR ${pkr}</strong> &nbsp;·&nbsp; rate: 1 USD = ${usdRate} PKR`;
+    }
+  }
+
+  // ── UNSTITCHED categories: no size field required ────────────────────────
+  const UNSTITCHED_CATS = new Set(['lawn_3pc_unstitch', 'dupatta_only', 'accessories']);
+
+  // ── MULTI-SIZE ROW SYSTEM ─────────────────────────────────────────────────
+  let sizeRowCounter = 0;
+
+  function buildSizeRowHTML(id, size='', qty=1){
+    const opts = ['XS','S','M','L','XL','XXL','Free Size']
+      .map(s => `<option${s===size?' selected':''}>${s}</option>`).join('');
+    return `<div id="sr_${id}" style="display:flex;gap:8px;align-items:center;margin-bottom:7px">
+      <select onchange="onSizeRowChange()"
+        style="flex:1;padding:8px 10px;border:1.5px solid #d9cfc4;border-radius:6px;
+               font-size:0.85rem;background:#fff;min-width:0">
+        <option value="">Pick size</option>${opts}
+      </select>
+      <input type="number" value="${qty}" min="1" max="20" placeholder="Qty"
+        style="width:62px;padding:8px 8px;border:1.5px solid #d9cfc4;border-radius:6px;
+               font-size:0.85rem;text-align:center"/>
+      <button type="button" onclick="removeSizeRow('${id}')"
+        style="background:none;border:none;color:#ccc;cursor:pointer;font-size:1rem;
+               padding:2px 5px;border-radius:4px;flex-shrink:0"
+        onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ccc'">✕</button>
+    </div>`;
+  }
+
+  function addSizeRow(size='', qty=1){
+    const id = sizeRowCounter++;
+    document.getElementById('sizeRowsContainer')
+      .insertAdjacentHTML('beforeend', buildSizeRowHTML(id, size, qty));
+  }
+
+  function removeSizeRow(id){
+    const container = document.getElementById('sizeRowsContainer');
+    if(container.children.length <= 1) return;
+    document.getElementById('sr_' + id)?.remove();
+  }
+
+  function onSizeRowChange(){
+    const rows = getSizeRows();
+    if(rows.some(r => r.size))
+      document.getElementById('sizeReminder').style.display = 'none';
+  }
+
+  function getSizeRows(){
+    const rows = [];
+    document.querySelectorAll('#sizeRowsContainer > div').forEach(row => {
+      const size = row.querySelector('select').value;
+      const qty  = Math.max(1, parseInt(row.querySelector('input').value) || 1);
+      rows.push({ size, qty });
+    });
+    return rows;
+  }
+
+  function resetSizeRows(){
+    document.getElementById('sizeRowsContainer').innerHTML = '';
+    sizeRowCounter = 0;
+  }
+
+  function updateSizeVisibility(catVal){
+    const section = document.getElementById('sizeQtySection');
+    const isUnstitched = UNSTITCHED_CATS.has(catVal);
+    section.style.display = isUnstitched ? 'none' : '';
+    document.getElementById('sizeReminder').style.display = 'none';
+    if(!isUnstitched && catVal){
+      // Ensure at least one row exists
+      if(!document.getElementById('sizeRowsContainer').children.length) addSizeRow();
+    }
+  }
+
+  document.getElementById('det_category').addEventListener('change', function(){
+    updateSizeVisibility(this.value);
+  });
+
+  // ── BRAND & CATEGORY AUTO-DETECTION FROM URL ─────────────────────────────
+  const BRAND_MAP = {
+    // .pk group — PKR automatic
+    'pk.sapphireonline.pk':'Sapphire','sapphireonline.pk':'Sapphire',
+    'crossstitch.pk':'Cross Stitch',
+    'generation.com.pk':'Generation','generation.pk':'Generation',
+    'outfitters.com.pk':'Outfitters',
+    'beechtree.pk':'Beechtree',
+    'breakout.com.pk':'Breakout',
+    'diners.com.pk':'Diners',
+    'monark.com.pk':'Monark',
+    'shahnameh.pk':'Shahnameh',
+    'nureh.pk':'Nureh',
+    'alizeh.pk':'Alizeh',
+    'jazmin.pk':'Jazmin',
+    'limelight.pk':'Limelight',
+    'baraekhanom.pk':'Barae Khanom',
+    'laam.pk':'LAAM',
+    'almirah.com.pk':'Almirah',
+    // .com group — may show USD
+    'khaadi.com':'Khaadi','pk.khaadi.com':'Khaadi',
+    'gulahmedshop.com':'Gul Ahmed','gulahmed.com':'Gul Ahmed',
+    'bonanzasatrangi.com':'Bonanza Satrangi',
+    'mariab.com':'Maria B','mariab.pk':'Maria B',
+    'sanasafinaz.com':'Sana Safinaz',
+    'nishatlinen.com':'Nishat Linen',
+    'ethnic.com':'Ethnic','ethnc.com':'Ethnic',
+    'asimjofa.com':'Asim Jofa',
+    'baroque.com':'Baroque','baroque.com.pk':'Baroque',
+    'elan.com':'Elan','elan.pk':'Elan',
+    'farahtalibaziz.com':'Farah Talib Aziz','farahtalibaziz.com.pk':'Farah Talib Aziz',
+    'mtjonline.com':'MTJ (Tariq Jameel)',
+    'uniworthshop.com':'Uniworth',
+    'edenrobe.com':'Edenrobe',
+    'mushq.com':'Mushq',
+    'afrozeh.com':'Afrozeh',
+    'zaha.com':'Zaha by Elan',
+    'crimson.com':'Crimson',
+    'mohsinnaveedranjha.com':'Mohsin Naveed Ranjha',
+    'faizasaqlain.com':'Faiza Saqlain',
+    'zarashahjahan.com':'Zara Shahjahan',
+    'junaidjamshed.com':'J. Junaid Jamshed',
+    'alkaramstudio.com':'Alkaram','alkaramstudio.pk':'Alkaram',
+    'zellbury.com':'Zellbury',
+    'houseofcharizma.com':'Charizma','houseofcharizma.com.pk':'Charizma',
+    'myrangja.com':'Rang Ja','rangja.com.pk':'Rang Ja',
+    'saadbinshahzad.com':'Saad Bin Shahzad',
+    'sobianazir.net':'Sobia Nazir',
+    'silayipret.com':'Silya i Pret',
+    'tawakkalfabrics.co':'Tawakkal Fabrics',
+    'binsaeedfabric.com':'Bin Saeed',
+    'binilyas.com':'Bin Ilyas',
+    'rangrasiya.com':'Rang Rasiya',
+    'bareezepk.com':'Bareeze',
+    'armasclothing.com':'Armas',
+    'shopecs.com':'ECS',
+    'ittehadtextiles.com':'Ittehad',
+    'republicwomenswear.com':'Republic',
+  };
+
+  function detectBrand(url){
+    try{
+      const host = new URL(url).hostname.replace(/^www\./,'');
+      for(const [domain, name] of Object.entries(BRAND_MAP)){
+        if(host === domain || host.endsWith('.'+domain)) return name;
+      }
+    }catch(e){}
+    return '';
+  }
+
+  function detectCategory(url){
+    const s = (url + ' ' + decodeURIComponent(url)).toLowerCase();
+    if(/unstitch/.test(s))                          return 'lawn_3pc_unstitch';
+    if(/dupatta|stole|scarf/.test(s) && !/shirt|kurti|suit/.test(s)) return 'dupatta_only';
+    if(/accessories|jewel|earring|necklace|ring/.test(s)) return 'accessories';
+    if(/bridal|velvet|full.embroi/.test(s))         return 'bridal';
+    if(/heavy.formal|organza|silk/.test(s))         return 'heavy_formal_3pc';
+    if(/formal.*(embroi|chiffon|net)/.test(s) && /3/.test(s)) return 'formal_emb_3pc';
+    if(/formal.*(embroi|chiffon|net)/.test(s))     return 'formal_emb_2pc';
+    if(/winter.*3|3.*winter/.test(s))               return 'winter_3pc';
+    if(/winter.*2|2.*winter|khaddar|karandi|linen/.test(s)) return 'winter_2pc';
+    if(/3.piece|3pc|three.piece|suit/.test(s) && /pret|stitch/.test(s)) return 'pret_3pc';
+    if(/3.piece|3pc|three.piece|lawn.*3/.test(s))  return 'lawn_3pc_unstitch';
+    if(/kurti|shirt.*trouser|co.?ord/.test(s) && /trouser|pant/.test(s)) return 'shirt_trouser_2pc';
+    if(/2.piece|2pc|two.piece|shirt.*dupatta/.test(s)) return 'shirt_dupatta_2pc';
+    if(/kurti|shirt|top/.test(s))                   return 'kurti_1pc';
+    return '';
+  }
+
+  function detectSizeFromUrl(url){
+    try{
+      const params = new URL(url).searchParams;
+      for(const key of ['size','Size','SIZE','s','variant','option']){
+        const v = params.get(key);
+        if(v) return normSize(v);
+      }
+      const m = url.match(/[?&/](xs|s|m|l|xl|xxl|free.?size)[&/\-_]?/i);
+      if(m) return normSize(m[1]);
+    }catch(e){}
+    return '';
+  }
+
+  function normSize(raw){
+    const s = raw.trim().toUpperCase();
+    if(/^(FREE.?SIZE|FREESIZE|ONE.?SIZE)$/.test(s)) return 'Free Size';
+    if(['XS','S','M','L','XL','XXL'].includes(s)) return s;
+    return '';
+  }
+
+  // ── ITEM DETAIL PANEL ────────────────────────────────────────────────────
+  // ── URL ENTRIES (multi-URL queue) ────────────────────────────────────────
+  let urlEntries = [];   // [{id, url, brand}]
+  let urlEntryCounter = 0;
+
+  function parseUrl(raw){
+    let url = raw.trim();
+    if(!url) return null;
+    if(!/^https?:\/\//i.test(url)) url = 'https://' + url;
+    try{ new URL(url); return url; }catch(e){ return null; }
+  }
+
+  function buildUrlEntryHTML(id, url, brand){
+    const isPk = /\.(pk|com\.pk)(\/|$)/.test(new URL(url).hostname + '/');
+    const badgeStyle = isPk
+      ? 'background:#e8f8ee;border:1px solid #a8dbb0;color:#1a5e2a'
+      : 'background:#fff8e7;border:1px solid #f0c040;color:#7a5000';
+    const badgeText = isPk ? '🟢 PKR' : '💵 Check $';
+    return `<div id="ue_${id}" style="display:flex;align-items:center;gap:8px;margin-bottom:6px;
+        background:#fff;border:1.5px solid #e0d5c8;border-radius:7px;padding:7px 10px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:0.7rem;color:#888;word-break:break-all;line-height:1.4">${esc(url)}</div>
+        <div style="margin-top:3px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          ${brand ? `<span style="font-size:0.72rem;font-weight:700;background:#1a1a2e;color:#c9a96e;
+            border-radius:10px;padding:2px 8px">${esc(brand)}</span>` : ''}
+          <span style="font-size:0.68rem;font-weight:600;border-radius:10px;padding:2px 7px;${badgeStyle}">${badgeText}</span>
+        </div>
+      </div>
+      <button type="button" onclick="removeUrlEntry(${id})"
+        style="background:none;border:none;color:#ccc;cursor:pointer;font-size:1rem;
+               padding:2px 5px;border-radius:4px;flex-shrink:0"
+        onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ccc'">✕</button>
+    </div>`;
+  }
+
+  function addUrlEntry(url){
+    const brand = detectBrand(url);
+    const id = urlEntryCounter++;
+    urlEntries.push({ id, url, brand });
+    document.getElementById('urlEntriesList')
+      .insertAdjacentHTML('beforeend', buildUrlEntryHTML(id, url, brand));
+    updateSaveButtonLabel();
+    return { brand };
+  }
+
+  function removeUrlEntry(id){
+    urlEntries = urlEntries.filter(e => e.id !== id);
+    document.getElementById('ue_' + id)?.remove();
+    updateSaveButtonLabel();
+    if(!urlEntries.length){
+      document.getElementById('detailPanel').classList.remove('active');
+    }
+  }
+
+  function resetUrlEntries(){
+    urlEntries = [];
+    document.getElementById('urlEntriesList').innerHTML = '';
+    updateSaveButtonLabel();
+  }
+
+  function updateSaveButtonLabel(){
+    const n = urlEntries.length;
+    const btn = document.getElementById('saveItemBtn');
+    if(btn) btn.textContent = n > 1 ? `✓ Save ${n} items to Order List` : '✓ Save to Order List';
+  }
+
+  function setCurrencyNoteForEntries(){
+    const currNote = document.getElementById('currencyNote');
+    if(!urlEntries.length){ currNote.style.display='none'; return; }
+    const allPk = urlEntries.every(e => /\.(pk|com\.pk)(\/|$)/.test(new URL(e.url).hostname + '/'));
+    const anyPk = urlEntries.some(e => /\.(pk|com\.pk)(\/|$)/.test(new URL(e.url).hostname + '/'));
+    currNote.style.display = '';
+    if(allPk){
+      setCurrency('PKR');
+      currNote.style.background='#f0faf3'; currNote.style.border='1px solid #a8dbb0'; currNote.style.color='#1a5e2a';
+      currNote.textContent = '✓ All .pk sites — price is in PKR. Use discounted price if a sale is on.';
+    } else if(anyPk){
+      currNote.style.background='#fff8e7'; currNote.style.border='1px solid #f0c040'; currNote.style.color='#5a4000';
+      currNote.textContent = '⚠️ Mixed sites — some show PKR, some may show USD. Enter price in PKR (use toggle to convert).';
+    } else {
+      currNote.style.background='#fff8e7'; currNote.style.border='1px solid #f0c040'; currNote.style.color='#5a4000';
+      currNote.textContent = '⚠️ .com sites — check if price shows in PKR or USD, then use the toggle. Use discounted price if sale is on.';
+    }
+  }
+
+  function processUrl(raw, isFirst){
+    const url = parseUrl(raw);
+    if(!url){ alert('That doesn\'t look like a valid URL:\n' + raw); return false; }
+    const { brand } = addUrlEntry(url);
+    // On first URL: auto-fill category + size hint
+    if(isFirst){
+      const cat = detectCategory(url);
+      const catSel = document.getElementById('det_category');
+      if(cat){ catSel.value = cat; updateSizeVisibility(cat); }
+      else { catSel.value = ''; updateSizeVisibility(''); }
+      if(cat && !UNSTITCHED_CATS.has(cat)){
+        const sz = detectSizeFromUrl(url);
+        if(sz && !document.getElementById('sizeRowsContainer').children.length) addSizeRow(sz);
+      }
+      document.getElementById('fetchStatus').textContent = brand
+        ? '✓ Brand: ' + brand + (detectCategory(url) ? ' · Category auto-filled' : '')
+        : 'Brand not recognised — check the brand badges above.';
+      document.getElementById('fetchStatus').className = 'fetch-status ' + (brand ? 'ok' : 'err');
+    } else {
+      document.getElementById('fetchStatus').textContent = urlEntries.length + ' URLs added.';
+      document.getElementById('fetchStatus').className = 'fetch-status ok';
+    }
+    return true;
+  }
+
+  function handleAddUrl(){
+    const raw = document.getElementById('urlInput').value.trim();
+    if(!raw){ alert('Please paste a product URL first.'); return; }
+    const isFirst = urlEntries.length === 0;
+    if(!processUrl(raw, isFirst)) return;
+    setCurrencyNoteForEntries();
+    document.getElementById('detailPanel').classList.add('active');
+    document.getElementById('urlInput').value = '';
+  }
+
+  function addUrlToPanel(){
+    const raw = document.getElementById('panelUrlInput').value.trim();
+    if(!raw){ alert('Please paste a URL first.'); return; }
+    processUrl(raw, urlEntries.length === 0);
+    setCurrencyNoteForEntries();
+    document.getElementById('panelUrlInput').value = '';
+  }
+
+  // Enter key on both inputs
+  document.getElementById('urlInput').addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); handleAddUrl(); }
+  });
+
+  // ── CART ─────────────────────────────────────────────────────────────────
+  let cart = [];
+
+  const CAT_LABELS = {
+    kurti_1pc:'Kurti / 1pc', shirt_dupatta_2pc:'2pc Shirt+Dupatta',
+    shirt_trouser_2pc:'2pc Co-ord', lawn_3pc_unstitch:'3pc Unstitched',
+    pret_3pc:'3pc Pret', winter_2pc:'Winter 2pc', winter_3pc:'Winter 3pc',
+    formal_emb_2pc:'Formal 2pc', formal_emb_3pc:'Formal 3pc',
+    heavy_formal_3pc:'Heavy Formal 3pc', bridal:'Bridal',
+    dupatta_only:'Dupatta / Stole', accessories:'Accessories',
+  };
+
+  function saveItem(){
+    if(!urlEntries.length){ alert('Please add at least one URL.'); return; }
+
+    const cat        = document.getElementById('det_category').value;
+    const pkrRaw     = parseFloat(document.getElementById('det_pkr').value);
+    const isUnstitched = UNSTITCHED_CATS.has(cat);
+
+    if(!cat){ alert('Please select a category.'); return; }
+    if(!pkrRaw || pkrRaw <= 0){ alert('Please enter the price from the product page.'); return; }
+
+    let sizes;
+    if(isUnstitched){
+      sizes = [{ size: '', qty: 1 }];
+    } else {
+      sizes = getSizeRows();
+      const missing = sizes.some(r => !r.size);
+      if(missing){
+        document.getElementById('sizeReminder').style.display = '';
+        document.querySelectorAll('#sizeRowsContainer > div select').forEach(sel => {
+          sel.style.borderColor = sel.value ? '' : '#c0392b';
+        });
+        return;
+      }
+    }
+
+    const usdRate = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
+    const pkr = selectedCurrency === 'USD' ? Math.round(pkrRaw * usdRate) : pkrRaw;
+
+    // One cart item per URL entry
+    urlEntries.forEach(entry => {
+      cart.push({
+        url   : entry.url,
+        brand : entry.brand || 'Unknown Brand',
+        cat, sizes, pkr,
+        weight: getWeight(cat),
+      });
+    });
+
+    renderCart();
+    // Reset panel
+    document.getElementById('detailPanel').classList.remove('active');
+    document.getElementById('det_category').value = '';
+    document.getElementById('det_pkr').value      = '';
+    document.getElementById('fetchStatus').textContent = '';
+    document.getElementById('currencyNote').style.display = 'none';
+    resetSizeRows();
+    resetUrlEntries();
+    updateSizeVisibility('');
+  }
+
+  function removeItem(idx){
+    cart.splice(idx, 1);
+    renderCart();
+  }
+
+  function editItem(idx){
+    const item = cart[idx];
+    // Restore URL entries list with just this item's URL
+    resetUrlEntries();
+    addUrlEntry(item.url);
+    // Category & price
+    document.getElementById('det_category').value = item.cat;
+    setCurrency('PKR');
+    document.getElementById('det_pkr').value = item.pkr;
+    updatePriceHint();
+    // Size rows
+    resetSizeRows();
+    updateSizeVisibility(item.cat);
+    if(!UNSTITCHED_CATS.has(item.cat)){
+      resetSizeRows();
+      (item.sizes || []).forEach(r => addSizeRow(r.size, r.qty));
+      if(!document.getElementById('sizeRowsContainer').children.length) addSizeRow();
+    }
+    setCurrencyNoteForEntries();
+    document.getElementById('fetchStatus').textContent = '✏️ Editing item #' + (idx+1) + ' — update details and save.';
+    document.getElementById('fetchStatus').className = 'fetch-status';
+    document.getElementById('detailPanel').classList.add('active');
+    cart.splice(idx, 1);
+    renderCart();
+    document.getElementById('detailPanel').scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+
+  function renderCart(){
+    const list  = document.getElementById('cartList');
+    const empty = document.getElementById('cartEmpty');
+    const rtBox = document.getElementById('runningTotal');
+    const badge = document.getElementById('itemCountBadge');
+
+    if(!cart.length){
+      empty.style.display = '';
+      rtBox.style.display = 'none';
+      badge.style.display = 'none';
+      list.innerHTML = '';
+      list.appendChild(empty);
+      return;
+    }
+    empty.style.display = 'none';
+    badge.style.display = '';
+    badge.textContent = cart.length + (cart.length === 1 ? ' item' : ' items');
+
+    const r = getRates();
+    let totalPkr = 0, totalWeight = 0;
+    let html = '';
+    cart.forEach((item, i) => {
+      const totalQty = (item.sizes || [{qty:1}]).reduce((s,r) => s + r.qty, 0);
+      totalPkr    += item.pkr * totalQty;
+      totalWeight += item.weight * totalQty;
+      const bdtEach = Math.round(item.pkr * r.CONV_RATE);
+      const catTag  = CAT_LABELS[item.cat] || item.cat;
+
+      // Size tags: "M×1", "L×2" — or blank for unstitched
+      const sizeTags = (item.sizes || [])
+        .filter(r => r.size || !UNSTITCHED_CATS.has(item.cat))
+        .map(r => r.size ? `<span class="item-tag">${esc(r.size)}×${r.qty}</span>` : '')
+        .join('');
+
+      html += `<div class="cart-item">
+        <div class="item-num">#${i+1}</div>
+        <div class="item-info">
+          <div class="item-brand">${esc(item.brand)}</div>
+          <div class="item-url">${esc(item.url)}</div>
+          <div class="item-tags">
+            <span class="item-tag">${esc(catTag)}</span>
+            ${sizeTags}
+            <span class="item-tag" style="background:#f0f8ff;border-color:#c9d8e8">Total qty: ${totalQty}</span>
+          </div>
+        </div>
+        <div>
+          <div class="item-price">PKR ${item.pkr.toLocaleString()} <span style="font-size:0.68rem;font-weight:400;color:#888">each</span></div>
+          <div class="item-bdt">≈ ৳${bdtEach.toLocaleString()} each</div>
+          <div style="display:flex;gap:4px;margin-top:4px;justify-content:flex-end">
+            <button class="remove-item" onclick="editItem(${i})" title="Edit" style="color:#c9a96e;font-size:0.8rem">✏️</button>
+            <button class="remove-item" onclick="removeItem(${i})" title="Remove">✕</button>
+          </div>
+        </div>
+      </div>`;
+    });
+    list.innerHTML = html;
+
+    // Running total
+    const logistics = Math.round(totalWeight * r.LOG_RATE);
+    const totalBdt  = Math.round(totalPkr * r.CONV_RATE) + logistics + TRANS_FEE;
+    document.getElementById('rt-item-count').textContent = cart.length;
+    document.getElementById('rt-pkr').textContent  = 'PKR ' + totalPkr.toLocaleString();
+    document.getElementById('rt-logistics').textContent = '৳ ' + logistics.toLocaleString();
+    document.getElementById('rt-total').textContent = '৳ ' + totalBdt.toLocaleString();
+    rtBox.style.display = '';
+  }
+
+  function esc(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── SUMMARY MODAL ─────────────────────────────────────────────────────────
+  function openSummary(){
+    if(!cart.length){ alert('Add at least one item to your order.'); return; }
+    const name    = document.getElementById('buyerName').value.trim();
+    const wa      = document.getElementById('buyerWA').value.trim();
+    const address = document.getElementById('buyerAddress').value.trim();
+    if(!name || !wa || !address){
+      alert('Please fill in your name, WhatsApp number, and delivery address.');
+      return;
+    }
+
+    const r = getRates();
+    let totalPkr = 0, totalWeight = 0;
+    let siHtml = '';
+    cart.forEach((item, i) => {
+      const totalQty = (item.sizes || [{qty:1}]).reduce((s,r) => s + r.qty, 0);
+      totalPkr    += item.pkr * totalQty;
+      totalWeight += item.weight * totalQty;
+      const bdtEach = Math.round(item.pkr * r.CONV_RATE);
+      const bdtTotal = Math.round(item.pkr * totalQty * r.CONV_RATE);
+      const sizeSummary = (item.sizes || []).filter(r => r.size)
+        .map(r => `${r.size}×${r.qty}`).join(', ') || '—';
+      const tags = [CAT_LABELS[item.cat] || item.cat];
+      if(sizeSummary !== '—') tags.push(sizeSummary);
+      tags.push('Total qty: ' + totalQty);
+      siHtml += `<div class="summary-item">
+        <div class="si-left">
+          <div class="si-brand">${esc(item.brand)}</div>
+          <div class="si-url">${esc(item.url)}</div>
+          <div class="si-tags">${tags.join(' · ')}</div>
+        </div>
+        <div class="si-price">
+          <div class="si-bdt">৳ ${bdtTotal.toLocaleString()}</div>
+          <div class="si-pkr">PKR ${item.pkr.toLocaleString()} × ${totalQty}</div>
+        </div>
+      </div>`;
+    });
+    document.getElementById('summaryItems').innerHTML = siHtml;
+
+    const logistics = Math.round(totalWeight * r.LOG_RATE);
+    const totalBdt  = Math.round(totalPkr * r.CONV_RATE) + logistics + TRANS_FEE;
+    document.getElementById('sum-pkr').textContent      = 'PKR ' + totalPkr.toLocaleString();
+    document.getElementById('sum-logistics').textContent = '৳ ' + logistics.toLocaleString();
+    document.getElementById('sum-total').textContent    = '৳ ' + totalBdt.toLocaleString();
+
+    const email = document.getElementById('buyerEmail').value.trim();
+    const notes = document.getElementById('buyerNotes').value.trim();
+    document.getElementById('customerSummary').innerHTML =
+      `<strong>${esc(name)}</strong> · ${esc(wa)}` +
+      (email   ? ` · ${esc(email)}`   : '') + `<br>` +
+      `📍 ${esc(address)}` +
+      (notes   ? `<br>📝 ${esc(notes)}` : '');
+
+    document.getElementById('summaryOverlay').classList.add('active');
+  }
+
+  function closeSummary(){
+    document.getElementById('summaryOverlay').classList.remove('active');
+  }
+
+  // ── ORDER SUBMISSION ──────────────────────────────────────────────────────
+  function submitOrder(){
+    const btn = document.getElementById('confirmSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    const r = getRates();
+    let totalPkr = 0, totalWeight = 0;
+    cart.forEach(item => {
+      const totalQty = (item.sizes || [{qty:1}]).reduce((s,r) => s + r.qty, 0);
+      totalPkr    += item.pkr * totalQty;
+      totalWeight += item.weight * totalQty;
+    });
+    const logistics = Math.round(totalWeight * r.LOG_RATE);
+    const totalBdt  = Math.round(totalPkr * r.CONV_RATE) + logistics + TRANS_FEE;
+
+    const orderId = 'PSB-' + Date.now().toString(36).toUpperCase();
+    const name    = document.getElementById('buyerName').value.trim();
+    const wa      = document.getElementById('buyerWA').value.trim();
+    const email   = document.getElementById('buyerEmail').value.trim();
+    const address = document.getElementById('buyerAddress').value.trim();
+    const notes   = document.getElementById('buyerNotes').value.trim();
+
+    saveBuyerDetails();
+
+    const itemsText = cart.map((item, i) => {
+      const totalQty = (item.sizes || [{qty:1}]).reduce((s,r) => s + r.qty, 0);
+      const sizeSummary = (item.sizes || []).filter(r => r.size)
+        .map(r => `${r.size}×${r.qty}`).join(', ');
+      const parts = [`#${i+1} ${item.brand}`, CAT_LABELS[item.cat] || item.cat];
+      if(sizeSummary) parts.push('Sizes: ' + sizeSummary);
+      parts.push('Total qty: ' + totalQty, 'PKR ' + item.pkr.toLocaleString() + ' each', item.url);
+      return parts.join(' | ');
+    }).join('\n');
+
+    document.getElementById('hf_subject').value  = `New Order ${orderId} — ${name}`;
+    document.getElementById('hf_replyto').value  = email || wa;
+    document.getElementById('hf_order_id').value = orderId;
+    document.getElementById('hf_name').value     = name;
+    document.getElementById('hf_wa').value       = wa;
+    document.getElementById('hf_email').value    = email;
+    document.getElementById('hf_address').value  = address;
+    document.getElementById('hf_notes').value    = notes;
+    document.getElementById('hf_total').value    = '৳ ' + totalBdt.toLocaleString();
+    document.getElementById('hf_count').value    = cart.length;
+    document.getElementById('hf_items').value    = itemsText;
+    document.getElementById('hf_cart_links').value = cart.map(i => i.url).join('\n');
+
+    const form = document.getElementById('hiddenForm');
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    }).then(res => {
+      if(res.ok){
+        document.getElementById('orderRef').textContent = orderId;
+        document.getElementById('trackOrderLink').href =
+          `tracking.html?order=${orderId}&name=${encodeURIComponent(name)}`;
+        closeSummary();
+        document.getElementById('mainContainer').style.display = 'none';
+        document.getElementById('successScreen').style.display = 'block';
+      } else {
+        alert('Submission failed. Please try again or contact us on WhatsApp.');
+        btn.disabled = false;
+        btn.textContent = 'Confirm & Submit Order';
+      }
+    }).catch(() => {
+      alert('Network error. Please check your connection and try again.');
+      btn.disabled = false;
+      btn.textContent = 'Confirm & Submit Order';
+    });
+  }
+
+  function resetForm(){
+    cart = [];
+    renderCart();
+    document.getElementById('buyerNotes').value = '';
+    document.getElementById('mainContainer').style.display = '';
+    document.getElementById('successScreen').style.display = 'none';
+  }
+
+  // ── UTILITIES ─────────────────────────────────────────────────────────────
+  function toggleBrands(btn){
+    const extra = document.getElementById('extraBrands');
+    const shown = extra.style.display !== 'none';
+    extra.style.display = shown ? 'none' : '';
+    btn.textContent = shown ? '+ Show all brands' : '− Show fewer brands';
+  }
+
+  function copyNum(num, btn){
+    navigator.clipboard.writeText(num).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✓ Copied';
+      setTimeout(() => btn.textContent = orig, 1800);
+    }).catch(() => {
+      prompt('Copy this number:', num);
+    });
+  }
+
+  function toggleWeightGuide(){
+    const g = document.getElementById('weightGuide');
+    const open = g.style.display !== 'none';
+    g.style.display = open ? 'none' : '';
+    // Populate table on first open
+    if(!open && !g.dataset.built){
+      g.dataset.built = '1';
+      document.getElementById('weightGuideBody').innerHTML =
+        Object.keys(DEFAULT_WEIGHTS).map(k =>
+          `<tr><td style="padding:2px 4px">${WEIGHT_LABELS[k]}</td>
+               <td style="text-align:right;padding:2px 4px">${getWeight(k).toFixed(2)}</td></tr>`
+        ).join('');
+    }
+  }
+
+
+</script>
+</body>
+</html>
