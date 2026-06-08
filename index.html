@@ -1305,9 +1305,7 @@
         }
       }
     }
-    if(data.name && !document.getElementById('det_brand').value){
-      document.getElementById('det_brand').value = data.name.slice(0,40);
-    }
+    // Brand name comes from hostname map only — never from product title
 
     setTimeout(()=>{ document.getElementById('fetchStatus').textContent = ''; }, 5000);
   }
