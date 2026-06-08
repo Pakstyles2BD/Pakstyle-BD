@@ -677,9 +677,19 @@
           style="width:120px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
       </div>
       <div>
-        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Commission</label>
-        <input type="text" value="1pc=20% · 2-3pc=18% · 4+pc=15%" readonly
-          style="width:180px;padding:8px 10px;border-radius:6px;border:none;font-size:0.78rem;background:#2e2e4e;color:#888"/>
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Commission — 1 item (%)</label>
+        <input id="adm_comm1" type="number" min="0" max="100" placeholder="20"
+          style="width:80px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Commission — 2–3 items (%)</label>
+        <input id="adm_comm2" type="number" min="0" max="100" placeholder="18"
+          style="width:80px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Commission — 4+ items (%)</label>
+        <input id="adm_comm3" type="number" min="0" max="100" placeholder="15"
+          style="width:80px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
       </div>
       <button id="saveRatesBtn" onclick="saveRates()"
         style="padding:8px 20px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:6px;
@@ -829,6 +839,9 @@
     document.getElementById('adm_conv').value    = r.CONV_RATE;
     document.getElementById('adm_log').value     = r.LOG_RATE;
     document.getElementById('adm_usd_pkr').value = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
+    document.getElementById('adm_comm1').value = parseFloat(localStorage.getItem('psb_comm1') || '20');
+    document.getElementById('adm_comm2').value = parseFloat(localStorage.getItem('psb_comm2') || '18');
+    document.getElementById('adm_comm3').value = parseFloat(localStorage.getItem('psb_comm3') || '15');
     buildWeightEditor();
     panel.scrollTop = 0;
   }
@@ -850,10 +863,16 @@
     const conv   = parseFloat(document.getElementById('adm_conv').value);
     const log    = parseFloat(document.getElementById('adm_log').value);
     const usdPkr = parseFloat(document.getElementById('adm_usd_pkr').value);
+    const comm1  = parseFloat(document.getElementById('adm_comm1').value);
+    const comm2  = parseFloat(document.getElementById('adm_comm2').value);
+    const comm3  = parseFloat(document.getElementById('adm_comm3').value);
     if(!conv || !log){ alert('Please enter valid numbers.'); return; }
     localStorage.setItem('psb_conv', conv);
     localStorage.setItem('psb_log',  log);
     if(usdPkr > 0) localStorage.setItem('psb_usd_pkr', usdPkr);
+    if(comm1 >= 0 && comm1 <= 100) localStorage.setItem('psb_comm1', comm1);
+    if(comm2 >= 0 && comm2 <= 100) localStorage.setItem('psb_comm2', comm2);
+    if(comm3 >= 0 && comm3 <= 100) localStorage.setItem('psb_comm3', comm3);
     const btn = document.getElementById('saveRatesBtn');
     btn.textContent = '✓ Saved!';
     btn.style.background = '#2e7d32';
@@ -955,16 +974,25 @@
 
   // ── TIERED COMMISSION ───────────────────────────────────────────────────
   // 1 item → 20%, 2–3 items → 18%, 4+ items → 15% (hidden from buyers)
+  function getCommRates(){
+    return {
+      c1: parseFloat(localStorage.getItem('psb_comm1') || '20') / 100,
+      c2: parseFloat(localStorage.getItem('psb_comm2') || '18') / 100,
+      c3: parseFloat(localStorage.getItem('psb_comm3') || '15') / 100
+    };
+  }
   function getCommRate(){
+    const r = getCommRates();
     const futureCount = cart.length + 1;
-    if(futureCount === 1) return 0.20;
-    if(futureCount <= 3)  return 0.18;
-    return 0.15;
+    if(futureCount === 1) return r.c1;
+    if(futureCount <= 3)  return r.c2;
+    return r.c3;
   }
   function getCartCommRate(){
-    if(cart.length === 1) return 0.20;
-    if(cart.length <= 3)  return 0.18;
-    return 0.15;
+    const r = getCommRates();
+    if(cart.length === 1) return r.c1;
+    if(cart.length <= 3)  return r.c2;
+    return r.c3;
   }
 
   // ── AUTO-FETCH PRODUCT DATA ─────────────────────────────────────────────
@@ -1028,6 +1056,12 @@
             const product = data.product;
             if(product){
               if(!name) name = product.title;
+              // Build rich text for category detection: type + tags + description
+              const _type = product.product_type || '';
+              const _tags = (product.tags || []).join(' ');
+              const _desc = (product.body_html || '').replace(/<[^>]+>/g,' ');
+              const _rich = [name||'', _type, _tags, _desc].join(' ');
+              if(!category && _rich.trim()) category = detectCategory(_rich);
               const variants = product.variants || [];
               const variantId = new URL(url).searchParams.get('variant');
               const matched = variantId ? variants.find(v => String(v.id) === String(variantId)) : null;
@@ -1087,6 +1121,14 @@
           if(el){ const v = parseFloat(el.textContent.replace(/[^0-9.]/g,'')); if(v > 100) price = v; }
         }
         if(!name) name = doc.querySelector('h1')?.textContent?.trim() || null;
+        // Also use meta description for category detection
+        if(!category){
+          const metaDesc = doc.querySelector('meta[name="description"],meta[property="og:description"]');
+          if(metaDesc && metaDesc.content){
+            const combined = (name||'') + ' ' + metaDesc.content;
+            category = detectCategory(combined);
+          }
+        }
       }
     }
 
@@ -1262,7 +1304,7 @@
       const brandMap = {
         'khaadi.com':'Khaadi','sapphireonline.pk':'Sapphire','mariab.pk':'Maria B',
         'limelight.pk':'Limelight','elan.pk':'Elan','baroque.com.pk':'Baroque',
-        'farahtalibaziz.com.pk':'Farah Talib Aziz','baraekhanom.pk':'Barae Khanom',
+        'farahtalibaziz.com.pk':'Farah Talib Aziz','baraekhanom.pk':'Barae Khanom','baraekhanom.com':'Barae Khanom',
         'crossstitch.pk':'Cross Stitch','laam.pk':'LAAM','generation.pk':'Generation',
         'almirah.com.pk':'Almirah','gulahmed.com':'Gul Ahmed','gulahmedshop.com':'Gul Ahmed',
         'alkaramstudio.com':'Alkaram','sanasafinaz.com':'Sana Safinaz',
