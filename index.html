@@ -667,6 +667,46 @@
 </form>
 
 <script>
+
+  const DEFAULT_WEIGHTS = {
+    kurti_1pc            : 0.34,
+    shirt_dupatta_2pc    : 0.46,
+    shirt_trouser_2pc    : 0.58,
+    pret_3pc             : 0.74,
+    winter_2pc           : 0.70,
+    winter_3pc           : 0.90,
+    formal_emb_2pc       : 0.86,
+    formal_emb_3pc       : 1.08,
+    heavy_formal_3pc     : 1.32,
+    bridal               : 2.00,
+    unstitch_2pc_dupatta : 0.42,
+    unstitch_2pc_trouser : 0.54,
+    lawn_3pc_unstitch    : 0.66,
+    dupatta_only         : 0.22,
+  };
+
+  const WEIGHT_LABELS = {
+    // Stitched / Pret — Casual
+    kurti_1pc         : 'Kurti / Shirt – 1pc',
+    shirt_dupatta_2pc : '2pc – Shirt + Dupatta',
+    shirt_trouser_2pc : '2pc Co-ord – Shirt + Trouser',
+    pret_3pc          : '3pc Pret / Stitched Suit',
+    // Stitched / Pret — Winter
+    winter_2pc        : 'Winter 2pc (karandi/khaddar/linen)',
+    winter_3pc        : 'Winter 3pc (karandi/khaddar)',
+    // Stitched / Pret — Formal
+    formal_emb_2pc    : 'Formal Embroidered 2pc (chiffon/net)',
+    formal_emb_3pc    : 'Formal Embroidered 3pc (chiffon/net)',
+    heavy_formal_3pc  : 'Heavy Formal 3pc (organza/silk)',
+    bridal            : 'Bridal / Velvet / Full Embroidery',
+    // Un-stitched
+    unstitch_2pc_dupatta : '2pc Unstitched – Shirt + Dupatta fabric',
+    unstitch_2pc_trouser : '2pc Unstitched – Shirt + Trouser fabric',
+    lawn_3pc_unstitch    : '3pc Unstitched – Shirt + Dupatta + Trouser fabric',
+    // Separates
+    dupatta_only      : 'Dupatta / Stole / Scarf only',
+  };
+
   // --- ADMIN RATE MANAGEMENT ---
   // Rates stored in localStorage, editable only via ?admin URL
   function getRates(){
@@ -759,45 +799,6 @@
   // ── WEIGHT SYSTEM ────────────────────────────────────────────────────────
   // Keys match dropdown option values and detectCategory() returns.
   // Weights include ~20% packaging allowance.
-  const DEFAULT_WEIGHTS = {
-    kurti_1pc            : 0.34,
-    shirt_dupatta_2pc    : 0.46,
-    shirt_trouser_2pc    : 0.58,
-    pret_3pc             : 0.74,
-    winter_2pc           : 0.70,
-    winter_3pc           : 0.90,
-    formal_emb_2pc       : 0.86,
-    formal_emb_3pc       : 1.08,
-    heavy_formal_3pc     : 1.32,
-    bridal               : 2.00,
-    unstitch_2pc_dupatta : 0.42,
-    unstitch_2pc_trouser : 0.54,
-    lawn_3pc_unstitch    : 0.66,
-    dupatta_only         : 0.22,
-  };
-
-  const WEIGHT_LABELS = {
-    // Stitched / Pret — Casual
-    kurti_1pc         : 'Kurti / Shirt – 1pc',
-    shirt_dupatta_2pc : '2pc – Shirt + Dupatta',
-    shirt_trouser_2pc : '2pc Co-ord – Shirt + Trouser',
-    pret_3pc          : '3pc Pret / Stitched Suit',
-    // Stitched / Pret — Winter
-    winter_2pc        : 'Winter 2pc (karandi/khaddar/linen)',
-    winter_3pc        : 'Winter 3pc (karandi/khaddar)',
-    // Stitched / Pret — Formal
-    formal_emb_2pc    : 'Formal Embroidered 2pc (chiffon/net)',
-    formal_emb_3pc    : 'Formal Embroidered 3pc (chiffon/net)',
-    heavy_formal_3pc  : 'Heavy Formal 3pc (organza/silk)',
-    bridal            : 'Bridal / Velvet / Full Embroidery',
-    // Un-stitched
-    unstitch_2pc_dupatta : '2pc Unstitched – Shirt + Dupatta fabric',
-    unstitch_2pc_trouser : '2pc Unstitched – Shirt + Trouser fabric',
-    lawn_3pc_unstitch    : '3pc Unstitched – Shirt + Dupatta + Trouser fabric',
-    // Separates
-    dupatta_only      : 'Dupatta / Stole / Scarf only',
-  };
-
   function getWeight(key){
     try{
       const saved = JSON.parse(localStorage.getItem('psb_weights') || '{}');
