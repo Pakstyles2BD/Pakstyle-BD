@@ -70,6 +70,31 @@
     .brand-group-hdr{width:100%;font-size:0.68rem;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;padding:6px 0 2px;margin-top:4px}
     .brand-group-hdr.pkr{color:#2ecc71}
     .brand-group-hdr.usd{color:#f9a825;margin-top:14px}
+    /* Brand search + directory */
+    .brand-search-wrap{position:relative;margin-bottom:8px}
+    .brand-search{width:100%;padding:12px 16px;border:1.5px solid #d9cfc4;border-radius:10px;font-size:0.92rem;
+      font-family:inherit;outline:none;background:#fff;transition:border-color .15s}
+    .brand-search:focus{border-color:#c9a96e;box-shadow:0 0 0 3px rgba(201,169,110,0.15)}
+    .brand-dropdown{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:50;background:#fff;
+      border:1.5px solid #e0d5c8;border-radius:10px;box-shadow:0 8px 26px rgba(0,0,0,0.16);max-height:280px;overflow-y:auto}
+    .brand-dd-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 14px;cursor:pointer;
+      text-decoration:none;color:#1a1a2e;font-size:0.85rem;border-bottom:1px solid #f2ece4}
+    .brand-dd-item:last-child{border-bottom:none}
+    .brand-dd-item:hover,.brand-dd-item.active{background:#faf6f0}
+    .brand-dd-item .cur{font-size:0.66rem;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
+    .brand-dd-item .cur.pkr{background:#e7f8ee;color:#1a7e3e}
+    .brand-dd-item .cur.usd{background:#fff3d6;color:#9a6a00}
+    .brand-dd-empty{padding:14px;text-align:center;color:#999;font-size:0.82rem}
+    .brand-legend{font-size:0.7rem;color:#888;margin:2px 0 12px}
+    .brand-cat{border:1px solid #ece5da;border-radius:10px;margin-bottom:8px;overflow:hidden;background:#fff}
+    .brand-cat-hdr{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;cursor:pointer;
+      background:#faf7f2;font-weight:700;font-size:0.84rem;color:#1a1a2e;user-select:none}
+    .brand-cat-hdr:hover{background:#f4eee5}
+    .brand-cat-hdr .cnt{font-size:0.68rem;font-weight:600;color:#999}
+    .brand-cat-hdr .arr{transition:transform .2s;color:#c9a96e}
+    .brand-cat.open .brand-cat-hdr .arr{transform:rotate(90deg)}
+    .brand-cat-body{display:none;flex-wrap:wrap;gap:7px;padding:12px 14px}
+    .brand-cat.open .brand-cat-body{display:flex}
     .brand-cat-label{font-size:0.68rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
       color:#aaa;margin:10px 0 5px;width:100%}
     .show-more-btn{font-size:0.75rem;color:#c9a96e;background:none;border:none;cursor:pointer;
@@ -267,71 +292,15 @@
   <div class="section-label">Browse a Brand</div>
 
   <div class="brand-section">
-    <div class="brand-chips">
-      <div class="brand-group-hdr pkr">🟢 PKR Auto — No Toggle Needed</div>
-      <a class="brand-chip pk-chip" href="https://pk.sapphireonline.pk" target="_blank">Sapphire <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://www.crossstitch.pk" target="_blank">Cross Stitch <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://generation.com.pk" target="_blank">Generation <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://outfitters.com.pk" target="_blank">Outfitters <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://beechtree.pk" target="_blank">Beechtree <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://breakout.com.pk" target="_blank">Breakout <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://diners.com.pk" target="_blank">Diners <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://monark.com.pk" target="_blank">Monark <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://shahnameh.pk" target="_blank">Shahnameh <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://nureh.pk" target="_blank">Nureh <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://alizeh.pk" target="_blank">Alizeh <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://jazmin.pk" target="_blank">Jazmin <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://www.limelight.pk" target="_blank">Limelight <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://www.baraekhanom.pk" target="_blank">Barae Khanom <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://laam.pk" target="_blank">LAAM <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://almirah.com.pk" target="_blank">Almirah <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://pk.ethnc.com" target="_blank">ETHNC <span>↗</span></a>
-
-      <div class="brand-group-hdr usd">💵 May Show USD — Use Toggle</div>
-      <a class="brand-chip" href="https://khaadi.com" target="_blank">Khaadi <span>↗</span></a>
-      <a class="brand-chip" href="https://gulahmedshop.com" target="_blank">Gul Ahmed <span>↗</span></a>
-      <a class="brand-chip" href="https://bonanzasatrangi.com" target="_blank">Bonanza Satrangi <span>↗</span></a>
-      <a class="brand-chip" href="https://mariab.com" target="_blank">Maria B <span>↗</span></a>
-      <a class="brand-chip" href="https://www.sanasafinaz.com" target="_blank">Sana Safinaz <span>↗</span></a>
-      <a class="brand-chip" href="https://nishatlinen.com" target="_blank">Nishat Linen <span>↗</span></a>
-      <a class="brand-chip" href="https://asimjofa.com" target="_blank">Asim Jofa <span>↗</span></a>
-
-      <div id="extraBrands" style="display:none;flex-wrap:wrap;gap:7px;width:100%">
-        <a class="brand-chip" href="https://baroque.com" target="_blank">Baroque <span>↗</span></a>
-        <a class="brand-chip" href="https://elan.com" target="_blank">Elan <span>↗</span></a>
-        <a class="brand-chip" href="https://www.farahtalibaziz.com" target="_blank">Farah Talib Aziz <span>↗</span></a>
-        <a class="brand-chip" href="https://mtjonline.com" target="_blank">MTJ <span>↗</span></a>
-        <a class="brand-chip" href="https://uniworthshop.com" target="_blank">Uniworth <span>↗</span></a>
-        <a class="brand-chip" href="https://edenrobe.com" target="_blank">Edenrobe <span>↗</span></a>
-        <a class="brand-chip" href="https://mushq.com" target="_blank">Mushq <span>↗</span></a>
-        <a class="brand-chip" href="https://afrozeh.com" target="_blank">Afrozeh <span>↗</span></a>
-        <a class="brand-chip" href="https://zaha.com" target="_blank">Zaha by Elan <span>↗</span></a>
-        <a class="brand-chip" href="https://crimson.com" target="_blank">Crimson <span>↗</span></a>
-        <a class="brand-chip" href="https://mohsinnaveedranjha.com" target="_blank">Mohsin Naveed Ranjha <span>↗</span></a>
-        <a class="brand-chip" href="https://faizasaqlain.com" target="_blank">Faiza Saqlain <span>↗</span></a>
-        <a class="brand-chip" href="https://www.zarashahjahan.com" target="_blank">Zara Shahjahan <span>↗</span></a>
-        <a class="brand-chip" href="https://www.junaidjamshed.com" target="_blank">J. Junaid Jamshed <span>↗</span></a>
-        <a class="brand-chip" href="https://www.alkaramstudio.com" target="_blank">Alkaram <span>↗</span></a>
-        <a class="brand-chip" href="https://zellbury.com" target="_blank">Zellbury <span>↗</span></a>
-        <a class="brand-chip" href="https://houseofcharizma.com" target="_blank">Charizma <span>↗</span></a>
-        <a class="brand-chip" href="https://myrangja.com" target="_blank">Rang Ja <span>↗</span></a>
-        <a class="brand-chip" href="https://www.saadbinshahzad.com" target="_blank">Saad Bin Shahzad <span>↗</span></a>
-        <a class="brand-chip" href="https://sobianazir.net" target="_blank">Sobia Nazir <span>↗</span></a>
-        <a class="brand-chip" href="https://silayipret.com" target="_blank">Silya i Pret <span>↗</span></a>
-        <a class="brand-chip" href="https://tawakkalfabrics.co" target="_blank">Tawakkal Fabrics <span>↗</span></a>
-        <a class="brand-chip" href="https://binsaeedfabric.com" target="_blank">Bin Saeed <span>↗</span></a>
-        <a class="brand-chip" href="https://binilyas.com" target="_blank">Bin Ilyas <span>↗</span></a>
-        <a class="brand-chip" href="https://www.rangrasiya.com" target="_blank">Rang Rasiya <span>↗</span></a>
-        <a class="brand-chip" href="https://www.bareezepk.com" target="_blank">Bareeze <span>↗</span></a>
-        <a class="brand-chip" href="https://armasclothing.com" target="_blank">Armas <span>↗</span></a>
-        <a class="brand-chip" href="https://www.shopecs.com" target="_blank">ECS <span>↗</span></a>
-        <a class="brand-chip" href="https://ittehadtextiles.com" target="_blank">Ittehad <span>↗</span></a>
-        <a class="brand-chip" href="https://republicwomenswear.com" target="_blank">Republic <span>↗</span></a>
-      </div>
-      <div style="width:100%;margin-top:8px">
-        <button class="show-more-btn" onclick="toggleBrands(this)">+ Show all brands</button>
-      </div>
+    <!-- Search bar with live dropdown -->
+    <div class="brand-search-wrap">
+      <input id="brandSearch" class="brand-search" type="text" autocomplete="off" placeholder="🔍 Search 85+ Pakistani brands by name…"
+        oninput="onBrandSearch()" onfocus="onBrandSearch()"/>
+      <div id="brandDropdown" class="brand-dropdown"></div>
     </div>
+    <div class="brand-legend">🟢 = opens in PKR automatically &nbsp;·&nbsp; 💵 = may show USD (switch currency to "Pakistan/PKR" on the site)</div>
+    <!-- Categorised directory (rendered by JS) -->
+    <div id="brandDirectory"></div>
   </div>
 
   <div class="section-label" style="margin-top:28px">Add Products to Your Order</div>
@@ -1530,6 +1499,184 @@
     'ittehadtextiles.com':'Ittehad',
     'republicwomenswear.com':'Republic',
   };
+
+  // ═══ FULL BRAND DIRECTORY (display + search) ═══════════════════════════════
+  // p:true = opens in PKR automatically · p:false = .com store (may show USD)
+  const BRAND_CATS = {
+    md: '🏢 Multi-Department (Men · Women · Kids)',
+    w:  '👗 Women’s Pret & Unstitched',
+    p:  '👑 Premium Designer & Luxury',
+    m:  '👔 Menswear & Tailoring',
+    k:  '🧸 Kids',
+    ws: '🧵 Wholesale Print / Fabric'
+  };
+  const BRANDS = [
+    // ── Multi-department ──
+    {n:'Sapphire',u:'https://pk.sapphireonline.pk',p:true,c:'md'},
+    {n:'Khaadi',u:'https://pk.khaadi.com',p:true,c:'md'},
+    {n:'Alkaram Studio',u:'https://alkaramstudio.pk',p:true,c:'md'},
+    {n:'Almirah',u:'https://almirah.com.pk',p:true,c:'md'},
+    {n:'Breakout',u:'https://breakout.com.pk',p:true,c:'md'},
+    {n:'Diners',u:'https://diners.com.pk',p:true,c:'md'},
+    {n:'Edenrobe',u:'https://edenrobe.com/pk/',p:true,c:'md'},
+    {n:'Limelight',u:'https://www.limelight.pk',p:true,c:'md'},
+    {n:'Outfitters',u:'https://outfitters.com.pk',p:true,c:'md'},
+    {n:'Zellbury',u:'https://zellbury.com.pk',p:true,c:'md'},
+    {n:'Bonanza Satrangi',u:'https://bonanzasatrangi.com',p:false,c:'md'},
+    {n:'ChenOne',u:'https://chenone.com',p:false,c:'md'},
+    {n:'Gul Ahmed',u:'https://gulahmedshop.com',p:false,c:'md'},
+    {n:'J. Junaid Jamshed',u:'https://www.junaidjamshed.com',p:false,c:'md'},
+    {n:'Khas Stores',u:'https://khasstores.com',p:false,c:'md'},
+    {n:'MTJ (Tariq Jameel)',u:'https://mtjonline.com',p:false,c:'md'},
+    {n:'Nishat Linen',u:'https://nishatlinen.com',p:false,c:'md'},
+    // ── Women’s pret & unstitched ──
+    {n:'Agha Noor',u:'https://aghanoorofficial.com.pk',p:true,c:'w'},
+    {n:'Alizeh',u:'https://alizeh.pk',p:true,c:'w'},
+    {n:'Armas',u:'https://armas.pk',p:true,c:'w'},
+    {n:'Beechtree',u:'https://beechtree.pk',p:true,c:'w'},
+    {n:'Bin Ilyas',u:'https://binilyas.com.pk',p:true,c:'w'},
+    {n:'By The Way (BTW)',u:'https://btwonline.pk',p:true,c:'w'},
+    {n:'Charizma',u:'https://houseofcharizma.com.pk',p:true,c:'w'},
+    {n:'Chinyere',u:'https://chinyere.pk',p:true,c:'w'},
+    {n:'Cross Stitch',u:'https://www.crossstitch.pk',p:true,c:'w'},
+    {n:'ECS',u:'https://shopecs.com.pk',p:true,c:'w'},
+    {n:'Ego',u:'https://wearego.com.pk',p:true,c:'w'},
+    {n:'ETHNC',u:'https://pk.ethnc.com',p:true,c:'w'},
+    {n:'Farasha',u:'https://farashaonline.pk',p:true,c:'w'},
+    {n:'Generation',u:'https://generation.com.pk',p:true,c:'w'},
+    {n:'Gulaal',u:'https://gulaal.pk',p:true,c:'w'},
+    {n:'Image',u:'https://image1993.com.pk',p:true,c:'w'},
+    {n:'Jazmin',u:'https://jazmin.pk',p:true,c:'w'},
+    {n:'Kayseria',u:'https://kayseria.com.pk',p:true,c:'w'},
+    {n:'Kross Kulture',u:'https://krosskulture.com.pk',p:true,c:'w'},
+    {n:'LAAM (multi-brand)',u:'https://laam.pk',p:true,c:'w'},
+    {n:'Maria B',u:'https://mariab.pk',p:true,c:'w'},
+    {n:'Motifz',u:'https://motifz.com.pk',p:true,c:'w'},
+    {n:'Nureh',u:'https://nureh.pk',p:true,c:'w'},
+    {n:'Rang Ja',u:'https://rangja.com.pk',p:true,c:'w'},
+    {n:'Ramsha',u:'https://ramsha.pk',p:true,c:'w'},
+    {n:'Salitex',u:'https://salitex.pk',p:true,c:'w'},
+    {n:'Sha Posh',u:'https://shaposh.pk',p:true,c:'w'},
+    {n:'Silayi Pret',u:'https://silayipret.com',p:true,c:'w'},
+    {n:'Thredz',u:'https://thredz.com.pk',p:true,c:'w'},
+    {n:'Warda',u:'https://warda.com.pk',p:true,c:'w'},
+    {n:'Zarif',u:'https://zarif.pk',p:true,c:'w'},
+    {n:'Ittehad',u:'https://ittehadtextiles.com',p:false,c:'w'},
+    // ── Premium designer & luxury ──
+    {n:'Afrozeh',u:'https://afrozeh.com',p:false,c:'p'},
+    {n:'Asim Jofa',u:'https://asimjofa.com',p:false,c:'p'},
+    {n:'Barae Khanom',u:'https://embellishedkurtas.com',p:false,c:'p'},
+    {n:'Bareeze',u:'https://bareeze.com',p:false,c:'p'},
+    {n:'Baroque',u:'https://baroque.com',p:false,c:'p'},
+    {n:'Crimson',u:'https://crimson.com',p:false,c:'p'},
+    {n:'Elan',u:'https://elan.com',p:false,c:'p'},
+    {n:'Erum Khan',u:'https://erumkhancouture.com',p:false,c:'p'},
+    {n:'Faiza Saqlain',u:'https://faizasaqlain.com',p:false,c:'p'},
+    {n:'Farah Talib Aziz',u:'https://www.farahtalibaziz.com',p:false,c:'p'},
+    {n:'Hussain Rehar',u:'https://hussainrehar.com',p:false,c:'p'},
+    {n:'Mohsin Naveed Ranjha',u:'https://mohsinnaveedranjha.com',p:false,c:'p'},
+    {n:'Mushq',u:'https://mushq.com',p:false,c:'p'},
+    {n:'Nomi Ansari',u:'https://nomiansari.com',p:false,c:'p'},
+    {n:'Republic Womenswear',u:'https://republicwomenswear.com',p:false,c:'p'},
+    {n:'Saad Bin Shahzad',u:'https://www.saadbinshahzad.com',p:false,c:'p'},
+    {n:'Sana Safinaz',u:'https://www.sanasafinaz.com',p:false,c:'p'},
+    {n:'Sania Maskatiya',u:'https://saniamaskatiya.com',p:false,c:'p'},
+    {n:'Sobia Nazir',u:'https://sobianazir.net',p:false,c:'p'},
+    {n:'Suffuse by Sana Yasir',u:'https://suffuse.com',p:false,c:'p'},
+    {n:'Tena Durrani',u:'https://tenadurrani.com',p:false,c:'p'},
+    {n:'Threads & Motifs',u:'https://threadsandmotifs.com',p:false,c:'p'},
+    {n:'Zaha by Elan',u:'https://zaha.com',p:false,c:'p'},
+    {n:'Zainab Chottani',u:'https://zainabchottani.com',p:false,c:'p'},
+    {n:'Zara Shahjahan',u:'https://www.zarashahjahan.com',p:false,c:'p'},
+    // ── Menswear & tailoring ──
+    {n:'Brumano',u:'https://brumano.com.pk',p:true,c:'m'},
+    {n:'Cambridge',u:'https://thecambridgeshop.com.pk',p:true,c:'m'},
+    {n:'Charcoal',u:'https://charcoal.com.pk',p:true,c:'m'},
+    {n:'Cougar',u:'https://cougar.com.pk',p:true,c:'m'},
+    {n:'Deepak Perwani',u:'https://deepakperwani.pk',p:true,c:'m'},
+    {n:'Ismail Farid',u:'https://ismailfarid.pk',p:true,c:'m'},
+    {n:'Monark',u:'https://monark.com.pk',p:true,c:'m'},
+    {n:'Royal Tag',u:'https://royaltag.pk',p:true,c:'m'},
+    {n:'Savoir',u:'https://savoir.pk',p:true,c:'m'},
+    {n:'Shahnameh',u:'https://shahnameh.pk',p:true,c:'m'},
+    {n:'Slayer',u:'https://slayer.pk',p:true,c:'m'},
+    {n:'Uniworth',u:'https://uniworthshop.com',p:false,c:'m'},
+    // ── Kids ──
+    {n:'Minnie Minors',u:'https://minnieminors.com.pk',p:true,c:'k'},
+    {n:'One Kids',u:'https://onepk.com.pk/pages/kids',p:true,c:'k'},
+    {n:'Bachaa Party',u:'https://bachaaparty.com',p:false,c:'k'},
+    {n:'Hopscotch',u:'https://ilovehopscotch.com',p:false,c:'k'},
+    // ── Wholesale print / fabric ──
+    {n:'Bin Saeed',u:'https://binsaeedfabric.com',p:false,c:'ws'},
+    {n:'Tawakkal Fabrics',u:'https://tawakkalfabrics.co',p:false,c:'ws'},
+    {n:'Rang Rasiya',u:'https://www.rangrasiya.com',p:false,c:'ws'},
+  ];
+  // Feed every brand's hostname into BRAND_MAP so pasted URLs auto-detect the name
+  BRANDS.forEach(b => {
+    try{ const h = new URL(b.u).hostname.replace(/^www\./,''); if(!BRAND_MAP[h]) BRAND_MAP[h] = b.n; }catch(e){}
+  });
+  renderBrandDirectory();   // build the categorised directory now (DOM above this script exists)
+
+  function renderBrandDirectory(){
+    const dir = document.getElementById('brandDirectory');
+    if(!dir) return;
+    let html = '';
+    Object.keys(BRAND_CATS).forEach((cat, idx) => {
+      const list = BRANDS.filter(b => b.c === cat);
+      if(!list.length) return;
+      const openCls = idx === 0 ? ' open' : '';   // first category open by default
+      const chips = list.map(b =>
+        `<a class="brand-chip${b.p?' pk-chip':''}" href="${b.u}" target="_blank" rel="noopener">${esc(b.n)} <span>${b.p?'🟢':'💵'}</span></a>`
+      ).join('');
+      html += `<div class="brand-cat${openCls}">
+        <div class="brand-cat-hdr" onclick="this.parentElement.classList.toggle('open')">
+          <span>${BRAND_CATS[cat]} <span class="cnt">${list.length}</span></span>
+          <span class="arr">▸</span>
+        </div>
+        <div class="brand-cat-body">${chips}</div>
+      </div>`;
+    });
+    dir.innerHTML = html;
+  }
+
+  let _bdActive = -1;
+  function onBrandSearch(){
+    const q = document.getElementById('brandSearch').value.trim().toLowerCase();
+    const dd = document.getElementById('brandDropdown');
+    _bdActive = -1;
+    if(!q){ dd.style.display='none'; dd.innerHTML=''; return; }
+    const matches = BRANDS.filter(b => b.n.toLowerCase().includes(q))
+                          .sort((a,b)=> a.n.toLowerCase().indexOf(q) - b.n.toLowerCase().indexOf(q))
+                          .slice(0,12);
+    if(!matches.length){
+      dd.innerHTML = `<div class="brand-dd-empty">No brand found for “${esc(q)}”. Paste the product link below instead.</div>`;
+    } else {
+      dd.innerHTML = matches.map(b =>
+        `<a class="brand-dd-item" href="${b.u}" target="_blank" rel="noopener">
+           <span>${esc(b.n)}</span>
+           <span class="cur ${b.p?'pkr':'usd'}">${b.p?'PKR ↗':'USD ↗'}</span>
+         </a>`
+      ).join('');
+    }
+    dd.style.display='';
+  }
+  // Keyboard nav + close-on-outside-click for the dropdown
+  document.addEventListener('keydown', e => {
+    const dd = document.getElementById('brandDropdown');
+    if(!dd || dd.style.display==='none') return;
+    const items = [...dd.querySelectorAll('.brand-dd-item')];
+    if(!items.length) return;
+    if(e.key==='ArrowDown'){ e.preventDefault(); _bdActive=Math.min(_bdActive+1,items.length-1); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); _bdActive=Math.max(_bdActive-1,0); }
+    else if(e.key==='Enter' && _bdActive>=0){ e.preventDefault(); items[_bdActive].click(); return; }
+    else if(e.key==='Escape'){ dd.style.display='none'; return; }
+    items.forEach((it,i)=>it.classList.toggle('active', i===_bdActive));
+    if(items[_bdActive]) items[_bdActive].scrollIntoView({block:'nearest'});
+  });
+  document.addEventListener('click', e => {
+    const wrap = document.querySelector('.brand-search-wrap');
+    if(wrap && !wrap.contains(e.target)){ const dd=document.getElementById('brandDropdown'); if(dd) dd.style.display='none'; }
+  });
 
   function detectBrand(url){
     try{
