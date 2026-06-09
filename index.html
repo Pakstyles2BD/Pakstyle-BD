@@ -373,12 +373,11 @@
     <span id="itemCountBadge" style="font-size:0.72rem;background:#c9a96e;color:#12122a;border-radius:10px;padding:2px 9px;margin-left:8px;display:none;font-weight:700"></span>
   </div>
 
-  <div id="cartList">
-    <div class="cart-empty" id="cartEmpty">
-      <div style="font-size:2rem;margin-bottom:8px">🛍️</div>
-      No items yet — paste a product link above to start.
-    </div>
+  <div class="cart-empty" id="cartEmpty">
+    <div style="font-size:2rem;margin-bottom:8px">🛍️</div>
+    No items yet — paste a product link above to start.
   </div>
+  <div id="cartList"></div>
 
   <div id="runningTotal" style="display:none">
     <div class="running-total">
@@ -1685,14 +1684,13 @@
     const badge = document.getElementById('itemCountBadge');
 
     if(!cart.length){
-      empty.style.display = '';
+      if(empty) empty.style.display = '';
       rtBox.style.display = 'none';
       badge.style.display = 'none';
       list.innerHTML = '';
-      list.appendChild(empty);
       return;
     }
-    empty.style.display = 'none';
+    if(empty) empty.style.display = 'none';
     badge.style.display = '';
     badge.textContent = cart.length + (cart.length === 1 ? ' item' : ' items');
 
