@@ -78,7 +78,8 @@
 // Status values must exactly match the keys in STEPS below.
 const SHEET_ID = '16v2e7pxwMPimVkOTFKID3S4dI-mPexlzNgUT3zN0CM0';
 const SHEET_GID = '0'; // tab index (0 = first sheet)
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`;
+// headers=1 is REQUIRED — without it gviz mangles the columns into one cell.
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}&headers=1`;
 
 const STEPS = [
   { key:'order_received',      icon:'📋', label:'Order Received',              note:'Your order request is in our queue.' },
