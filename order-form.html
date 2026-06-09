@@ -349,15 +349,18 @@
       <div id="draftCards"></div>
 
       <!-- Add-another row — button disabled until last card is complete -->
-      <div id="addAnotherRow" style="margin-top:14px;padding-top:12px;border-top:1px dashed #e0d5c8">
+      <div id="addAnotherRow" style="margin-top:14px;padding-top:14px;border-top:1px dashed #e0d5c8">
         <div id="addUrlLockHint" style="font-size:0.75rem;color:#c9a96e;background:#fffbf2;border:1px dashed #c9a96e;border-radius:7px;padding:7px 12px;margin-bottom:8px;text-align:center;display:none">
           ⬆️ Complete Category, Price &amp; Size for the item above first
         </div>
+        <div style="font-size:0.77rem;font-weight:600;color:#555;margin-bottom:7px">
+          ➕ Add another product — paste its URL below:
+        </div>
         <div class="url-row">
-          <input type="url" id="panelUrlInput" placeholder="Paste another product URL…"
+          <input type="url" id="panelUrlInput" placeholder="https://brand.com/products/another-product"
             onkeydown="if(event.key==='Enter'){event.preventDefault();addAnotherUrl()}"/>
           <button class="add-btn" id="addAnotherBtn" onclick="addAnotherUrl()" disabled
-            style="background:#ddd;color:#888;cursor:not-allowed">+ Add Another URL</button>
+            style="background:#ddd;color:#888;cursor:not-allowed">+ Add</button>
         </div>
       </div>
 
@@ -1203,13 +1206,30 @@
 
   // ── ADD ANOTHER URL (panel inside draftsContainer) ────────────────────────
   function addAnotherUrl(){
-    const raw = document.getElementById('panelUrlInput').value.trim();
-    if(!raw){ alert('Please paste a product URL first.'); return; }
+    const inp = document.getElementById('panelUrlInput');
+    const raw = inp.value.trim();
+    if(!raw){
+      // Focus + highlight instead of alert
+      inp.focus();
+      inp.style.borderColor = '#c9a96e';
+      inp.style.boxShadow   = '0 0 0 3px rgba(201,169,110,0.3)';
+      inp.placeholder = '← Paste the product URL here first';
+      setTimeout(()=>{
+        inp.style.borderColor=''; inp.style.boxShadow='';
+        inp.placeholder='Paste another product URL…';
+      }, 2500);
+      return;
+    }
     const url = parseUrl(raw);
-    if(!url){ alert('That doesn\'t look like a valid URL:\n' + raw); return; }
+    if(!url){
+      inp.style.borderColor='#e74c3c';
+      inp.focus(); inp.select();
+      setTimeout(()=>{ inp.style.borderColor=''; }, 2000);
+      return;
+    }
     createDraft(url);
-    document.getElementById('panelUrlInput').value = '';
-    // scroll to newest card
+    inp.value = '';
+    inp.placeholder = 'Paste another product URL…';
     const newCard = document.getElementById(`dc_${draftIdCtr-1}`);
     if(newCard) newCard.scrollIntoView({ behavior:'smooth', block:'nearest' });
   }
@@ -1278,6 +1298,13 @@
     const wrap  = document.getElementById(`dc_szchips_${id}`);
     const inner = document.getElementById(`dc_szchips_inner_${id}`);
     if(!wrap || !inner) return;
+    // Remove any empty rows that were auto-created before chips arrived
+    const rowsEl = document.getElementById(`dc_srows_${id}`);
+    if(rowsEl){
+      [...rowsEl.children].forEach(row => {
+        if(!row.querySelector('select')?.value) row.remove();
+      });
+    }
     inner.innerHTML = sizes.map(sz =>
       `<button type="button" id="szchip_${id}_${sz.replace(/\s/g,'_')}"
         onclick="addSizeFromChip(${id},'${sz}')"
