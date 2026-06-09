@@ -344,10 +344,15 @@
     <!-- Draft cards appear here — one per URL -->
     <div id="draftsContainer" style="display:none;margin-top:14px">
       <div id="draftCards"></div>
-      <div class="url-row" style="margin-top:8px">
-        <input type="url" id="panelUrlInput" placeholder="Paste another product URL…" style="font-size:0.82rem"
-          onkeydown="if(event.key==='Enter'){event.preventDefault();addUrlToPanel()}"/>
-        <button class="add-btn" style="padding:9px 14px;font-size:0.78rem;white-space:nowrap" onclick="addUrlToPanel()">+ Add URL</button>
+      <div id="addAnotherRow" style="margin-top:10px;opacity:0.45;pointer-events:none">
+        <div id="addUrlLockHint" style="font-size:0.72rem;color:#c9a96e;background:#fffbf2;border:1px dashed #c9a96e;border-radius:6px;padding:6px 10px;margin-bottom:8px;text-align:center">
+          ⬆️ Fill in Category, Price &amp; Size for the item above, then you can add another URL
+        </div>
+        <div class="url-row">
+          <input type="url" id="panelUrlInput" placeholder="Paste another product URL…" style="font-size:0.82rem"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();addUrlToPanel()}"/>
+          <button class="add-btn" style="padding:9px 14px;font-size:0.78rem;white-space:nowrap" onclick="addUrlToPanel()">+ Add URL</button>
+        </div>
       </div>
       <div id="globalFetchStatus" class="fetch-status" style="margin-top:6px"></div>
       <button class="save-item-btn" id="saveAllBtn" onclick="saveAllDrafts()">✓ Save to Order List</button>
@@ -859,6 +864,145 @@
       <option value="accessories">Accessories / Jewellery</option>
     </optgroup>`;
 
+  // ── AUTO-FETCH ENGINE (Shopify JSON API) ─────────────────────────────────
+  // Maps Shopify product_type strings → our category keys
+  const PT_CAT = [
+    [/unstitch/i,                                          'lawn_3pc_unstitch'],
+    [/bridal|velvet/i,                                     'bridal'],
+    [/heavy[\s-]?formal|organza|heavy[\s-]?embroi/i,      'heavy_formal_3pc'],
+    [/formal|chiffon|net[\s-]?embroi/i,                   'formal_emb_3pc'],
+    [/winter|khaddar|karandi/i,                            'winter_3pc'],
+    [/linen/i,                                             'winter_2pc'],
+    [/dupatta|stole|scarf/i,                               'dupatta_only'],
+    [/bag|purse|clutch|jewel|accessories/i,                'accessories'],
+    [/shalwar[\s-]?kameez|rtw|ready[\s-]?to[\s-]?wear/i,  'pret_3pc'],
+    [/pret|stitched/i,                                     'pret_3pc'],
+    [/3[\s-]?pc|3[\s-]?piece|suit/i,                      'pret_3pc'],
+    [/shirt[\s-]?trouser|co[\s-]?ord/i,                   'shirt_trouser_2pc'],
+    [/2[\s-]?pc|2[\s-]?piece|shirt[\s-]?dupatta/i,        'shirt_dupatta_2pc'],
+    [/kurti|kurta|shirt|top/i,                             'kurti_1pc'],
+  ];
+  function mapPtToCat(pt){ const s=(pt||'').toLowerCase(); for(const[re,c] of PT_CAT){ if(re.test(s)) return c; } return ''; }
+
+  // Normalize variant size strings → our dropdown values
+  function normSizeFull(raw){
+    const s = (raw||'').trim().toUpperCase().replace(/[-\s]+/g,' ');
+    if(/^(XS|EXTRA SMALL)$/.test(s))     return 'XS';
+    if(/^(S|SMALL)$/.test(s))            return 'S';
+    if(/^(M|MEDIUM)$/.test(s))           return 'M';
+    if(/^(L|LARGE)$/.test(s))            return 'L';
+    if(/^(XL|X L|X LARGE|EXTRA LARGE)$/.test(s)) return 'XL';
+    if(/^(XXL|XX L|2XL|XX LARGE|DOUBLE XL)$/.test(s)) return 'XXL';
+    if(/^(FREE SIZE|FREESIZE|ONE SIZE|OS)$/.test(s)) return 'Free Size';
+    return null;
+  }
+
+  async function fetchProductData(id, url){
+    const statusEl = document.getElementById(`dc_fetch_${id}`);
+    function setStatus(msg, color){ if(statusEl){ statusEl.style.display=''; statusEl.textContent=msg; statusEl.style.color=color||'#c9a96e'; } }
+    function hideStatus(){ if(statusEl) setTimeout(()=>{ statusEl.style.display='none'; },3500); }
+
+    try {
+      const u = new URL(url);
+      const m = u.pathname.match(/\/products\/([^/?#]+)/);
+      if(!m) return setStatus('ℹ️ Fill details manually — no /products/ path detected','#aaa');
+
+      setStatus('🔍 Fetching product details from brand site…','#c9a96e');
+      const apiUrl = `${u.origin}/products/${m[1]}.json`;
+
+      const ctrl = new AbortController();
+      const tid  = setTimeout(()=>ctrl.abort(), 9000);
+      const res  = await fetch(apiUrl, { signal: ctrl.signal });
+      clearTimeout(tid);
+      if(!res.ok) throw new Error('HTTP '+res.status);
+
+      const { product } = await res.json();
+      if(!product) throw new Error('empty');
+
+      // ── CATEGORY ──────────────────────────────────────────────────────────
+      const fetchedCat = mapPtToCat(product.product_type || '');
+      const catEl = document.getElementById(`dc_cat_${id}`);
+      if(catEl && fetchedCat && !catEl.value){
+        catEl.value = fetchedCat;
+        onDraftCatChange(id);
+      }
+      const activeCat = catEl ? catEl.value : fetchedCat;
+
+      // ── FIND SIZE OPTION ──────────────────────────────────────────────────
+      const opts = product.options || [];
+      const sizeIdx = opts.findIndex(o => /size/i.test(o.name));  // 0-based
+      const sizeKey = ['option1','option2','option3'][sizeIdx] || null;
+
+      // ── FIND TYPE OPTION (stitched/unstitched brands like Nureh, Alizeh) ─
+      const typeIdx = opts.findIndex(o => /^(type|item|stitch)/i.test(o.name));
+      const typeKey = ['option1','option2','option3'][typeIdx] || null;
+
+      // ── SELECT RELEVANT VARIANTS ──────────────────────────────────────────
+      let vars = product.variants || [];
+      let avail = vars.filter(v => v.available);
+      if(!avail.length) avail = vars;  // if all sold out, show anyway
+
+      // For brands with type option: prefer stitched over unstitched
+      if(typeKey){
+        const stitched = avail.filter(v => /stitch/i.test(v[typeKey]) && !/unstitch/i.test(v[typeKey]));
+        if(stitched.length) avail = stitched;
+      }
+
+      // ── PRICE ─────────────────────────────────────────────────────────────
+      const refVar = avail[0] || vars[0];
+      if(refVar){
+        const salePrice = parseFloat(refVar.price) || 0;
+        if(salePrice > 0){
+          const priceEl = document.getElementById(`dc_price_${id}`);
+          if(priceEl && !priceEl.value){
+            priceEl.value = Math.round(salePrice); // prices are PKR integers
+            updateDraftPriceHint(id);
+          }
+          // Note about original price
+          const origPrice = parseFloat(refVar.compare_at_price);
+          if(origPrice > salePrice){
+            const cnote = document.getElementById(`dc_cnote_${id}`);
+            if(cnote){
+              const pct = Math.round((1-salePrice/origPrice)*100);
+              cnote.style.display=''; cnote.style.background='#fff0f4';
+              cnote.style.border='1px solid #f5a0b0'; cnote.style.color='#8b0000';
+              cnote.textContent = `🏷️ Sale! Was PKR ${Math.round(origPrice).toLocaleString()} — ${pct}% off`;
+            }
+          }
+        }
+      }
+
+      // ── SIZES ─────────────────────────────────────────────────────────────
+      if(sizeKey && activeCat && !UNSTITCHED_CATS.has(activeCat)){
+        const seen = new Set();
+        const sizesToAdd = [];
+        avail.forEach(v => {
+          const norm = normSizeFull(v[sizeKey]);
+          if(norm && !seen.has(norm)){ seen.add(norm); sizesToAdd.push(norm); }
+        });
+        if(sizesToAdd.length){
+          // Clear any URL-based row that was pre-filled
+          const rowsEl = document.getElementById(`dc_srows_${id}`);
+          if(rowsEl) rowsEl.innerHTML = '';
+          // Add one row per available size (all qty=1, user removes unwanted)
+          sizesToAdd.forEach(sz => addDraftSizeRow(id, sz, 1));
+        }
+      }
+
+      const uniqSizes = sizeKey ? new Set(avail.map(v=>normSizeFull(v[sizeKey])).filter(Boolean)) : new Set();
+      const refPrice  = Math.round(parseFloat((avail[0]||vars[0])?.price)||0);
+      setStatus(`✓ Fetched: ${product.product_type||'product'} · PKR ${refPrice.toLocaleString()}${uniqSizes.size?' · '+uniqSizes.size+' sizes available':''}`, '#2a7a32');
+      hideStatus();
+      checkAddUrlLock();
+
+    } catch(e) {
+      if(e.name==='AbortError')
+        setStatus('⚠️ Fetch timed out — fill in details manually','#aaa');
+      else
+        setStatus('⚠️ Auto-fetch not available for this site — fill in details manually','#aaa');
+    }
+  }
+
   function buildDraftCard(id, url, brand, isPk){
     const pkBadge = isPk
       ? `<span class="draft-badge-pk">🟢 PKR auto</span>`
@@ -874,17 +1018,18 @@
         </div>
         <button class="draft-remove" onclick="removeDraft(${id})" title="Remove this URL">✕</button>
       </div>
+      <div id="dc_fetch_${id}" style="display:none;font-size:0.72rem;font-weight:600;padding:5px 10px;background:#fffbf2;border-radius:5px;margin-top:6px"></div>
       <hr class="draft-divider"/>
       <div class="row-2">
         <div class="field">
-          <label>Category</label>
+          <label>Category *</label>
           <select id="dc_cat_${id}" onchange="onDraftCatChange(${id})">${CAT_OPTIONS}</select>
         </div>
         <div class="field">
-          <label>Price — <span style="color:#c0392b;font-weight:700">use sale price if shown</span></label>
+          <label>Price * — <span style="color:#c0392b;font-weight:700">use sale price if shown</span></label>
           <div class="price-row">
             <input type="number" id="dc_price_${id}" placeholder="e.g. 4500 PKR" min="0"
-              oninput="updateDraftPriceHint(${id})"/>
+              oninput="updateDraftPriceHint(${id});checkAddUrlLock()"/>
             <div class="currency-toggle">
               <button id="dc_pkr_${id}" class="active" onclick="setDraftCurrency(${id},'PKR')">PKR</button>
               <button id="dc_usd_${id}" onclick="setDraftCurrency(${id},'USD')">USD</button>
@@ -894,14 +1039,18 @@
           <div id="dc_phint_${id}" style="font-size:0.72rem;color:#c9a96e;margin-top:3px;min-height:14px"></div>
         </div>
       </div>
-      <div id="dc_sizes_${id}" style="display:none;margin-top:10px">
+      <!-- Sizes section — always visible, content changes with category -->
+      <div style="margin-top:12px;background:#f9f6f2;border-radius:7px;padding:10px 12px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
-          <label style="font-size:0.76rem;font-weight:600;color:#555">Sizes &amp; Quantities
-            <span style="font-weight:400;color:#aaa;font-size:0.68rem">(same price for all adult sizes)</span>
+          <label style="font-size:0.76rem;font-weight:600;color:#555">Sizes &amp; Quantities *
+            <span id="dc_sz_note_${id}" style="font-weight:400;color:#aaa;font-size:0.67rem;margin-left:4px">(same price for all adult sizes)</span>
           </label>
-          <button type="button" onclick="addDraftSizeRow(${id})"
-            style="font-size:0.72rem;color:#c9a96e;background:none;border:1.5px solid #c9a96e;
+          <button type="button" id="dc_addsz_${id}" onclick="addDraftSizeRow(${id})"
+            style="display:none;font-size:0.72rem;color:#c9a96e;background:none;border:1.5px solid #c9a96e;
             border-radius:12px;padding:3px 12px;cursor:pointer;font-weight:700">+ Add size</button>
+        </div>
+        <div id="dc_sz_msg_${id}" style="font-size:0.78rem;color:#bbb;padding:4px 0">
+          ← Select a category first
         </div>
         <div id="dc_srows_${id}"></div>
         <div id="dc_sremind_${id}" style="display:none;margin-top:5px;font-size:0.72rem;font-weight:700;
@@ -919,17 +1068,22 @@
     drafts[id]  = { currency: 'PKR', sizeCounter: 0 };
     document.getElementById('draftCards')
       .insertAdjacentHTML('beforeend', buildDraftCard(id, url, brand, isPk));
-    // Auto-detect category
+
+    // Immediate URL-based detection (instant, no network)
     const cat = detectCategory(url);
     if(cat){ document.getElementById(`dc_cat_${id}`).value = cat; onDraftCatChange(id); }
-    // Auto-detect size for stitched items
     if(cat && !UNSTITCHED_CATS.has(cat)){
+      // Pre-fill size from URL params while fetch loads
       const sz = detectSizeFromUrl(url);
-      addDraftSizeRow(id, sz);
+      if(sz) addDraftSizeRow(id, sz);
     }
-    // Auto currency note
     showDraftCurrencyNote(id, isPk);
+
+    // Network fetch — overwrites with richer data if available
+    fetchProductData(id, url);
+
     updateSaveAllBtn();
+    checkAddUrlLock();
     return id;
   }
 
@@ -939,15 +1093,60 @@
     updateSaveAllBtn();
     if(!Object.keys(drafts).length)
       document.getElementById('draftsContainer').style.display = 'none';
+    else
+      checkAddUrlLock();
   }
 
   function onDraftCatChange(id){
     const cat = document.getElementById(`dc_cat_${id}`).value;
-    const isUnstitched = UNSTITCHED_CATS.has(cat);
-    document.getElementById(`dc_sizes_${id}`).style.display = isUnstitched ? 'none' : '';
+    const msg     = document.getElementById(`dc_sz_msg_${id}`);
+    const rowsEl  = document.getElementById(`dc_srows_${id}`);
+    const addBtn  = document.getElementById(`dc_addsz_${id}`);
+    const note    = document.getElementById(`dc_sz_note_${id}`);
     document.getElementById(`dc_sremind_${id}`).style.display = 'none';
-    if(!isUnstitched && cat && !document.getElementById(`dc_srows_${id}`).children.length)
-      addDraftSizeRow(id);
+
+    if(!cat){
+      msg.style.display    = '';
+      msg.textContent      = '← Select a category first';
+      msg.style.color      = '#bbb';
+      addBtn.style.display = 'none';
+    } else if(UNSTITCHED_CATS.has(cat)){
+      msg.style.display    = '';
+      msg.textContent      = '✓ No size selection needed for unstitched / accessories items';
+      msg.style.color      = '#2a7a32';
+      addBtn.style.display = 'none';
+      rowsEl.innerHTML     = '';  // clear any leftover rows
+      if(note) note.style.display = 'none';
+    } else {
+      msg.style.display    = 'none';
+      addBtn.style.display = '';
+      if(note) note.style.display = '';
+      if(!rowsEl.children.length) addDraftSizeRow(id);
+    }
+    checkAddUrlLock();
+  }
+
+  // ── LOCK "Add another URL" until current draft card is complete ───────────
+  function checkAddUrlLock(){
+    const ids = Object.keys(drafts).map(Number);
+    const row = document.getElementById('addAnotherRow');
+    const hint = document.getElementById('addUrlLockHint');
+    if(!ids.length || !row) return;
+
+    const lastId = ids[ids.length - 1];
+    const cat    = document.getElementById(`dc_cat_${lastId}`)?.value;
+    const price  = parseFloat(document.getElementById(`dc_price_${lastId}`)?.value);
+    const isUnstitched = UNSTITCHED_CATS.has(cat);
+
+    let complete = !!(cat && price > 0);
+    if(complete && !isUnstitched){
+      const rows = getDraftSizeRows(lastId);
+      complete = rows.length > 0 && rows.some(r => r.size);
+    }
+
+    row.style.opacity       = complete ? '1'    : '0.45';
+    row.style.pointerEvents = complete ? 'auto' : 'none';
+    if(hint) hint.style.display = complete ? 'none' : '';
   }
 
   function setDraftCurrency(id, cur){
@@ -1000,23 +1199,26 @@
             style="flex:1;padding:8px 10px;border:1.5px solid #d9cfc4;border-radius:6px;font-size:0.85rem;background:#fff;min-width:0">
             <option value="">Pick size</option>${opts}
           </select>
-          <input type="number" value="${qty}" min="1" max="20"
+          <input type="number" value="${qty}" min="1" max="20" onchange="checkAddUrlLock()"
             style="width:62px;padding:8px 8px;border:1.5px solid #d9cfc4;border-radius:6px;font-size:0.85rem;text-align:center"/>
           <button type="button" onclick="removeDraftSizeRow(${draftId},'${rowId}')"
             style="background:none;border:none;color:#ccc;cursor:pointer;font-size:1rem;padding:2px 5px;border-radius:4px;flex-shrink:0"
             onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ccc'">✕</button>
         </div>`);
+    checkAddUrlLock();
   }
 
   function removeDraftSizeRow(draftId, rowId){
     const container = document.getElementById(`dc_srows_${draftId}`);
     if(container && container.children.length <= 1) return;
     document.getElementById(`sr_${rowId}`)?.remove();
+    checkAddUrlLock();
   }
 
   function onDraftSizeChange(draftId){
     if(getDraftSizeRows(draftId).some(r=>r.size))
       document.getElementById(`dc_sremind_${draftId}`).style.display='none';
+    checkAddUrlLock();
   }
 
   function getDraftSizeRows(draftId){
