@@ -5,205 +5,238 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PakStyle BD – Order</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Inter','Segoe UI',Arial,sans-serif;background:#f2ede8;color:#1e1e2e;min-height:100vh;font-size:15px}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:#f7f3ef;color:#2c2c2c;min-height:100vh}
 
-    /* ── HEADER ── */
-    header{background:linear-gradient(135deg,#12122a 0%,#1e1e3f 100%);color:#fff;padding:28px 24px 22px;text-align:center;border-bottom:3px solid #c9a96e}
-    header h1{font-size:2rem;letter-spacing:2px;font-weight:700;color:#fff}
-    header h1 span{color:#c9a96e}
-    header p{font-size:0.88rem;color:#b0a090;margin-top:6px;letter-spacing:0.3px}
+    header{background:#1a1a2e;color:#fff;padding:22px 20px 16px;text-align:center}
+    header h1{font-size:1.7rem;letter-spacing:1px}
+    header p{font-size:0.88rem;color:#c9a96e;margin-top:5px}
 
-    /* ── STEP BAR ── */
-    .steps-bar{background:#12122a;display:flex;justify-content:center;align-items:center;padding:0 16px;gap:0;border-bottom:1px solid #2a2a4a}
-    .step-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:default;opacity:0.32;transition:opacity 0.2s;min-width:80px;padding:14px 8px}
-    .step-item.active{opacity:1}
-    .step-item.done{opacity:0.6;cursor:pointer}
-    .step-item.done:hover{opacity:0.9}
-    .step-num{width:32px;height:32px;border-radius:50%;border:2px solid #c9a96e;color:#c9a96e;font-weight:700;font-size:0.82rem;display:flex;align-items:center;justify-content:center;background:#12122a;transition:all 0.2s}
-    .step-item.active .step-num{background:#c9a96e;color:#12122a;box-shadow:0 0 0 4px rgba(201,169,110,0.2)}
-    .step-item.done .step-num{background:#2a7a32;border-color:#2a7a32;color:#fff}
-    .step-lbl{font-size:0.62rem;color:#c9a96e;font-weight:600;letter-spacing:0.5px;text-align:center;white-space:nowrap;text-transform:uppercase}
-    .step-arrow{color:#333;font-size:1.2rem;padding:0 4px}
+    .how-bar{background:#c9a96e;display:flex;justify-content:center;flex-wrap:wrap;gap:0}
+    .how-bar span{padding:9px 16px;font-size:0.75rem;color:#1a1a2e;font-weight:700;letter-spacing:0.3px}
 
-    /* ── VPN BAR ── */
-    .vpn-bar{background:#fffbf0;border-bottom:2px solid #e8c84a;padding:10px 16px;font-size:0.79rem;color:#5a4000}
-    .vpn-bar-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+    /* VPN notice bar */
+    .vpn-bar{background:#fff8e7;border-bottom:2px solid #f0c040;padding:10px 16px;font-size:0.8rem;color:#5a4000}
+    .vpn-bar-inner{max-width:700px;margin:0 auto;display:flex;align-items:center;flex-wrap:wrap;gap:8px}
     .vpn-bar strong{color:#3a2800}
-    .vpn-link{display:inline-block;padding:4px 12px;border-radius:14px;font-size:0.74rem;font-weight:700;text-decoration:none;transition:opacity 0.15s}
-    .vpn-link:hover{opacity:0.82}
-    .vpn-paid{background:#12122a;color:#c9a96e}
-    .vpn-dismiss{background:none;border:none;cursor:pointer;color:#bbb;font-size:1rem;margin-left:auto;padding:0 4px}
+    .vpn-link{display:inline-block;padding:4px 12px;border-radius:14px;font-size:0.75rem;font-weight:700;
+      text-decoration:none;transition:opacity 0.15s}
+    .vpn-link:hover{opacity:0.85}
+    .vpn-free{background:#25d366;color:#fff}
+    .vpn-paid{background:#1a1a2e;color:#c9a96e}
+    .vpn-dismiss{background:none;border:none;cursor:pointer;color:#aaa;font-size:1rem;margin-left:auto;padding:0 4px}
     .vpn-bar.hidden{display:none}
 
-    /* ── LAYOUT ── */
-    .container{max-width:960px;margin:0 auto;padding:32px 24px 80px}
-
-    .section-label{font-size:0.66rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
-      color:#c9a96e;margin:32px 0 14px;display:flex;align-items:center;gap:10px}
-    .section-label::after{content:'';flex:1;height:1px;background:#ddd3c4}
-
-    /* ── BRAND CHIPS ── */
-    .brand-section{background:#fff;border-radius:14px;padding:20px 22px;margin-bottom:6px;border:1px solid #e8e0d5;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
-    .brand-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:4px}
-    .brand-chip{padding:6px 15px;background:#faf8f5;border:1.5px solid #ddd5c8;border-radius:20px;
-      font-size:0.77rem;font-weight:600;color:#444;cursor:pointer;text-decoration:none;transition:all 0.15s;white-space:nowrap}
-    .brand-chip:hover{background:#12122a;color:#c9a96e;border-color:#12122a;transform:translateY(-1px)}
-    .brand-chip span{font-size:0.64rem;opacity:0.55;margin-left:2px}
-    .brand-chip.pk-chip{border-color:#2ecc71;color:#1a5e2a;background:#f4fff8}
-    .brand-chip.pk-chip:hover{background:#0d3a18;color:#5eff9e;border-color:#2ecc71}
-    .brand-group-hdr{width:100%;font-size:0.67rem;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;padding:8px 0 4px;margin-top:6px;display:flex;align-items:center;gap:8px}
-    .brand-group-hdr::after{content:'';flex:1;height:1px;background:currentColor;opacity:0.18}
-    .brand-group-hdr.pkr{color:#2ecc71}
-    .brand-group-hdr.usd{color:#f9a825;margin-top:16px}
-    .show-more-btn{font-size:0.76rem;color:#c9a96e;background:none;border:1.5px solid #c9a96e;border-radius:20px;cursor:pointer;font-weight:600;padding:5px 16px;margin-top:6px;transition:all 0.15s}
-    .show-more-btn:hover{background:#c9a96e;color:#12122a}
-
-    /* ── URL INPUT BOX ── */
-    .url-input-box{background:#fff;border:2px solid #c9a96e;border-radius:14px;padding:22px;margin-bottom:6px;box-shadow:0 2px 12px rgba(201,169,110,0.12)}
-    .url-input-box>.input-label{font-size:0.85rem;font-weight:600;color:#333;display:block;margin-bottom:12px}
-    .url-row{display:flex;gap:10px}
-    .url-row input{flex:1;padding:13px 16px;border:1.5px solid #ddd5c8;border-radius:9px;font-size:0.95rem;background:#faf8f5;font-family:inherit;transition:border-color 0.15s}
-    .url-row input:focus{outline:none;border-color:#c9a96e;background:#fff;box-shadow:0 0 0 3px rgba(201,169,110,0.12)}
-    .add-btn{padding:13px 24px;background:#c9a96e;color:#12122a;border:none;border-radius:9px;
-      font-weight:700;font-size:0.9rem;cursor:pointer;white-space:nowrap;transition:all 0.15s;font-family:inherit}
-    .add-btn:hover:not(:disabled){background:#b8934d;transform:translateY(-1px)}
-    .add-btn:disabled{background:#ddd;color:#aaa;cursor:not-allowed;transform:none}
-    .url-lock-hint{font-size:0.76rem;color:#c9a96e;background:#fffbf2;border:1px dashed #c9a96e;
-      border-radius:7px;padding:7px 12px;margin-top:10px;display:none;text-align:center}
-
-    /* ── DRAFT CARDS ── */
-    .draft-card{background:#fff;border:1.5px solid #e0d5c8;border-radius:12px;padding:18px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);transition:box-shadow 0.2s}
-    .draft-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.09)}
-    .draft-card-hdr{display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #f0e8dc}
-    .draft-card-hdr .url-text{font-size:0.71rem;color:#999;word-break:break-all;line-height:1.5;font-family:monospace}
-    .draft-card-hdr .badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
-    .draft-badge-brand{font-size:0.7rem;font-weight:700;background:#12122a;color:#c9a96e;border-radius:10px;padding:3px 10px}
-    .draft-badge-pk{font-size:0.68rem;font-weight:600;background:#e8f8ee;border:1px solid #a8dbb0;color:#1a5e2a;border-radius:10px;padding:2px 8px}
-    .draft-badge-com{font-size:0.68rem;font-weight:600;background:#fff8e7;border:1px solid #f0c040;color:#7a5000;border-radius:10px;padding:2px 8px}
-    .draft-remove{background:none;border:none;color:#ccc;cursor:pointer;font-size:1.1rem;padding:4px 6px;border-radius:6px;flex-shrink:0;margin-left:auto;transition:all 0.15s}
-    .draft-remove:hover{color:#e74c3c;background:#fff0f0}
-
-    .row-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-    .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-    .field label{font-size:0.77rem;font-weight:600;color:#555;display:block;margin-bottom:5px}
-    .field input,.field select{width:100%;padding:10px 13px;border:1.5px solid #ddd5c8;border-radius:8px;
-      font-size:0.9rem;background:#faf8f5;font-family:inherit;transition:border-color 0.15s,box-shadow 0.15s}
-    .field input:focus,.field select:focus{outline:none;border-color:#c9a96e;background:#fff;box-shadow:0 0 0 3px rgba(201,169,110,0.10)}
-
-    /* Price row */
+    /* Price input with currency toggle */
     .price-row{display:flex;gap:0}
-    .price-row input{flex:1;padding:10px 13px;border:1.5px solid #ddd5c8;border-radius:8px 0 0 8px;
-      font-size:0.9rem;background:#faf8f5;border-right:none;font-family:inherit;transition:border-color 0.15s}
-    .price-row input:focus{outline:none;border-color:#c9a96e;background:#fff}
-    .currency-toggle{display:flex;border:1.5px solid #ddd5c8;border-radius:0 8px 8px 0;overflow:hidden}
-    .currency-toggle button{padding:10px 11px;border:none;background:#f2ede8;font-size:0.78rem;font-weight:700;
-      cursor:pointer;color:#888;transition:all 0.15s;white-space:nowrap;font-family:inherit}
-    .currency-toggle button.active{background:#c9a96e;color:#12122a}
-    .currency-toggle button:hover:not(.active){background:#e8e0d5}
+    .price-row input{flex:1;padding:9px 12px;border:1.5px solid #d9cfc4;border-radius:6px 0 0 6px;
+      font-size:0.88rem;background:#fff;border-right:none}
+    .price-row input:focus{outline:none;border-color:#c9a96e}
+    .currency-toggle{display:flex;border:1.5px solid #d9cfc4;border-radius:0 6px 6px 0;overflow:hidden}
+    .currency-toggle button{padding:9px 10px;border:none;background:#f7f3ef;font-size:0.78rem;font-weight:700;
+      cursor:pointer;color:#888;transition:all 0.15s;white-space:nowrap}
+    .currency-toggle button.active{background:#c9a96e;color:#1a1a2e}
+    .currency-toggle button:hover:not(.active){background:#ede5d8}
 
-    .save-item-btn{width:100%;margin-top:16px;padding:13px;background:#12122a;color:#c9a96e;
-      border:none;border-radius:9px;font-weight:700;font-size:0.92rem;cursor:pointer;transition:all 0.15s;font-family:inherit;letter-spacing:0.3px}
-    .save-item-btn:hover{background:#1e1e3f;transform:translateY(-1px)}
+    /* Auto-fetch loading state */
+    .fetch-status{font-size:0.72rem;color:#c9a96e;margin-top:6px;min-height:16px}
+    .fetch-status.ok{color:#2e7d32}
+    .fetch-status.err{color:#aaa}
+    .field input.loading{background:#faf7f2;color:#aaa}
 
-    /* ── CART ── */
-    .cart-empty{text-align:center;padding:36px 20px;color:#bbb;font-size:0.88rem;
-      background:#fff;border-radius:12px;border:2px dashed #e0d5c8}
-    .cart-empty p{margin-top:8px;font-size:0.78rem;color:#ccc}
-    .cart-item{background:#fff;border:1.5px solid #e8e0d5;border-radius:12px;padding:16px 18px;
-      margin-bottom:10px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:box-shadow 0.15s}
-    .cart-item:hover{box-shadow:0 3px 12px rgba(0,0,0,0.08)}
-    .item-num{background:#12122a;color:#c9a96e;font-size:0.72rem;font-weight:700;
-      border-radius:6px;padding:4px 9px;white-space:nowrap;margin-top:2px;letter-spacing:0.5px}
-    .item-info{flex:1;min-width:0}
-    .item-brand{font-size:0.85rem;font-weight:700;color:#12122a;margin-bottom:3px}
-    .item-url{font-size:0.71rem;color:#aaa;word-break:break-all;margin-bottom:8px;font-family:monospace}
-    .item-tags{display:flex;flex-wrap:wrap;gap:5px}
-    .item-tag{background:#f5f0ea;border:1px solid #e0d5c8;border-radius:12px;font-size:0.71rem;color:#555;padding:3px 10px;font-weight:500}
-    .item-price{font-size:0.95rem;font-weight:700;color:#12122a;white-space:nowrap;text-align:right}
-    .item-bdt{font-size:0.72rem;color:#c9a96e;white-space:nowrap;font-weight:600}
-    .remove-item{background:none;border:none;color:#ddd;cursor:pointer;font-size:1rem;
-      padding:3px 6px;border-radius:5px;margin-left:3px;transition:all 0.15s}
-    .remove-item:hover{color:#e74c3c;background:#fff0f0}
-
-    /* ── RUNNING TOTAL ── */
-    .running-total{background:linear-gradient(135deg,#12122a,#1e1e3f);color:#fff;border-radius:12px;padding:20px 22px;margin-top:16px;border:1px solid #2a2a4a}
-    .rt-row{display:flex;justify-content:space-between;font-size:0.86rem;padding:6px 0;border-bottom:1px solid #252540;color:#bbb}
-    .rt-row:last-child{border:none}
-    .rt-total{display:flex;justify-content:space-between;font-size:1.08rem;font-weight:700;padding:12px 0 4px;color:#c9a96e}
-    .rt-note{font-size:0.7rem;color:#555;text-align:center;margin-top:8px}
-
-    /* ── DETAILS FORM ── */
-    .details-form{background:#fff;border:1.5px solid #e8e0d5;border-radius:12px;padding:24px;box-shadow:0 1px 6px rgba(0,0,0,0.04)}
-    .details-form .field{margin-bottom:16px}
-    .saved-indicator{display:none;align-items:center;gap:8px;font-size:0.76rem;
-      background:#f0faf3;border:1px solid #a8dbb0;border-radius:8px;padding:8px 14px;margin-bottom:14px}
+    /* Remember me / saved details */
+    .saved-indicator{display:none;align-items:center;gap:8px;font-size:0.75rem;
+      background:#f0faf3;border:1px solid #a8dbb0;border-radius:6px;padding:7px 12px;margin-bottom:12px}
     .saved-indicator span{color:#2e7d32;font-weight:600}
-    .saved-indicator button{background:none;border:none;color:#888;cursor:pointer;font-size:0.73rem;text-decoration:underline;padding:0}
-    .remember-row{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:0.82rem;color:#666}
+    .saved-indicator button{background:none;border:none;color:#888;cursor:pointer;font-size:0.72rem;
+      text-decoration:underline;padding:0}
+    .remember-row{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:0.8rem;color:#666}
     .remember-row input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:#c9a96e}
 
-    /* ── REVIEW BOX ── */
-    .review-box{background:#fff;border:1.5px solid #e8e0d5;border-radius:14px;padding:26px;margin-top:8px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
-    .review-box h2{font-size:1.1rem;color:#12122a;margin-bottom:4px;font-weight:700}
-    .review-box>p{font-size:0.82rem;color:#999;margin-bottom:20px}
-    .summary-item{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid #f0e8dc;gap:12px}
+    .container{max-width:700px;margin:0 auto;padding:24px 14px 70px}
+
+    .section-label{font-size:0.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+      color:#c9a96e;margin:28px 0 12px;border-bottom:1px solid #e0d5c8;padding-bottom:6px}
+
+    /* Brand chips */
+    .brand-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+    .brand-chip{padding:6px 14px;background:#fff;border:1.5px solid #d9cfc4;border-radius:20px;
+      font-size:0.78rem;font-weight:600;color:#444;cursor:pointer;text-decoration:none;
+      transition:all 0.15s}
+    .brand-chip:hover{background:#1a1a2e;color:#c9a96e;border-color:#1a1a2e}
+    .brand-chip span{font-size:0.65rem;opacity:0.6;margin-left:2px}
+    .brand-chip.pk-chip{border-color:#2ecc71;color:#1a5e2a}
+    .brand-chip.pk-chip:hover{background:#1a3a1a;color:#2ecc71;border-color:#2ecc71}
+    .brand-group-hdr{width:100%;font-size:0.68rem;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;padding:6px 0 2px;margin-top:4px}
+    .brand-group-hdr.pkr{color:#2ecc71}
+    .brand-group-hdr.usd{color:#f9a825;margin-top:14px}
+    .brand-cat-label{font-size:0.68rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+      color:#aaa;margin:10px 0 5px;width:100%}
+    .show-more-btn{font-size:0.75rem;color:#c9a96e;background:none;border:none;cursor:pointer;
+      font-weight:600;padding:4px 0;text-decoration:underline}
+
+    /* URL input area */
+    .url-input-box{background:#fff;border:2px solid #c9a96e;border-radius:10px;padding:18px;margin-bottom:6px}
+    .url-input-box label{font-size:0.78rem;font-weight:700;color:#444;display:block;margin-bottom:8px}
+    .url-row{display:flex;gap:10px}
+    .url-row input{flex:1;padding:11px 14px;border:1.5px solid #d9cfc4;border-radius:7px;font-size:0.9rem}
+    .url-row input:focus{outline:none;border-color:#c9a96e}
+    .add-btn{padding:11px 20px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:7px;
+      font-weight:700;font-size:0.88rem;cursor:pointer;white-space:nowrap;transition:background 0.15s}
+    .add-btn:hover{background:#b8934d}
+
+    /* Item details panel (shown after URL added) */
+    .item-detail-panel{display:none;background:#f7f3ef;border:1.5px dashed #c9a96e;border-radius:8px;
+      padding:14px;margin-top:12px}
+    .item-detail-panel.active{display:block}
+    .detected-brand{display:inline-block;background:#1a1a2e;color:#c9a96e;font-size:0.72rem;
+      font-weight:700;padding:3px 10px;border-radius:12px;margin-bottom:10px}
+    .det-url{font-size:0.72rem;color:#888;word-break:break-all;margin-bottom:10px}
+    .row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    .field label{font-size:0.76rem;font-weight:600;color:#555;display:block;margin-bottom:4px}
+    .field input,.field select{width:100%;padding:9px 12px;border:1.5px solid #d9cfc4;border-radius:6px;
+      font-size:0.88rem;background:#fff}
+    .field input:focus,.field select:focus{outline:none;border-color:#c9a96e}
+    .save-item-btn{width:100%;margin-top:12px;padding:11px;background:#1a1a2e;color:#c9a96e;
+      border:none;border-radius:7px;font-weight:700;font-size:0.88rem;cursor:pointer;transition:background 0.15s}
+    .save-item-btn:hover{background:#2e2e4e}
+
+    /* Draft cards — one per URL */
+    .draft-card{background:#fff;border:1.5px solid #d9cfc4;border-radius:10px;padding:14px;margin-bottom:10px}
+    .draft-card-hdr{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
+    .draft-card-hdr .url-text{font-size:0.69rem;color:#888;word-break:break-all;line-height:1.4}
+    .draft-card-hdr .badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:3px}
+    .draft-badge-brand{font-size:0.7rem;font-weight:700;background:#1a1a2e;color:#c9a96e;border-radius:10px;padding:2px 8px}
+    .draft-badge-pk{font-size:0.68rem;font-weight:600;background:#e8f8ee;border:1px solid #a8dbb0;color:#1a5e2a;border-radius:10px;padding:2px 7px}
+    .draft-badge-com{font-size:0.68rem;font-weight:600;background:#fff8e7;border:1px solid #f0c040;color:#7a5000;border-radius:10px;padding:2px 7px}
+    .draft-remove{background:none;border:none;color:#ccc;cursor:pointer;font-size:1.1rem;padding:2px 4px;border-radius:4px;flex-shrink:0;margin-left:auto}
+    .draft-remove:hover{color:#e74c3c;background:#fff0f0}
+    .draft-divider{border:none;border-top:1px dashed #e0d5c8;margin:10px 0}
+
+    /* Cart list */
+    .cart-empty{text-align:center;padding:28px;color:#aaa;font-size:0.85rem;
+      background:#fff;border-radius:8px;border:1.5px dashed #e0d5c8}
+    .cart-item{background:#fff;border:1.5px solid #e0d5c8;border-radius:8px;padding:14px;
+      margin-bottom:10px;display:flex;gap:12px;align-items:flex-start}
+    .item-num{background:#1a1a2e;color:#c9a96e;font-size:0.7rem;font-weight:700;
+      border-radius:4px;padding:3px 8px;white-space:nowrap;margin-top:2px}
+    .item-info{flex:1;min-width:0}
+    .item-brand{font-size:0.75rem;font-weight:700;color:#1a1a2e;margin-bottom:2px}
+    .item-url{font-size:0.72rem;color:#888;word-break:break-all;margin-bottom:6px}
+    .item-tags{display:flex;flex-wrap:wrap;gap:5px}
+    .item-tag{background:#f7f3ef;border:1px solid #e0d5c8;border-radius:12px;
+      font-size:0.7rem;color:#555;padding:2px 9px}
+    .item-price{font-size:0.88rem;font-weight:700;color:#1a1a2e;white-space:nowrap;text-align:right}
+    .item-bdt{font-size:0.7rem;color:#c9a96e;white-space:nowrap}
+    .remove-item{background:none;border:none;color:#ccc;cursor:pointer;font-size:1rem;
+      padding:2px 5px;border-radius:4px;margin-left:4px}
+    .remove-item:hover{color:#e74c3c;background:#fff0f0}
+
+    /* Running total */
+    .running-total{background:#1a1a2e;color:#fff;border-radius:10px;padding:18px;margin-top:16px}
+    .rt-row{display:flex;justify-content:space-between;font-size:0.85rem;padding:5px 0;
+      border-bottom:1px solid #2e2e4e;color:#ccc}
+    .rt-row:last-child{border:none}
+    .rt-total{display:flex;justify-content:space-between;font-size:1.05rem;font-weight:700;
+      padding:10px 0 4px;color:#c9a96e}
+    .rt-note{font-size:0.7rem;color:#666;text-align:center;margin-top:8px}
+
+    /* Personal details */
+    .details-form{background:#fff;border:1.5px solid #e0d5c8;border-radius:10px;padding:18px}
+    .details-form .field{margin-bottom:14px}
+
+    /* Summary modal */
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;
+      overflow-y:auto;padding:20px}
+    .overlay.active{display:flex;align-items:flex-start;justify-content:center}
+    .summary-box{background:#fff;border-radius:12px;max-width:640px;width:100%;padding:28px;margin:auto}
+    .summary-box h2{font-size:1.1rem;color:#1a1a2e;margin-bottom:4px}
+    .summary-box p{font-size:0.8rem;color:#888;margin-bottom:20px}
+    .summary-item{display:flex;justify-content:space-between;align-items:flex-start;
+      padding:10px 0;border-bottom:1px solid #f0e8dc;gap:10px}
     .summary-item:last-child{border:none}
     .si-left{flex:1}
-    .si-brand{font-size:0.82rem;font-weight:700;color:#12122a}
-    .si-url{font-size:0.69rem;color:#bbb;word-break:break-all;font-family:monospace}
-    .si-tags{font-size:0.74rem;color:#888;margin-top:3px}
+    .si-brand{font-size:0.75rem;font-weight:700;color:#1a1a2e}
+    .si-url{font-size:0.68rem;color:#aaa;word-break:break-all}
+    .si-tags{font-size:0.72rem;color:#888;margin-top:2px}
     .si-price{text-align:right;white-space:nowrap}
-    .si-bdt{font-size:0.95rem;font-weight:700;color:#12122a}
-    .si-pkr{font-size:0.71rem;color:#aaa}
-    .summary-total-box{background:#f5f0ea;border-radius:10px;padding:16px;margin:20px 0}
-    .st-row{display:flex;justify-content:space-between;font-size:0.86rem;color:#666;padding:4px 0}
-    .st-total{display:flex;justify-content:space-between;font-size:1.1rem;font-weight:700;color:#12122a;padding:12px 0 4px;border-top:2px solid #e0d5c8;margin-top:8px}
-    .customer-summary{background:#fffbf5;border:1px solid #e8e0d5;border-radius:8px;padding:14px;font-size:0.83rem;color:#555;margin-bottom:20px}
-    .customer-summary strong{color:#12122a}
+    .si-bdt{font-size:0.9rem;font-weight:700;color:#1a1a2e}
+    .si-pkr{font-size:0.7rem;color:#aaa}
+    .summary-total-box{background:#f7f3ef;border-radius:8px;padding:14px;margin:18px 0}
+    .st-row{display:flex;justify-content:space-between;font-size:0.85rem;color:#555;padding:3px 0}
+    .st-total{display:flex;justify-content:space-between;font-size:1.1rem;font-weight:700;
+      color:#1a1a2e;padding:10px 0 4px;border-top:2px solid #e0d5c8;margin-top:6px}
+    .customer-summary{background:#fff8f0;border:1px solid #e0d5c8;border-radius:6px;
+      padding:12px;font-size:0.82rem;color:#555;margin-bottom:18px}
+    .customer-summary strong{color:#1a1a2e}
+    .confirm-btn{width:100%;padding:14px;background:#c9a96e;color:#1a1a2e;border:none;
+      border-radius:8px;font-weight:700;font-size:0.95rem;cursor:pointer;transition:background 0.15s}
+    .confirm-btn:hover{background:#b8934d}
+    .back-btn{width:100%;padding:11px;background:#fff;color:#888;border:1.5px solid #e0d5c8;
+      border-radius:8px;font-weight:600;font-size:0.85rem;cursor:pointer;margin-top:8px}
 
-    /* ── BUTTONS ── */
-    .nav-row{display:flex;gap:10px;margin-top:28px}
-    .btn-next{flex:1;padding:15px;background:#c9a96e;color:#12122a;border:none;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.15s;font-family:inherit}
-    .btn-next:hover{background:#b8934d;transform:translateY(-1px)}
-    .btn-back{padding:15px 20px;background:#fff;color:#777;border:1.5px solid #e0d5c8;border-radius:10px;font-weight:600;font-size:0.86rem;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all 0.15s}
-    .btn-back:hover{background:#f5f0ea}
-    .btn-confirm{flex:1;padding:15px;background:#12122a;color:#c9a96e;border:none;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.15s;font-family:inherit}
-    .btn-confirm:hover{background:#1e1e3f;transform:translateY(-1px)}
-    .btn-confirm:disabled{background:#ccc;color:#888;cursor:not-allowed;transform:none}
-    .wa-note{text-align:center;margin-top:18px;font-size:0.81rem;color:#999}
+    .submit-btn{width:100%;padding:15px;background:#c9a96e;color:#1a1a2e;border:none;
+      border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;margin-top:20px;transition:background 0.15s}
+    .submit-btn:hover{background:#b8934d}
+    .submit-btn:disabled{background:#ddd;color:#aaa;cursor:not-allowed}
+
+    .review-btn{width:100%;padding:15px;background:#1a1a2e;color:#c9a96e;border:none;
+      border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;margin-top:20px;transition:background 0.15s}
+    .review-btn:hover{background:#2e2e4e}
+
+    .success-screen{display:none;text-align:center;padding:40px 20px}
+    .success-screen h2{color:#1a1a2e;font-size:1.4rem;margin-bottom:10px}
+    .success-screen p{color:#666;font-size:0.88rem}
+
+    .wa-note{text-align:center;margin-top:14px;font-size:0.8rem;color:#888}
     .wa-note a{color:#25d366;font-weight:600;text-decoration:none}
 
-    /* ── STEP SECTIONS ── */
+    /* ── Step indicator ── */
+    .steps-bar{background:#1a1a2e;display:flex;justify-content:center;align-items:center;padding:14px 16px;gap:0}
+    .step-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:default;opacity:0.38;transition:opacity 0.2s;min-width:60px}
+    .step-item.active{opacity:1}
+    .step-item.done{opacity:0.65;cursor:pointer}
+    .step-item.done:hover{opacity:1}
+    .step-num{width:28px;height:28px;border-radius:50%;border:2px solid #c9a96e;color:#c9a96e;font-weight:700;font-size:0.8rem;display:flex;align-items:center;justify-content:center;background:#1a1a2e;transition:all 0.2s}
+    .step-item.active .step-num{background:#c9a96e;color:#1a1a2e}
+    .step-item.done .step-num{background:#2a7a32;border-color:#2a7a32;color:#fff}
+    .step-lbl{font-size:0.6rem;color:#c9a96e;font-weight:600;letter-spacing:0.4px;text-align:center;white-space:nowrap}
+    .step-arrow{color:#444;font-size:1.4rem;padding:0 2px;padding-bottom:14px;line-height:1}
+
+    /* ── Step sections ── */
     .step-section{display:none}
     .step-section.active{display:block}
 
-    /* ── FETCH STATUS ── */
-    .fetch-status-inline{font-size:0.73rem;padding:6px 10px;border-radius:6px;margin-top:8px;font-weight:600}
-    .fetch-ok{color:#2a7a32;background:#f0fff4;border:1px solid #a8dbb0}
-    .fetch-warn{color:#7a5000;background:#fffbf0;border:1px solid #e8c84a}
-    .fetch-err{color:#888;background:#f8f8f8;border:1px solid #ddd}
-    .sale-badge{font-size:0.72rem;font-weight:700;padding:4px 9px;border-radius:6px;margin-top:6px;display:inline-block;background:#fff0f4;border:1px solid #f5a0b0;color:#8b0000}
+    /* ── Navigation row ── */
+    .nav-row{display:flex;gap:10px;margin-top:24px}
+    .btn-next{flex:1;padding:15px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:background 0.15s}
+    .btn-next:hover{background:#b8934d}
+    .btn-back{padding:15px 18px;background:#fff;color:#777;border:1.5px solid #e0d5c8;border-radius:8px;font-weight:600;font-size:0.85rem;cursor:pointer;white-space:nowrap}
+    .btn-back:hover{background:#f7f3ef}
+    .btn-confirm{flex:1;padding:15px;background:#1a1a2e;color:#c9a96e;border:none;border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:background 0.15s}
+    .btn-confirm:hover{background:#2e2e4e}
 
-    @media(max-width:640px){
-      .container{padding:20px 14px 60px}
+    /* ── Inline review box (replaces modal on step 3) ── */
+    .review-box{background:#fff;border:1.5px solid #e0d5c8;border-radius:12px;padding:24px;margin-top:8px}
+    .review-box h2{font-size:1.05rem;color:#1a1a2e;margin-bottom:4px}
+    .review-box>p{font-size:0.8rem;color:#888;margin-bottom:18px}
+
+    @media(max-width:480px){
       .row-2,.row-3{grid-template-columns:1fr}
       .url-row{flex-direction:column}
       .add-btn{width:100%}
       .cart-item{flex-wrap:wrap}
       .step-lbl{font-size:0.56rem}
-      .step-item{min-width:56px;padding:12px 4px}
-      header h1{font-size:1.5rem}
-      .brand-section{padding:14px}
+      .step-item{min-width:50px}
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>Pak<span>Style</span> BD</h1>
-  <p>🇵🇰 Authentic Pakistani Fashion · Delivered to Your Door in Bangladesh 🇧🇩</p>
+  <h1>PakStyle BD</h1>
+  <p>Pakistani Fashion · Delivered to Your Door in Bangladesh</p>
 </header>
 <!-- Step indicator -->
 <div class="steps-bar">
@@ -231,107 +264,106 @@
 
 <div class="container">
 
-  <div class="section-label">Browse a Brand</div>
+  <div class="section-label">Browse a Brand &amp; Paste Product Links</div>
 
-  <div class="brand-section">
-    <div class="brand-chips">
-      <!-- GROUP 1: PKR — auto -->
-      <div class="brand-group-hdr pkr">🟢 PKR Auto — No Toggle Needed</div>
-      <a class="brand-chip pk-chip" href="https://pk.sapphireonline.pk" target="_blank">Sapphire <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://www.crossstitch.pk" target="_blank">Cross Stitch <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://generation.com.pk" target="_blank">Generation <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://outfitters.com.pk" target="_blank">Outfitters <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://beechtree.pk" target="_blank">Beechtree <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://breakout.com.pk" target="_blank">Breakout <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://diners.com.pk" target="_blank">Diners <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://monark.com.pk" target="_blank">Monark <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://shahnameh.pk" target="_blank">Shahnameh <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://nureh.pk" target="_blank">Nureh <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://alizeh.pk" target="_blank">Alizeh <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://jazmin.pk" target="_blank">Jazmin <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://www.limelight.pk" target="_blank">Limelight <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://www.baraekhanom.pk" target="_blank">Barae Khanom <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://laam.pk" target="_blank">LAAM <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://almirah.com.pk" target="_blank">Almirah <span>↗</span></a>
-      <a class="brand-chip pk-chip" href="https://pk.ethnc.com" target="_blank">ETHNC <span>↗</span></a>
+  <div class="brand-chips">
 
-      <!-- GROUP 2: May show USD -->
-      <div class="brand-group-hdr usd">💵 May Show USD — Use PKR/USD Toggle</div>
-      <a class="brand-chip" href="https://khaadi.com" target="_blank">Khaadi <span>↗</span></a>
-      <a class="brand-chip" href="https://gulahmedshop.com" target="_blank">Gul Ahmed <span>↗</span></a>
-      <a class="brand-chip" href="https://bonanzasatrangi.com" target="_blank">Bonanza Satrangi <span>↗</span></a>
-      <a class="brand-chip" href="https://mariab.com" target="_blank">Maria B <span>↗</span></a>
-      <a class="brand-chip" href="https://www.sanasafinaz.com" target="_blank">Sana Safinaz <span>↗</span></a>
-      <a class="brand-chip" href="https://nishatlinen.com" target="_blank">Nishat Linen <span>↗</span></a>
-      <a class="brand-chip" href="https://asimjofa.com" target="_blank">Asim Jofa <span>↗</span></a>
+    <!-- GROUP 1: Verified .pk / .com.pk domains — PKR prices load automatically -->
+    <div class="brand-group-hdr pkr">🟢 PKR Prices — No Toggle Needed (.pk domains)</div>
+    <a class="brand-chip pk-chip" href="https://pk.sapphireonline.pk" target="_blank">Sapphire <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://www.crossstitch.pk" target="_blank">Cross Stitch <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://generation.com.pk" target="_blank">Generation <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://outfitters.com.pk" target="_blank">Outfitters <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://beechtree.pk" target="_blank">Beechtree <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://breakout.com.pk" target="_blank">Breakout <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://diners.com.pk" target="_blank">Diners <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://monark.com.pk" target="_blank">Monark <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://shahnameh.pk" target="_blank">Shahnameh <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://nureh.pk" target="_blank">Nureh <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://alizeh.pk" target="_blank">Alizeh <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://jazmin.pk" target="_blank">Jazmin <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://www.limelight.pk" target="_blank">Limelight <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://www.baraekhanom.pk" target="_blank">Barae Khanom <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://laam.pk" target="_blank">LAAM (Multi-brand) <span>↗</span></a>
+    <a class="brand-chip pk-chip" href="https://almirah.com.pk" target="_blank">Almirah <span>↗</span></a>
 
-      <div id="extraBrands" style="display:none;flex-wrap:wrap;gap:7px;width:100%">
-        <a class="brand-chip" href="https://baroque.com" target="_blank">Baroque <span>↗</span></a>
-        <a class="brand-chip" href="https://elan.com" target="_blank">Elan <span>↗</span></a>
-        <a class="brand-chip" href="https://www.farahtalibaziz.com" target="_blank">Farah Talib Aziz <span>↗</span></a>
-        <a class="brand-chip" href="https://mtjonline.com" target="_blank">MTJ <span>↗</span></a>
-        <a class="brand-chip" href="https://uniworthshop.com" target="_blank">Uniworth <span>↗</span></a>
-        <a class="brand-chip" href="https://edenrobe.com" target="_blank">Edenrobe <span>↗</span></a>
-        <a class="brand-chip" href="https://mushq.com" target="_blank">Mushq <span>↗</span></a>
-        <a class="brand-chip" href="https://afrozeh.com" target="_blank">Afrozeh <span>↗</span></a>
-        <a class="brand-chip" href="https://zaha.com" target="_blank">Zaha by Elan <span>↗</span></a>
-        <a class="brand-chip" href="https://crimson.com" target="_blank">Crimson <span>↗</span></a>
-        <a class="brand-chip" href="https://mohsinnaveedranjha.com" target="_blank">Mohsin Naveed Ranjha <span>↗</span></a>
-        <a class="brand-chip" href="https://faizasaqlain.com" target="_blank">Faiza Saqlain <span>↗</span></a>
-        <a class="brand-chip" href="https://www.zarashahjahan.com" target="_blank">Zara Shahjahan <span>↗</span></a>
-        <a class="brand-chip" href="https://www.junaidjamshed.com" target="_blank">J. Junaid Jamshed <span>↗</span></a>
-        <a class="brand-chip" href="https://www.alkaramstudio.com" target="_blank">Alkaram <span>↗</span></a>
-        <a class="brand-chip" href="https://zellbury.com" target="_blank">Zellbury <span>↗</span></a>
-        <a class="brand-chip" href="https://houseofcharizma.com" target="_blank">Charizma <span>↗</span></a>
-        <a class="brand-chip" href="https://myrangja.com" target="_blank">Rang Ja <span>↗</span></a>
-        <a class="brand-chip" href="https://www.saadbinshahzad.com" target="_blank">Saad Bin Shahzad <span>↗</span></a>
-        <a class="brand-chip" href="https://sobianazir.net" target="_blank">Sobia Nazir <span>↗</span></a>
-        <a class="brand-chip" href="https://silayipret.com" target="_blank">Silya i Pret <span>↗</span></a>
-        <a class="brand-chip" href="https://tawakkalfabrics.co" target="_blank">Tawakkal Fabrics <span>↗</span></a>
-        <a class="brand-chip" href="https://binsaeedfabric.com" target="_blank">Bin Saeed <span>↗</span></a>
-        <a class="brand-chip" href="https://binilyas.com" target="_blank">Bin Ilyas <span>↗</span></a>
-        <a class="brand-chip" href="https://www.rangrasiya.com" target="_blank">Rang Rasiya <span>↗</span></a>
-        <a class="brand-chip" href="https://www.bareezepk.com" target="_blank">Bareeze <span>↗</span></a>
-        <a class="brand-chip" href="https://armasclothing.com" target="_blank">Armas <span>↗</span></a>
-        <a class="brand-chip" href="https://www.shopecs.com" target="_blank">ECS <span>↗</span></a>
-        <a class="brand-chip" href="https://ittehadtextiles.com" target="_blank">Ittehad <span>↗</span></a>
-        <a class="brand-chip" href="https://republicwomenswear.com" target="_blank">Republic <span>↗</span></a>
-      </div>
+    <!-- GROUP 2: .com domains — may show USD, use toggle when entering price -->
+    <div class="brand-group-hdr usd">💵 May Show USD — Use PKR/USD Toggle When Entering Price</div>
+    <a class="brand-chip" href="https://khaadi.com" target="_blank">Khaadi <span>↗</span></a>
+    <a class="brand-chip" href="https://gulahmedshop.com" target="_blank">Gul Ahmed <span>↗</span></a>
+    <a class="brand-chip" href="https://bonanzasatrangi.com" target="_blank">Bonanza Satrangi <span>↗</span></a>
+    <a class="brand-chip" href="https://mariab.com" target="_blank">Maria B <span>↗</span></a>
+    <a class="brand-chip" href="https://www.sanasafinaz.com" target="_blank">Sana Safinaz <span>↗</span></a>
+    <a class="brand-chip" href="https://nishatlinen.com" target="_blank">Nishat Linen <span>↗</span></a>
+    <a class="brand-chip" href="https://pk.ethnc.com" target="_blank">ETHNC <span>↗</span></a>
+    <a class="brand-chip" href="https://asimjofa.com" target="_blank">Asim Jofa <span>↗</span></a>
 
-      <div style="width:100%;margin-top:8px">
-        <button class="show-more-btn" onclick="toggleBrands(this)">+ Show all brands</button>
-      </div>
+    <div id="extraBrands" style="display:none">
+      <a class="brand-chip" href="https://baroque.com" target="_blank">Baroque <span>↗</span></a>
+      <a class="brand-chip" href="https://elan.com" target="_blank">Elan <span>↗</span></a>
+      <a class="brand-chip" href="https://www.farahtalibaziz.com" target="_blank">Farah Talib Aziz <span>↗</span></a>
+      <a class="brand-chip" href="https://mtjonline.com" target="_blank">MTJ (Tariq Jameel) <span>↗</span></a>
+      <a class="brand-chip" href="https://uniworthshop.com" target="_blank">Uniworth <span>↗</span></a>
+      <a class="brand-chip" href="https://edenrobe.com" target="_blank">Edenrobe <span>↗</span></a>
+      <a class="brand-chip" href="https://mushq.com" target="_blank">Mushq <span>↗</span></a>
+      <a class="brand-chip" href="https://afrozeh.com" target="_blank">Afrozeh <span>↗</span></a>
+      <a class="brand-chip" href="https://zaha.com" target="_blank">Zaha by Elan <span>↗</span></a>
+      <a class="brand-chip" href="https://crimson.com" target="_blank">Crimson <span>↗</span></a>
+      <a class="brand-chip" href="https://mohsinnaveedranjha.com" target="_blank">Mohsin Naveed Ranjha <span>↗</span></a>
+      <a class="brand-chip" href="https://faizasaqlain.com" target="_blank">Faiza Saqlain <span>↗</span></a>
+      <a class="brand-chip" href="https://www.zarashahjahan.com" target="_blank">Zara Shahjahan <span>↗</span></a>
+      <a class="brand-chip" href="https://www.junaidjamshed.com" target="_blank">J. Junaid Jamshed <span>↗</span></a>
+      <a class="brand-chip" href="https://www.alkaramstudio.com" target="_blank">Alkaram <span>↗</span></a>
+      <a class="brand-chip" href="https://zellbury.com" target="_blank">Zellbury <span>↗</span></a>
+      <a class="brand-chip" href="https://houseofcharizma.com" target="_blank">Charizma <span>↗</span></a>
+      <a class="brand-chip" href="https://myrangja.com" target="_blank">Rang Ja <span>↗</span></a>
+      <a class="brand-chip" href="https://www.saadbinshahzad.com" target="_blank">Saad Bin Shahzad <span>↗</span></a>
+      <a class="brand-chip" href="https://sobianazir.net" target="_blank">Sobia Nazir <span>↗</span></a>
+      <a class="brand-chip" href="https://silayipret.com" target="_blank">Silya i Pret <span>↗</span></a>
+      <a class="brand-chip" href="https://tawakkalfabrics.co" target="_blank">Tawakkal Fabrics <span>↗</span></a>
+      <a class="brand-chip" href="https://binsaeedfabric.com" target="_blank">Bin Saeed <span>↗</span></a>
+      <a class="brand-chip" href="https://binilyas.com" target="_blank">Bin Ilyas <span>↗</span></a>
+      <a class="brand-chip" href="https://www.rangrasiya.com" target="_blank">Rang Rasiya <span>↗</span></a>
+      <a class="brand-chip" href="https://www.bareezepk.com" target="_blank">Bareeze <span>↗</span></a>
+      <a class="brand-chip" href="https://armasclothing.com" target="_blank">Armas <span>↗</span></a>
+      <a class="brand-chip" href="https://www.shopecs.com" target="_blank">ECS <span>↗</span></a>
+      <a class="brand-chip" href="https://ittehadtextiles.com" target="_blank">Ittehad <span>↗</span></a>
+      <a class="brand-chip" href="https://republicwomenswear.com" target="_blank">Republic <span>↗</span></a>
     </div>
+
+    <button class="show-more-btn" onclick="toggleBrands(this)">+ Show all brands</button>
   </div>
 
-  <div class="section-label" style="margin-top:28px">Add Products to Your Order</div>
-
   <div class="url-input-box">
-    <span class="input-label">📋 Paste a product link from any brand site:</span>
+    <label>Copy a product link from any brand site and paste it here:</label>
     <div class="url-row">
-      <input type="url" id="urlInput" placeholder="https://brand.com/products/product-name" />
-      <button class="add-btn" id="addUrlBtn" onclick="handleAddUrl()">+ Add URL</button>
-    </div>
-    <div class="url-lock-hint" id="addUrlLockHint">
-      ⬆️ Complete Category, Price &amp; Size for the item above first
+      <input type="url" id="urlInput" placeholder="https://www.gulahmed.com/product/..." />
+      <button class="add-btn" onclick="handleAddUrl()">+ Add URL</button>
     </div>
 
     <!-- Draft cards appear here — one per URL -->
-    <div id="draftsContainer" style="display:none;margin-top:18px">
+    <div id="draftsContainer" style="display:none;margin-top:14px">
       <div id="draftCards"></div>
+      <div id="addAnotherRow" style="margin-top:10px;opacity:0.45;pointer-events:none">
+        <div id="addUrlLockHint" style="font-size:0.72rem;color:#c9a96e;background:#fffbf2;border:1px dashed #c9a96e;border-radius:6px;padding:6px 10px;margin-bottom:8px;text-align:center">
+          ⬆️ Fill in Category, Price &amp; Size for the item above, then you can add another URL
+        </div>
+        <div class="url-row">
+          <input type="url" id="panelUrlInput" placeholder="Paste another product URL…" style="font-size:0.82rem"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();addUrlToPanel()}"/>
+          <button class="add-btn" style="padding:9px 14px;font-size:0.78rem;white-space:nowrap" onclick="addUrlToPanel()">+ Add URL</button>
+        </div>
+      </div>
+      <div id="globalFetchStatus" class="fetch-status" style="margin-top:6px"></div>
       <button class="save-item-btn" id="saveAllBtn" onclick="saveAllDrafts()">✓ Save to Order List</button>
     </div>
   </div>
 
   <!-- Order list label -->
-  <div class="section-label" style="margin-top:32px">Your Order List <span id="itemCountBadge" style="font-size:0.73rem;background:#c9a96e;color:#12122a;border-radius:10px;padding:2px 9px;margin-left:8px;display:none;font-weight:700;letter-spacing:0">0 items</span></div>
+  <div class="section-label" style="margin-top:22px">Your Order List <span id="itemCountBadge" style="font-size:0.75rem;background:#c9a96e;color:#1a1a2e;border-radius:10px;padding:2px 8px;margin-left:6px;display:none">0 items</span></div>
 
   <div id="cartList">
-    <div class="cart-empty" id="cartEmpty">
-      <div style="font-size:2rem;margin-bottom:8px">🛍️</div>
-      Your order list is empty.
-      <p>Paste a product link above and fill in the details to add items.</p>
-    </div>
+    <div class="cart-empty" id="cartEmpty">No items yet. Paste a product link above to start your order.</div>
   </div>
 
   <div id="runningTotal" style="display:none">
@@ -874,9 +906,9 @@
     try {
       const u = new URL(url);
       const m = u.pathname.match(/\/products\/([^/?#]+)/);
-      if(!m) return setStatus('ℹ️ No /products/ path — fill details manually','#aaa');
+      if(!m) return setStatus('ℹ️ Fill details manually — no /products/ path detected','#aaa');
 
-      setStatus('🔍 Fetching product details…','#c9a96e');
+      setStatus('🔍 Fetching product details from brand site…','#c9a96e');
       const apiUrl = `${u.origin}/products/${m[1]}.json`;
 
       const ctrl = new AbortController();
@@ -927,25 +959,22 @@
       // ── PRICE ─────────────────────────────────────────────────────────────
       const refVar = avail[0] || vars[0];
       if(refVar){
-        const salePrice  = parseFloat(refVar.price) || 0;
-        const origPrice  = parseFloat(refVar.compare_at_price) || 0;
+        const salePrice = parseFloat(refVar.price) || 0;
         if(salePrice > 0){
           const priceEl = document.getElementById(`dc_price_${id}`);
-          if(priceEl){
-            priceEl.value = Math.round(salePrice);  // always fill fetched price
+          if(priceEl && !priceEl.value){
+            priceEl.value = Math.round(salePrice); // prices are PKR integers
             updateDraftPriceHint(id);
           }
-          // Show sale badge if discounted
-          const cnote = document.getElementById(`dc_cnote_${id}`);
-          if(cnote){
-            if(origPrice > salePrice){
-              const pct = Math.round((1 - salePrice / origPrice) * 100);
-              cnote.className = 'sale-badge';
-              cnote.style.display = '';
-              cnote.textContent = `🏷️ ${pct}% off! Was PKR ${Math.round(origPrice).toLocaleString()} → Sale PKR ${Math.round(salePrice).toLocaleString()}`;
-            } else {
-              cnote.className = '';
-              cnote.style.display = 'none';
+          // Note about original price
+          const origPrice = parseFloat(refVar.compare_at_price);
+          if(origPrice > salePrice){
+            const cnote = document.getElementById(`dc_cnote_${id}`);
+            if(cnote){
+              const pct = Math.round((1-salePrice/origPrice)*100);
+              cnote.style.display=''; cnote.style.background='#fff0f4';
+              cnote.style.border='1px solid #f5a0b0'; cnote.style.color='#8b0000';
+              cnote.textContent = `🏷️ Sale! Was PKR ${Math.round(origPrice).toLocaleString()} — ${pct}% off`;
             }
           }
         }
@@ -970,16 +999,15 @@
 
       const uniqSizes = sizeKey ? new Set(avail.map(v=>normSizeFull(v[sizeKey])).filter(Boolean)) : new Set();
       const refPrice  = Math.round(parseFloat((avail[0]||vars[0])?.price)||0);
-      const sizeInfo  = uniqSizes.size ? ` · ${uniqSizes.size} sizes` : '';
-      setStatus(`✅ Auto-filled: ${product.product_type||'product'} · PKR ${refPrice.toLocaleString()}${sizeInfo}`, '#2a7a32');
+      setStatus(`✓ Fetched: ${product.product_type||'product'} · PKR ${refPrice.toLocaleString()}${uniqSizes.size?' · '+uniqSizes.size+' sizes available':''}`, '#2a7a32');
       hideStatus();
       checkAddUrlLock();
 
     } catch(e) {
       if(e.name==='AbortError')
-        setStatus('⚠️ Timed out — fill in details manually','#aaa');
+        setStatus('⚠️ Fetch timed out — fill in details manually','#aaa');
       else
-        setStatus('ℹ️ This brand\'s site doesn\'t support auto-fetch — fill in details manually','#aaa');
+        setStatus('⚠️ Auto-fetch not available for this site — fill in details manually','#aaa');
     }
   }
 
@@ -1054,8 +1082,7 @@
 
   function createDraft(url){
     const brand = detectBrand(url);
-    const host  = new URL(url).hostname;
-    const isPk  = /\.(pk|com\.pk)(\/|$)/.test(host + '/') || host === 'pk.ethnc.com';
+    const isPk  = /\.(pk|com\.pk)(\/|$)/.test(new URL(url).hostname + '/');
     const id    = draftIdCtr++;
     drafts[id]  = { currency: 'PKR', sizeCounter: 0 };
     document.getElementById('draftCards')
@@ -1083,14 +1110,10 @@
     document.getElementById(`dc_${id}`)?.remove();
     delete drafts[id];
     updateSaveAllBtn();
-    if(!Object.keys(drafts).length){
+    if(!Object.keys(drafts).length)
       document.getElementById('draftsContainer').style.display = 'none';
-      const addBtn = document.getElementById('addUrlBtn');
-      if(addBtn) addBtn.disabled = false;
-      document.getElementById('addUrlLockHint').style.display = 'none';
-    } else {
+    else
       checkAddUrlLock();
-    }
   }
 
   function onDraftCatChange(id){
@@ -1128,16 +1151,13 @@
     checkAddUrlLock();
   }
 
-  // ── LOCK "Add URL" button until current draft card is complete ────────────
+  // ── LOCK "Add another URL" until current draft card is complete ───────────
   function checkAddUrlLock(){
-    const ids  = Object.keys(drafts).map(Number);
-    const btn  = document.getElementById('addUrlBtn');
+    const ids = Object.keys(drafts).map(Number);
+    const row = document.getElementById('addAnotherRow');
     const hint = document.getElementById('addUrlLockHint');
-    if(!ids.length){
-      if(btn){ btn.disabled = false; }
-      if(hint) hint.style.display = 'none';
-      return;
-    }
+    if(!ids.length || !row) return;
+
     const lastId = ids[ids.length - 1];
     const cat    = document.getElementById(`dc_cat_${lastId}`)?.value;
     const price  = parseFloat(document.getElementById(`dc_price_${lastId}`)?.value);
@@ -1148,7 +1168,9 @@
       const rows = getDraftSizeRows(lastId);
       complete = rows.length > 0 && rows.some(r => r.size);
     }
-    if(btn) btn.disabled = !complete;
+
+    row.style.opacity       = complete ? '1'    : '0.45';
+    row.style.pointerEvents = complete ? 'auto' : 'none';
     if(hint) hint.style.display = complete ? 'none' : '';
   }
 
@@ -1179,16 +1201,15 @@
   }
 
   function showDraftCurrencyNote(id, isPk){
-    // Shown as a subtle hint; fetch will overwrite this with actual sale info
     const note = document.getElementById(`dc_cnote_${id}`);
-    if(!note) return;
-    note.className = '';
-    note.style.cssText = `display:block;margin-top:5px;font-size:0.72rem;font-weight:600;padding:4px 9px;border-radius:6px;${isPk
-      ? 'background:#f0faf3;border:1px solid #a8dbb0;color:#1a5e2a'
-      : 'background:#fffbf0;border:1px solid #e8c84a;color:#5a4000'}`;
-    note.textContent = isPk
-      ? '✓ PKR store — price will auto-fill. Sale prices fetched automatically.'
-      : '⚠️ .com store — price will auto-fill. If USD toggle needed, switch it above.';
+    note.style.display = '';
+    if(isPk){
+      note.style.background='#f0faf3'; note.style.border='1px solid #a8dbb0'; note.style.color='#1a5e2a';
+      note.textContent='✓ .pk site — price is in PKR. Use discounted price if a sale is on.';
+    } else {
+      note.style.background='#fff8e7'; note.style.border='1px solid #f0c040'; note.style.color='#5a4000';
+      note.textContent='⚠️ .com site — check if price shows PKR or USD, then use the toggle.';
+    }
   }
 
   function addDraftSizeRow(draftId, size='', qty=1){
@@ -1366,7 +1387,18 @@
     document.getElementById('draftsContainer').style.display = '';
     createDraft(url);
     document.getElementById('urlInput').value = '';
+    document.getElementById('globalFetchStatus').textContent = '';
     document.getElementById('draftsContainer').scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+
+  function addUrlToPanel(){
+    const raw = document.getElementById('panelUrlInput').value.trim();
+    if(!raw){ alert('Please paste a URL first.'); return; }
+    const url = parseUrl(raw);
+    if(!url){ alert('That doesn\'t look like a valid URL:\n' + raw); return; }
+    createDraft(url);
+    document.getElementById('panelUrlInput').value = '';
+    document.getElementById('globalFetchStatus').textContent = Object.keys(drafts).length + ' URLs ready.';
   }
 
   // Enter key on main input
@@ -1417,9 +1449,6 @@
     ids.forEach(id => { document.getElementById(`dc_${id}`)?.remove(); delete drafts[id]; });
     document.getElementById('draftsContainer').style.display = 'none';
     document.getElementById('urlInput').value = '';
-    const addBtn = document.getElementById('addUrlBtn');
-    if(addBtn) addBtn.disabled = false;
-    document.getElementById('addUrlLockHint').style.display = 'none';
     renderCart();
   }
 
