@@ -991,7 +991,7 @@
         }
       }
 
-      // ── SIZES ─────────────────────────────────────────────────────────────
+      // ── SIZES — show as clickable chips, not auto-filled rows ────────────
       if(sizeKey && activeCat && !UNSTITCHED_CATS.has(activeCat)){
         const seen = new Set();
         const sizesToAdd = [];
@@ -1000,11 +1000,7 @@
           if(norm && !seen.has(norm)){ seen.add(norm); sizesToAdd.push(norm); }
         });
         if(sizesToAdd.length){
-          // Clear any URL-based row that was pre-filled
-          const rowsEl = document.getElementById(`dc_srows_${id}`);
-          if(rowsEl) rowsEl.innerHTML = '';
-          // Add one row per available size (all qty=1, user removes unwanted)
-          sizesToAdd.forEach(sz => addDraftSizeRow(id, sz, 1));
+          showSizeChips(id, sizesToAdd);
         }
       }
 
@@ -1082,6 +1078,13 @@
             <span style="font-size:0.78rem;color:#888">piece(s)</span>
           </div>
         </div>
+        <!-- Available size chips from auto-fetch — click to add a row -->
+        <div id="dc_szchips_${id}" style="display:none;margin-bottom:8px">
+          <div style="font-size:0.71rem;color:#888;margin-bottom:5px">
+            🔍 Available sizes — tap to add:
+          </div>
+          <div id="dc_szchips_inner_${id}" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+        </div>
         <div id="dc_srows_${id}"></div>
         <div id="dc_sremind_${id}" style="display:none;margin-top:5px;font-size:0.72rem;font-weight:700;
           color:#c0392b;background:#fff0f0;border:1px solid #f5c6c6;border-radius:5px;padding:4px 8px">
@@ -1151,6 +1154,8 @@
       msg.style.color      = '#2a7a32';
       addBtn.style.display = 'none';
       rowsEl.innerHTML     = '';  // clear any leftover size rows
+      const szchips0 = document.getElementById(`dc_szchips_${id}`);
+      if(szchips0) szchips0.style.display = 'none';
       if(note) note.style.display = 'none';
       const uqtyWrap = document.getElementById(`dc_uqty_wrap_${id}`);
       if(uqtyWrap) uqtyWrap.style.display = '';
@@ -1266,6 +1271,42 @@
             onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ccc'">✕</button>
         </div>`);
     checkAddUrlLock();
+  }
+
+  // ── SIZE CHIPS (from auto-fetch) ─────────────────────────────────────────
+  function showSizeChips(id, sizes){
+    const wrap  = document.getElementById(`dc_szchips_${id}`);
+    const inner = document.getElementById(`dc_szchips_inner_${id}`);
+    if(!wrap || !inner) return;
+    inner.innerHTML = sizes.map(sz =>
+      `<button type="button" id="szchip_${id}_${sz.replace(/\s/g,'_')}"
+        onclick="addSizeFromChip(${id},'${sz}')"
+        style="padding:5px 14px;border:1.5px solid #c9a96e;border-radius:16px;background:#fff;
+               color:#1a1a2e;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.15s"
+        onmouseover="if(!this.disabled)this.style.background='#c9a96e'"
+        onmouseout="if(!this.disabled)this.style.background='#fff'">${sz}</button>`
+    ).join('');
+    wrap.style.display = '';
+  }
+
+  function addSizeFromChip(id, sz){
+    // Mark chip as used
+    const chip = document.getElementById(`szchip_${id}_${sz.replace(/\s/g,'_')}`);
+    if(chip){
+      chip.disabled = true;
+      chip.style.cssText = 'padding:5px 14px;border:1.5px solid #ddd;border-radius:16px;background:#f0f0f0;color:#bbb;font-size:0.78rem;font-weight:700;cursor:default;text-decoration:line-through';
+    }
+    // Find existing empty row and fill it, otherwise add new row
+    const rows = document.querySelectorAll(`#dc_srows_${id} > div`);
+    for(const row of rows){
+      const sel = row.querySelector('select');
+      if(sel && !sel.value){
+        sel.value = sz;
+        onDraftSizeChange(id);
+        return;
+      }
+    }
+    addDraftSizeRow(id, sz, 1);
   }
 
   function removeDraftSizeRow(draftId, rowId){
