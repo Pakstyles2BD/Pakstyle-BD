@@ -133,8 +133,9 @@ async function lookupOrder(){
   resultEl.innerHTML = '<div class="loading">Looking up your order…</div>';
 
   try {
-    const proxy = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(CSV_URL);
-    const res = await fetch(proxy);
+    // Sheet is shared "Anyone with the link" → Google serves the CSV with CORS,
+    // so we can fetch it directly (no third-party proxy needed = fast & reliable).
+    const res = await fetch(CSV_URL + '&_=' + Date.now());
     if(!res.ok) throw new Error('fetch failed');
     const csv = await res.text();
     const rows = parseCSV(csv);
