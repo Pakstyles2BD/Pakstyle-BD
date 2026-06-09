@@ -74,7 +74,6 @@
       color:#aaa;margin:10px 0 5px;width:100%}
     .show-more-btn{font-size:0.75rem;color:#c9a96e;background:none;border:none;cursor:pointer;
       font-weight:600;padding:4px 0;text-decoration:underline}
-    #extraBrands{display:none}
 
     /* URL input area */
     .url-input-box{background:#fff;border:2px solid #c9a96e;border-radius:10px;padding:18px;margin-bottom:6px}
@@ -102,6 +101,18 @@
     .save-item-btn{width:100%;margin-top:12px;padding:11px;background:#1a1a2e;color:#c9a96e;
       border:none;border-radius:7px;font-weight:700;font-size:0.88rem;cursor:pointer;transition:background 0.15s}
     .save-item-btn:hover{background:#2e2e4e}
+
+    /* Draft cards — one per URL */
+    .draft-card{background:#fff;border:1.5px solid #d9cfc4;border-radius:10px;padding:14px;margin-bottom:10px}
+    .draft-card-hdr{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
+    .draft-card-hdr .url-text{font-size:0.69rem;color:#888;word-break:break-all;line-height:1.4}
+    .draft-card-hdr .badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:3px}
+    .draft-badge-brand{font-size:0.7rem;font-weight:700;background:#1a1a2e;color:#c9a96e;border-radius:10px;padding:2px 8px}
+    .draft-badge-pk{font-size:0.68rem;font-weight:600;background:#e8f8ee;border:1px solid #a8dbb0;color:#1a5e2a;border-radius:10px;padding:2px 7px}
+    .draft-badge-com{font-size:0.68rem;font-weight:600;background:#fff8e7;border:1px solid #f0c040;color:#7a5000;border-radius:10px;padding:2px 7px}
+    .draft-remove{background:none;border:none;color:#ccc;cursor:pointer;font-size:1.1rem;padding:2px 4px;border-radius:4px;flex-shrink:0;margin-left:auto}
+    .draft-remove:hover{color:#e74c3c;background:#fff0f0}
+    .draft-divider{border:none;border-top:1px dashed #e0d5c8;margin:10px 0}
 
     /* Cart list */
     .cart-empty{text-align:center;padding:28px;color:#aaa;font-size:0.85rem;
@@ -181,12 +192,43 @@
     .wa-note{text-align:center;margin-top:14px;font-size:0.8rem;color:#888}
     .wa-note a{color:#25d366;font-weight:600;text-decoration:none}
 
+    /* ── Step indicator ── */
+    .steps-bar{background:#1a1a2e;display:flex;justify-content:center;align-items:center;padding:14px 16px;gap:0}
+    .step-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:default;opacity:0.38;transition:opacity 0.2s;min-width:60px}
+    .step-item.active{opacity:1}
+    .step-item.done{opacity:0.65;cursor:pointer}
+    .step-item.done:hover{opacity:1}
+    .step-num{width:28px;height:28px;border-radius:50%;border:2px solid #c9a96e;color:#c9a96e;font-weight:700;font-size:0.8rem;display:flex;align-items:center;justify-content:center;background:#1a1a2e;transition:all 0.2s}
+    .step-item.active .step-num{background:#c9a96e;color:#1a1a2e}
+    .step-item.done .step-num{background:#2a7a32;border-color:#2a7a32;color:#fff}
+    .step-lbl{font-size:0.6rem;color:#c9a96e;font-weight:600;letter-spacing:0.4px;text-align:center;white-space:nowrap}
+    .step-arrow{color:#444;font-size:1.4rem;padding:0 2px;padding-bottom:14px;line-height:1}
+
+    /* ── Step sections ── */
+    .step-section{display:none}
+    .step-section.active{display:block}
+
+    /* ── Navigation row ── */
+    .nav-row{display:flex;gap:10px;margin-top:24px}
+    .btn-next{flex:1;padding:15px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:background 0.15s}
+    .btn-next:hover{background:#b8934d}
+    .btn-back{padding:15px 18px;background:#fff;color:#777;border:1.5px solid #e0d5c8;border-radius:8px;font-weight:600;font-size:0.85rem;cursor:pointer;white-space:nowrap}
+    .btn-back:hover{background:#f7f3ef}
+    .btn-confirm{flex:1;padding:15px;background:#1a1a2e;color:#c9a96e;border:none;border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:background 0.15s}
+    .btn-confirm:hover{background:#2e2e4e}
+
+    /* ── Inline review box (replaces modal on step 3) ── */
+    .review-box{background:#fff;border:1.5px solid #e0d5c8;border-radius:12px;padding:24px;margin-top:8px}
+    .review-box h2{font-size:1.05rem;color:#1a1a2e;margin-bottom:4px}
+    .review-box>p{font-size:0.8rem;color:#888;margin-bottom:18px}
+
     @media(max-width:480px){
       .row-2,.row-3{grid-template-columns:1fr}
       .url-row{flex-direction:column}
       .add-btn{width:100%}
       .cart-item{flex-wrap:wrap}
-      .how-bar span{padding:7px 10px}
+      .step-lbl{font-size:0.56rem}
+      .step-item{min-width:50px}
     }
   </style>
 </head>
@@ -196,27 +238,33 @@
   <h1>PakStyle BD</h1>
   <p>Pakistani Fashion · Delivered to Your Door in Bangladesh</p>
 </header>
-<div class="how-bar">
-  <span>① Browse Brand Site</span>
-  <span>→ ② Paste URLs Here</span>
-  <span>→ ③ Review & Submit</span>
-  <span>→ ④ Delivered in 2–3 Weeks</span>
+<!-- Step indicator -->
+<div class="steps-bar">
+  <div class="step-item active" id="si_1"><div class="step-num">1</div><div class="step-lbl">Add Items</div></div>
+  <div class="step-arrow">›</div>
+  <div class="step-item" id="si_2"><div class="step-num">2</div><div class="step-lbl">My Details</div></div>
+  <div class="step-arrow">›</div>
+  <div class="step-item" id="si_3"><div class="step-num">3</div><div class="step-lbl">Review</div></div>
+  <div class="step-arrow">›</div>
+  <div class="step-item" id="si_4"><div class="step-num">4</div><div class="step-lbl">Payment</div></div>
 </div>
+
+<!-- ═══ STEP 1: ADD ITEMS ═══ -->
+<div class="step-section active" id="step1">
 
 <!-- VPN Notice Bar -->
 <div class="vpn-bar" id="vpnBar">
   <div class="vpn-bar-inner">
-    <span>🇵🇰 <strong>Brand links above go directly to Pakistan (.pk) sites</strong> — PKR prices load automatically, no VPN needed.</span>
-    <span style="font-size:0.75rem;color:#888">Still seeing USD? Use the PKR/USD toggle when entering your price, or browse with a paid VPN:</span>
+    <span>🇵🇰 <strong>Brand links go directly to Pakistan (.pk) sites</strong> — PKR prices load automatically, no VPN needed.</span>
+    <span style="font-size:0.75rem;color:#888">Still seeing USD? Use the PKR/USD toggle per item, or browse with a VPN:</span>
     <a class="vpn-link vpn-paid" href="https://surfshark.com" target="_blank">🔒 Surfshark — ~$2.30/mo</a>
     <button class="vpn-dismiss" onclick="document.getElementById('vpnBar').classList.add('hidden')" title="Dismiss">✕</button>
   </div>
 </div>
 
-<div class="container" id="mainContainer">
+<div class="container">
 
-  <!-- STEP 1: ADD ITEMS -->
-  <div class="section-label">Step 1 — Browse a Brand & Paste Product Link</div>
+  <div class="section-label">Browse a Brand &amp; Paste Product Links</div>
 
   <div class="brand-chips">
 
@@ -247,10 +295,10 @@
     <a class="brand-chip" href="https://mariab.com" target="_blank">Maria B <span>↗</span></a>
     <a class="brand-chip" href="https://www.sanasafinaz.com" target="_blank">Sana Safinaz <span>↗</span></a>
     <a class="brand-chip" href="https://nishatlinen.com" target="_blank">Nishat Linen <span>↗</span></a>
-    <a class="brand-chip" href="https://ethnic.com" target="_blank">Ethnic <span>↗</span></a>
+    <a class="brand-chip" href="https://pk.ethnc.com" target="_blank">ETHNC <span>↗</span></a>
     <a class="brand-chip" href="https://asimjofa.com" target="_blank">Asim Jofa <span>↗</span></a>
 
-    <div id="extraBrands">
+    <div id="extraBrands" style="display:none">
       <a class="brand-chip" href="https://baroque.com" target="_blank">Baroque <span>↗</span></a>
       <a class="brand-chip" href="https://elan.com" target="_blank">Elan <span>↗</span></a>
       <a class="brand-chip" href="https://www.farahtalibaziz.com" target="_blank">Farah Talib Aziz <span>↗</span></a>
@@ -293,95 +341,26 @@
       <button class="add-btn" onclick="handleAddUrl()">+ Add URL</button>
     </div>
 
-    <div class="item-detail-panel" id="detailPanel">
-
-      <!-- URL list -->
-      <div style="margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
-          <label style="font-size:0.76rem;font-weight:600;color:#555">Product URLs
-            <span style="font-weight:400;color:#aaa;font-size:0.68rem;margin-left:4px">(category &amp; price apply to all)</span>
-          </label>
+    <!-- Draft cards appear here — one per URL -->
+    <div id="draftsContainer" style="display:none;margin-top:14px">
+      <div id="draftCards"></div>
+      <div id="addAnotherRow" style="margin-top:10px;opacity:0.45;pointer-events:none">
+        <div id="addUrlLockHint" style="font-size:0.72rem;color:#c9a96e;background:#fffbf2;border:1px dashed #c9a96e;border-radius:6px;padding:6px 10px;margin-bottom:8px;text-align:center">
+          ⬆️ Fill in Category, Price &amp; Size for the item above, then you can add another URL
         </div>
-        <div id="urlEntriesList"></div>
-        <div class="url-row" style="margin-top:6px">
-          <input type="url" id="panelUrlInput" placeholder="Paste another URL…" style="font-size:0.82rem"
+        <div class="url-row">
+          <input type="url" id="panelUrlInput" placeholder="Paste another product URL…" style="font-size:0.82rem"
             onkeydown="if(event.key==='Enter'){event.preventDefault();addUrlToPanel()}"/>
           <button class="add-btn" style="padding:9px 14px;font-size:0.78rem;white-space:nowrap" onclick="addUrlToPanel()">+ Add URL</button>
         </div>
       </div>
-      <div class="row-2">
-        <div class="field">
-          <label>Category <span style="color:#aaa;font-weight:400">(sets weight — see guide ↓)</span></label>
-          <select id="det_category">
-            <option value="">Select category</option>
-            <optgroup label="☀️ Lawn / Summer / Everyday">
-              <option value="kurti_1pc">Kurti / Shirt – 1pc only</option>
-              <option value="shirt_dupatta_2pc">2-Piece – Shirt + Dupatta (no trouser)</option>
-              <option value="shirt_trouser_2pc">2-Piece Co-ord – Shirt + Trouser (no dupatta)</option>
-              <option value="lawn_3pc_unstitch">3-Piece Unstitched (shirt+dupatta+trouser fabric)</option>
-              <option value="pret_3pc">3-Piece Pret / Stitched</option>
-            </optgroup>
-            <optgroup label="❄️ Winter">
-              <option value="winter_2pc">Winter 2-Piece (karandi / khaddar / linen)</option>
-              <option value="winter_3pc">Winter 3-Piece (karandi / khaddar)</option>
-            </optgroup>
-            <optgroup label="✨ Formal / Designer">
-              <option value="formal_emb_2pc">Formal Embroidered 2-Piece (chiffon/net)</option>
-              <option value="formal_emb_3pc">Formal Embroidered 3-Piece (chiffon/net)</option>
-              <option value="heavy_formal_3pc">Heavy Formal 3-Piece (organza / silk)</option>
-              <option value="bridal">Bridal / Velvet / Full Embroidery</option>
-            </optgroup>
-            <optgroup label="➕ Separates">
-              <option value="dupatta_only">Dupatta / Stole / Scarf only</option>
-              <option value="accessories">Accessories / Jewellery</option>
-            </optgroup>
-          </select>
-          <div id="weightGuideToggle" style="font-size:0.68rem;color:#c9a96e;cursor:pointer;margin-top:4px;text-decoration:underline" onclick="toggleWeightGuide()">📦 How are weights estimated?</div>
-          <div id="weightGuide" style="display:none;background:#fff8f0;border:1px solid #e0d5c8;border-radius:8px;padding:10px 12px;margin-top:6px;font-size:0.72rem;color:#555;line-height:1.7">
-            <strong style="color:#1a1a2e">Weight Guide &mdash; incl. packaging (per unit &times; qty)</strong><br>
-            <table style="width:100%;border-collapse:collapse;margin-top:6px">
-              <tr style="color:#888;font-size:0.65rem"><th style="text-align:left;padding:2px 4px">Category</th><th style="text-align:right;padding:2px 4px">kg</th></tr>
-              <tbody id="weightGuideBody"></tbody>
-            </table>
-            <div style="margin-top:6px;color:#888">Includes ~20% packaging. Edit via admin panel (?admin). Confirmed at Karachi warehouse.</div>
-          </div>
-        </div>
-        <div class="field">
-          <label>Price — <span style="color:#c0392b;font-weight:700">use sale/discounted price if shown</span></label>
-          <div class="price-row">
-            <input type="number" id="det_pkr" placeholder="e.g. 4500 PKR" min="0" oninput="updatePriceHint()"/>
-            <div class="currency-toggle">
-              <button id="btn_pkr" class="active" onclick="setCurrency('PKR')">PKR</button>
-              <button id="btn_usd" onclick="setCurrency('USD')">USD</button>
-            </div>
-          </div>
-          <div id="currencyNote" style="display:none;margin-top:5px;font-size:0.72rem;font-weight:600;
-            padding:4px 8px;border-radius:5px"></div>
-          <div id="priceHint" style="font-size:0.72rem;color:#c9a96e;margin-top:4px;min-height:16px"></div>
-        </div>
-      </div>
-      <div id="sizeQtySection" style="display:none;margin-top:12px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <label style="font-size:0.76rem;font-weight:600;color:#555">Sizes &amp; Quantities
-            <span style="font-weight:400;color:#aaa;font-size:0.68rem;margin-left:4px">(same price for all adult sizes)</span>
-          </label>
-          <button type="button" onclick="addSizeRow()"
-            style="font-size:0.72rem;color:#c9a96e;background:none;border:1.5px solid #c9a96e;
-            border-radius:12px;padding:3px 12px;cursor:pointer;font-weight:700">+ Add size</button>
-        </div>
-        <div id="sizeRowsContainer"></div>
-        <div id="sizeReminder" style="display:none;margin-top:6px;font-size:0.72rem;font-weight:700;
-          color:#c0392b;background:#fff0f0;border:1px solid #f5c6c6;border-radius:5px;padding:4px 8px">
-          ⚠️ Please select a size in every row before saving.
-        </div>
-      </div>
-      <div id="fetchStatus" class="fetch-status"></div>
-      <button class="save-item-btn" id="saveItemBtn" onclick="saveItem()">✓ Save to Order List</button>
+      <div id="globalFetchStatus" class="fetch-status" style="margin-top:6px"></div>
+      <button class="save-item-btn" id="saveAllBtn" onclick="saveAllDrafts()">✓ Save to Order List</button>
     </div>
   </div>
 
-  <!-- STEP 2: CART -->
-  <div class="section-label">Step 2 — Your Order List <span id="itemCountBadge" style="font-size:0.75rem;background:#c9a96e;color:#1a1a2e;border-radius:10px;padding:2px 8px;margin-left:6px;display:none">0 items</span></div>
+  <!-- Order list label -->
+  <div class="section-label" style="margin-top:22px">Your Order List <span id="itemCountBadge" style="font-size:0.75rem;background:#c9a96e;color:#1a1a2e;border-radius:10px;padding:2px 8px;margin-left:6px;display:none">0 items</span></div>
 
   <div id="cartList">
     <div class="cart-empty" id="cartEmpty">No items yet. Paste a product link above to start your order.</div>
@@ -394,12 +373,22 @@
       <div class="rt-row"><span>Transaction Fee</span><span>৳ 100</span></div>
       <div class="rt-total"><span>ESTIMATED TOTAL</span><span id="rt-total">৳ —</span></div>
       <div class="rt-note">* Final confirmed price sent via WhatsApp before payment.</div>
-      <div class="rt-note" style="margin-top:6px;color:#f9a825">⚖️ Weight calculations are approximate. If actual weight differs significantly, a revised logistics charge will be communicated via WhatsApp before payment.</div>
+      <div class="rt-note" style="margin-top:6px;color:#f9a825">⚖️ Weight calculations are approximate. Final logistics charge confirmed on WhatsApp.</div>
     </div>
   </div>
 
-  <!-- STEP 3: YOUR DETAILS -->
-  <div class="section-label">Step 3 — Your Details</div>
+  <div class="nav-row">
+    <button class="btn-next" onclick="nextFromStep1()">Next: My Details →</button>
+  </div>
+
+</div><!-- end container step1 -->
+</div><!-- end step1 -->
+
+<!-- ═══ STEP 2: MY DETAILS ═══ -->
+<div class="step-section" id="step2">
+<div class="container">
+
+  <div class="section-label">Your Contact &amp; Delivery Details</div>
   <div class="details-form">
 
     <div class="saved-indicator" id="savedIndicator">
@@ -419,7 +408,7 @@
     </div>
     <div class="row-2">
       <div class="field">
-        <label>Email <span style="color:#aaa;font-weight:400">(optional — for order updates)</span></label>
+        <label>Email <span style="color:#aaa;font-weight:400">(optional)</span></label>
         <input type="email" id="buyerEmail" placeholder="your@email.com"/>
       </div>
       <div class="field">
@@ -434,153 +423,36 @@
 
     <div class="remember-row">
       <input type="checkbox" id="rememberMe" checked/>
-      <label for="rememberMe">Remember my details on this device (so you don't fill this again next time)</label>
+      <label for="rememberMe">Remember my details on this device</label>
     </div>
   </div>
 
-  <div style="display:flex;align-items:center;justify-content:center;gap:8px;background:#fff8e7;border:1.5px solid #f0c040;border-radius:8px;padding:11px 16px;margin-top:16px;font-size:0.82rem;color:#5a4000">
+  <div style="display:flex;align-items:center;gap:8px;background:#fff8e7;border:1.5px solid #f0c040;border-radius:8px;padding:11px 16px;margin-top:16px;font-size:0.82rem;color:#5a4000">
     <span style="font-size:1.1rem">🚚</span>
     <span><strong>Estimated Delivery: 2–3 Weeks</strong> from order confirmation to your door.</span>
   </div>
 
-  <button class="review-btn" onclick="openSummary()">Review My Order →</button>
+  <div class="nav-row">
+    <button class="btn-back" onclick="goToStep(1)">← Back</button>
+    <button class="btn-next" onclick="nextFromStep2()">Review My Order →</button>
+  </div>
 
-  <div class="wa-note">
+  <div class="wa-note" style="margin-top:16px">
     Questions? <a href="https://wa.me/923XXXXXXXXX" target="_blank">Chat on WhatsApp</a>
   </div>
 
 </div>
-
-<!-- SUCCESS SCREEN -->
-<div class="success-screen" id="successScreen">
-  <div style="font-size:3rem;margin-bottom:12px">✅</div>
-  <h2>Order Request Submitted!</h2>
-  <p style="margin-top:8px;color:#888;font-size:0.88rem">We'll confirm your price quote on WhatsApp within a few hours.</p>
-
-  <div style="background:#ff6b0015;border:1px solid #ff6b0055;border-radius:8px;padding:10px 14px;margin:14px auto 0;max-width:380px;font-size:0.78rem;color:#ffaa55;text-align:left">
-    ⚠️ <strong style="color:#ffcc88">Stock Notice:</strong> Pakistani fashion items sell out fast. If any item in your order goes out of stock before we place it, we will notify you on WhatsApp immediately and suggest alternatives or a refund.
-  </div>
-
-  <p style="margin-top:20px;font-size:0.85rem;color:#aaa">Your Order ID:</p>
-  <p style="font-size:1.3rem;font-weight:700;color:#f9a825;letter-spacing:1px;margin:6px 0 16px" id="orderRef"></p>
-  <a id="trackOrderLink" href="tracking.html" style="display:inline-block;background:#f9a825;color:#1a1a2e;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.95rem;margin-bottom:24px">📦 Track My Order</a>
-
-  <!-- PAYMENT DETAILS -->
-  <div style="background:#1a1a2e;border-radius:14px;padding:20px 18px;text-align:left;max-width:360px;margin:0 auto">
-    <p style="font-size:0.95rem;font-weight:700;color:#f9a825;margin-bottom:14px;text-align:center">💳 Payment Details</p>
-    <p style="font-size:0.75rem;color:#888;margin-bottom:14px;text-align:center">Send payment only after receiving your confirmed price quote on WhatsApp.</p>
-
-    <!-- bKash Payment -->
-    <div style="background:#e2136e18;border:1px solid #e2136e55;border-radius:10px;padding:12px 14px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span style="font-size:1.2rem">🟣</span>
-        <span style="font-weight:700;color:#e2136e;font-size:0.9rem">bKash</span>
-        <span style="background:#e2136e;color:#fff;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">PAYMENT</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01352-018131</span>
-        <button onclick="copyNum('01352018131',this)" style="background:#e2136e22;border:1px solid #e2136e55;color:#e2136e;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
-      </div>
-    </div>
-
-    <!-- bKash Send Money -->
-    <div style="background:#e2136e10;border:1px solid #e2136e33;border-radius:10px;padding:12px 14px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span style="font-size:1.2rem">🟣</span>
-        <span style="font-weight:700;color:#e2136e;font-size:0.9rem">bKash</span>
-        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:#e2136e22;border:1px solid #e2136e55;color:#e2136e;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
-      </div>
-    </div>
-
-    <!-- Nagad -->
-    <div style="background:#f7941d15;border:1px solid #f7941d44;border-radius:10px;padding:12px 14px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span style="font-size:1.2rem">🟠</span>
-        <span style="font-weight:700;color:#f7941d;font-size:0.9rem">Nagad</span>
-        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:#f7941d22;border:1px solid #f7941d55;color:#f7941d;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
-      </div>
-    </div>
-
-    <!-- Upay -->
-    <div style="background:#6c3cff15;border:1px solid #6c3cff44;border-radius:10px;padding:12px 14px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span style="font-size:1.2rem">🟤</span>
-        <span style="font-weight:700;color:#a87aff;font-size:0.9rem">Upay</span>
-        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:#6c3cff22;border:1px solid #6c3cff55;color:#a87aff;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
-      </div>
-    </div>
-
-    <!-- Rocket -->
-    <div style="background:#8b189115;border:1px solid #8b189155;border-radius:10px;padding:12px 14px;margin-bottom:0">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span style="font-size:1.2rem">🚀</span>
-        <span style="font-weight:700;color:#c060cc;font-size:0.9rem">Rocket</span>
-        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
-        <button onclick="copyNum('01851948690',this)" style="background:#8b189122;border:1px solid #8b189155;color:#c060cc;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
-      </div>
-    </div>
-
-    <!-- City Bank -->
-    <div style="background:#00529b15;border:1px solid #00529b44;border-radius:10px;padding:12px 14px;margin-top:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <span style="font-size:1.2rem">🏦</span>
-        <span style="font-weight:700;color:#4a9fd4;font-size:0.9rem">City Bank</span>
-        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">BANK TRANSFER</span>
-      </div>
-      <div style="font-size:0.78rem;color:#aaa;margin-bottom:4px">Account Name: <strong style="color:#eee">Moors Attire</strong></div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div style="font-size:0.68rem;color:#888">A/C No</div>
-          <div style="font-size:1rem;font-weight:700;color:#eee;letter-spacing:0.5px">1324897775001</div>
-        </div>
-        <button onclick="copyNum('1324897775001',this)" style="background:#00529b22;border:1px solid #00529b55;color:#4a9fd4;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
-      </div>
-    </div>
-
-    <!-- UCBL -->
-    <div style="background:#00529b15;border:1px solid #00529b44;border-radius:10px;padding:12px 14px;margin-top:10px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <span style="font-size:1.2rem">🏦</span>
-        <span style="font-weight:700;color:#4a9fd4;font-size:0.9rem">UCBL</span>
-        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">BANK TRANSFER</span>
-      </div>
-      <div style="font-size:0.78rem;color:#aaa;margin-bottom:4px">Account Name: <strong style="color:#eee">Moors Attire</strong></div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div style="font-size:0.68rem;color:#888">A/C No</div>
-          <div style="font-size:1rem;font-weight:700;color:#eee;letter-spacing:0.5px">7862141003465221</div>
-        </div>
-        <button onclick="copyNum('7862141003465221',this)" style="background:#00529b22;border:1px solid #00529b55;color:#4a9fd4;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
-      </div>
-    </div>
-
-    <p style="font-size:0.7rem;color:#666;margin-top:14px;text-align:center">After payment, send your transaction ID on WhatsApp to confirm.</p>
-  </div>
-
-  <p style="font-size:0.72rem;color:#555;margin-top:16px">Save your Order ID to track status anytime</p>
-  <button onclick="resetForm()" style="margin-top:20px;background:none;border:1.5px solid #555;color:#888;padding:10px 24px;border-radius:8px;font-size:0.85rem;cursor:pointer;">← Place Another Order</button>
 </div>
 
-<!-- SUMMARY OVERLAY -->
-<div class="overlay" id="summaryOverlay">
-  <div class="summary-box">
+<!-- ═══ STEP 3: REVIEW ═══ -->
+<div class="step-section" id="step3">
+<div class="container">
+
+  <div class="section-label">Review Your Order</div>
+
+  <div class="review-box">
     <h2>Order Summary</h2>
-    <p>Review before submitting. We'll confirm the final price on WhatsApp.</p>
+    <p>Please review everything below. We'll confirm the final price on WhatsApp before you pay.</p>
 
     <div id="summaryItems"></div>
 
@@ -593,13 +465,133 @@
 
     <div class="customer-summary" id="customerSummary"></div>
 
-    <div style="background:#fff8ec;border:1px solid #f0c040;border-radius:7px;padding:9px 13px;font-size:0.75rem;color:#7a5000;margin-bottom:14px">
+    <div style="background:#fff8ec;border:1px solid #f0c040;border-radius:7px;padding:9px 13px;font-size:0.75rem;color:#7a5000;margin-bottom:6px">
       ⚠️ Items are subject to availability. If anything goes out of stock, we'll contact you on WhatsApp before proceeding.
     </div>
-
-    <button class="confirm-btn" id="confirmSubmitBtn" onclick="submitOrder()">Confirm & Submit Order</button>
-    <button class="back-btn" onclick="closeSummary()">← Edit Order</button>
   </div>
+
+  <div class="nav-row">
+    <button class="btn-back" onclick="goToStep(2)">← Edit Details</button>
+    <button class="btn-confirm" id="confirmSubmitBtn" onclick="submitOrder()">✓ Confirm &amp; Submit Order</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══ STEP 4: PAYMENT / SUCCESS ═══ -->
+<div class="step-section" id="step4">
+<div class="container" style="text-align:center;padding-top:36px">
+
+  <div style="font-size:3rem;margin-bottom:12px">✅</div>
+  <h2 style="color:#1a1a2e;font-size:1.4rem">Order Request Submitted!</h2>
+  <p style="margin-top:8px;color:#888;font-size:0.88rem">We'll confirm your price quote on WhatsApp within a few hours.</p>
+
+  <div style="background:#ff6b0015;border:1px solid #ff6b0055;border-radius:8px;padding:10px 14px;margin:14px auto 0;max-width:380px;font-size:0.78rem;color:#ffaa55;text-align:left">
+    ⚠️ <strong style="color:#ffcc88">Stock Notice:</strong> Pakistani fashion items sell out fast. If any item goes out of stock before we place it, we will notify you on WhatsApp immediately and suggest alternatives or a refund.
+  </div>
+
+  <p style="margin-top:20px;font-size:0.85rem;color:#aaa">Your Order ID:</p>
+  <p style="font-size:1.3rem;font-weight:700;color:#f9a825;letter-spacing:1px;margin:6px 0 16px" id="orderRef"></p>
+  <a id="trackOrderLink" href="tracking.html" style="display:inline-block;background:#f9a825;color:#1a1a2e;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.95rem;margin-bottom:24px">📦 Track My Order</a>
+
+  <!-- PAYMENT DETAILS -->
+  <div style="background:#1a1a2e;border-radius:14px;padding:20px 18px;text-align:left;max-width:360px;margin:0 auto">
+    <p style="font-size:0.95rem;font-weight:700;color:#f9a825;margin-bottom:14px;text-align:center">💳 How to Pay</p>
+    <p style="font-size:0.75rem;color:#888;margin-bottom:14px;text-align:center">Send payment only after receiving your confirmed price quote on WhatsApp.</p>
+
+    <div style="background:#e2136e18;border:1px solid #e2136e55;border-radius:10px;padding:12px 14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:1.2rem">🟣</span>
+        <span style="font-weight:700;color:#e2136e;font-size:0.9rem">bKash</span>
+        <span style="background:#e2136e;color:#fff;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">PAYMENT</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01352-018131</span>
+        <button onclick="copyNum('01352018131',this)" style="background:#e2136e22;border:1px solid #e2136e55;color:#e2136e;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+      </div>
+    </div>
+
+    <div style="background:#e2136e10;border:1px solid #e2136e33;border-radius:10px;padding:12px 14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:1.2rem">🟣</span>
+        <span style="font-weight:700;color:#e2136e;font-size:0.9rem">bKash</span>
+        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
+        <button onclick="copyNum('01851948690',this)" style="background:#e2136e22;border:1px solid #e2136e55;color:#e2136e;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+      </div>
+    </div>
+
+    <div style="background:#f7941d15;border:1px solid #f7941d44;border-radius:10px;padding:12px 14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:1.2rem">🟠</span>
+        <span style="font-weight:700;color:#f7941d;font-size:0.9rem">Nagad</span>
+        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
+        <button onclick="copyNum('01851948690',this)" style="background:#f7941d22;border:1px solid #f7941d55;color:#f7941d;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+      </div>
+    </div>
+
+    <div style="background:#6c3cff15;border:1px solid #6c3cff44;border-radius:10px;padding:12px 14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:1.2rem">🟤</span>
+        <span style="font-weight:700;color:#a87aff;font-size:0.9rem">Upay</span>
+        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
+        <button onclick="copyNum('01851948690',this)" style="background:#6c3cff22;border:1px solid #6c3cff55;color:#a87aff;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+      </div>
+    </div>
+
+    <div style="background:#8b189115;border:1px solid #8b189155;border-radius:10px;padding:12px 14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:1.2rem">🚀</span>
+        <span style="font-weight:700;color:#c060cc;font-size:0.9rem">Rocket</span>
+        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">SEND MONEY</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:1.05rem;font-weight:700;color:#eee;letter-spacing:0.5px">01851-948690</span>
+        <button onclick="copyNum('01851948690',this)" style="background:#8b189122;border:1px solid #8b189155;color:#c060cc;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+      </div>
+    </div>
+
+    <div style="background:#00529b15;border:1px solid #00529b44;border-radius:10px;padding:12px 14px;margin-top:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:1.2rem">🏦</span>
+        <span style="font-weight:700;color:#4a9fd4;font-size:0.9rem">City Bank</span>
+        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">BANK TRANSFER</span>
+      </div>
+      <div style="font-size:0.78rem;color:#aaa;margin-bottom:4px">Account Name: <strong style="color:#eee">Moors Attire</strong></div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:0.68rem;color:#888">A/C No</div><div style="font-size:1rem;font-weight:700;color:#eee;letter-spacing:0.5px">1324897775001</div></div>
+        <button onclick="copyNum('1324897775001',this)" style="background:#00529b22;border:1px solid #00529b55;color:#4a9fd4;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+      </div>
+    </div>
+
+    <div style="background:#00529b15;border:1px solid #00529b44;border-radius:10px;padding:12px 14px;margin-top:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:1.2rem">🏦</span>
+        <span style="font-weight:700;color:#4a9fd4;font-size:0.9rem">UCBL</span>
+        <span style="background:#333;color:#ccc;font-size:0.65rem;padding:2px 7px;border-radius:10px;font-weight:600">BANK TRANSFER</span>
+      </div>
+      <div style="font-size:0.78rem;color:#aaa;margin-bottom:4px">Account Name: <strong style="color:#eee">Moors Attire</strong></div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:0.68rem;color:#888">A/C No</div><div style="font-size:1rem;font-weight:700;color:#eee;letter-spacing:0.5px">7862141003465221</div></div>
+        <button onclick="copyNum('7862141003465221',this)" style="background:#00529b22;border:1px solid #00529b55;color:#4a9fd4;border-radius:6px;padding:4px 10px;font-size:0.72rem;cursor:pointer">Copy</button>
+      </div>
+    </div>
+
+    <p style="font-size:0.7rem;color:#666;margin-top:14px;text-align:center">After payment, send your transaction ID on WhatsApp to confirm.</p>
+  </div>
+
+  <p style="font-size:0.72rem;color:#555;margin-top:20px">Save your Order ID to track status anytime.</p>
+  <button onclick="resetForm()" style="margin-top:16px;background:none;border:1.5px solid #555;color:#888;padding:10px 24px;border-radius:8px;font-size:0.85rem;cursor:pointer;">← Place Another Order</button>
+
+</div>
 </div>
 
 <!-- ADMIN PANEL — visible only via ?admin in URL -->
@@ -841,113 +833,434 @@
     buildWeightEditor();
   }
 
-  // Currency toggle for price input
-  let selectedCurrency = 'PKR';
-  function setCurrency(cur){
-    const usdRate = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
-    const input   = document.getElementById('det_pkr');
-    const val     = parseFloat(input.value);
-    // Convert existing value when toggling so user never has to retype
-    if(val > 0){
-      if(selectedCurrency === 'PKR' && cur === 'USD'){
-        input.value = (val / usdRate).toFixed(2);
-      } else if(selectedCurrency === 'USD' && cur === 'PKR'){
-        input.value = Math.round(val * usdRate);
-      }
-    }
-    selectedCurrency = cur;
-    document.getElementById('btn_pkr').classList.toggle('active', cur==='PKR');
-    document.getElementById('btn_usd').classList.toggle('active', cur==='USD');
-    input.placeholder = cur==='USD' ? 'e.g. 42 (USD)' : 'e.g. 4500 (PKR)';
-    updatePriceHint();
-  }
-
-  function updatePriceHint(){
-    const val = parseFloat(document.getElementById('det_pkr').value);
-    const hint = document.getElementById('priceHint');
-    const usdRate = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
-    if(!val || val <= 0){ hint.textContent = ''; return; }
-    if(selectedCurrency === 'PKR'){
-      const usd = (val / usdRate).toFixed(2);
-      hint.innerHTML = `≈ <strong>$${usd} USD</strong> &nbsp;·&nbsp; rate: 1 USD = ${usdRate} PKR`;
-    } else {
-      const pkr = Math.round(val * usdRate).toLocaleString();
-      hint.innerHTML = `≈ <strong>PKR ${pkr}</strong> &nbsp;·&nbsp; rate: 1 USD = ${usdRate} PKR`;
-    }
-  }
-
   // ── UNSTITCHED categories: no size field required ────────────────────────
   const UNSTITCHED_CATS = new Set(['lawn_3pc_unstitch', 'dupatta_only', 'accessories']);
 
-  // ── MULTI-SIZE ROW SYSTEM ─────────────────────────────────────────────────
-  let sizeRowCounter = 0;
+  // ── DRAFT CARD SYSTEM — each URL gets its own card ───────────────────────
+  let drafts      = {};  // id → {currency, sizeCounter}
+  let draftIdCtr  = 0;
 
-  function buildSizeRowHTML(id, size='', qty=1){
-    const opts = ['XS','S','M','L','XL','XXL','Free Size']
-      .map(s => `<option${s===size?' selected':''}>${s}</option>`).join('');
-    return `<div id="sr_${id}" style="display:flex;gap:8px;align-items:center;margin-bottom:7px">
-      <select onchange="onSizeRowChange()"
-        style="flex:1;padding:8px 10px;border:1.5px solid #d9cfc4;border-radius:6px;
-               font-size:0.85rem;background:#fff;min-width:0">
-        <option value="">Pick size</option>${opts}
-      </select>
-      <input type="number" value="${qty}" min="1" max="20" placeholder="Qty"
-        style="width:62px;padding:8px 8px;border:1.5px solid #d9cfc4;border-radius:6px;
-               font-size:0.85rem;text-align:center"/>
-      <button type="button" onclick="removeSizeRow('${id}')"
-        style="background:none;border:none;color:#ccc;cursor:pointer;font-size:1rem;
-               padding:2px 5px;border-radius:4px;flex-shrink:0"
-        onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ccc'">✕</button>
+  const CAT_OPTIONS = `
+    <option value="">Select category</option>
+    <optgroup label="☀️ Lawn / Summer / Everyday">
+      <option value="kurti_1pc">Kurti / Shirt – 1pc only</option>
+      <option value="shirt_dupatta_2pc">2-Piece – Shirt + Dupatta</option>
+      <option value="shirt_trouser_2pc">2-Piece Co-ord – Shirt + Trouser</option>
+      <option value="lawn_3pc_unstitch">3-Piece Unstitched</option>
+      <option value="pret_3pc">3-Piece Pret / Stitched</option>
+    </optgroup>
+    <optgroup label="❄️ Winter">
+      <option value="winter_2pc">Winter 2-Piece (karandi/khaddar/linen)</option>
+      <option value="winter_3pc">Winter 3-Piece (karandi/khaddar)</option>
+    </optgroup>
+    <optgroup label="✨ Formal / Designer">
+      <option value="formal_emb_2pc">Formal Embroidered 2-Piece</option>
+      <option value="formal_emb_3pc">Formal Embroidered 3-Piece</option>
+      <option value="heavy_formal_3pc">Heavy Formal 3-Piece (organza/silk)</option>
+      <option value="bridal">Bridal / Velvet / Full Embroidery</option>
+    </optgroup>
+    <optgroup label="➕ Separates">
+      <option value="dupatta_only">Dupatta / Stole / Scarf only</option>
+      <option value="accessories">Accessories / Jewellery</option>
+    </optgroup>`;
+
+  // ── AUTO-FETCH ENGINE (Shopify JSON API) ─────────────────────────────────
+  // Maps Shopify product_type strings → our category keys
+  const PT_CAT = [
+    [/unstitch/i,                                              'lawn_3pc_unstitch'],
+    [/bridal|velvet/i,                                         'bridal'],
+    [/heavy[\s-]?formal|organza|heavy[\s-]?embroi/i,          'heavy_formal_3pc'],
+    [/formal|chiffon|net[\s-]?embroi/i,                       'formal_emb_3pc'],
+    [/winter|khaddar|karandi/i,                                'winter_3pc'],
+    [/linen/i,                                                 'winter_2pc'],
+    [/dupatta|stole|scarf/i,                                   'dupatta_only'],
+    [/bag|purse|clutch|jewel|accessories/i,                    'accessories'],
+    [/shalwar[\s-]?kameez|rtw|ready[\s-]?to[\s-]?wear/i,      'pret_3pc'],
+    [/pret|stitched|fusion/i,                                  'pret_3pc'],     // afrozeh "Pret", sbs "Fusion"
+    [/3[\s-]?pc|3[\s-]?piece|suit/i,                          'pret_3pc'],
+    [/2[\s-]?pc[\s|]stitch|2[\s-]?pc[\s|]rtw/i,               'shirt_dupatta_2pc'],
+    [/shirt[\s-]?trouser|co[\s-]?ord/i,                       'shirt_trouser_2pc'],
+    [/2[\s-]?pc|2[\s-]?piece|shirt[\s-]?dupatta/i,            'shirt_dupatta_2pc'],
+    [/kurti|kurta|shirt|top/i,                                 'kurti_1pc'],
+  ];
+  function mapPtToCat(pt){ const s=(pt||'').toLowerCase(); for(const[re,c] of PT_CAT){ if(re.test(s)) return c; } return ''; }
+
+  // Normalize variant size strings → our dropdown values
+  function normSizeFull(raw){
+    const s = (raw||'').trim().toUpperCase().replace(/[-\s]+/g,' ');
+    if(/^(XS|EXTRA SMALL)$/.test(s))     return 'XS';
+    if(/^(S|SMALL)$/.test(s))            return 'S';
+    if(/^(M|MEDIUM)$/.test(s))           return 'M';
+    if(/^(L|LARGE)$/.test(s))            return 'L';
+    if(/^(XL|X L|X LARGE|EXTRA LARGE)$/.test(s)) return 'XL';
+    if(/^(XXL|XX L|2XL|XX LARGE|DOUBLE XL)$/.test(s)) return 'XXL';
+    if(/^(FREE SIZE|FREESIZE|ONE SIZE|OS)$/.test(s)) return 'Free Size';
+    return null;
+  }
+
+  async function fetchProductData(id, url){
+    const statusEl = document.getElementById(`dc_fetch_${id}`);
+    function setStatus(msg, color){ if(statusEl){ statusEl.style.display=''; statusEl.textContent=msg; statusEl.style.color=color||'#c9a96e'; } }
+    function hideStatus(){ if(statusEl) setTimeout(()=>{ statusEl.style.display='none'; },3500); }
+
+    try {
+      const u = new URL(url);
+      const m = u.pathname.match(/\/products\/([^/?#]+)/);
+      if(!m) return setStatus('ℹ️ Fill details manually — no /products/ path detected','#aaa');
+
+      setStatus('🔍 Fetching product details from brand site…','#c9a96e');
+      const apiUrl = `${u.origin}/products/${m[1]}.json`;
+
+      const ctrl = new AbortController();
+      const tid  = setTimeout(()=>ctrl.abort(), 9000);
+      const res  = await fetch(apiUrl, { signal: ctrl.signal });
+      clearTimeout(tid);
+      if(!res.ok) throw new Error('HTTP '+res.status);
+
+      const { product } = await res.json();
+      if(!product) throw new Error('empty');
+
+      // ── CATEGORY ──────────────────────────────────────────────────────────
+      const fetchedCat = mapPtToCat(product.product_type || '');
+      const catEl = document.getElementById(`dc_cat_${id}`);
+      if(catEl && fetchedCat && !catEl.value){
+        catEl.value = fetchedCat;
+        onDraftCatChange(id);
+      }
+      const activeCat = catEl ? catEl.value : fetchedCat;
+
+      // ── FIND SIZE OPTION ──────────────────────────────────────────────────
+      const opts = product.options || [];
+      // Primary: option named "size". Fallback: any option whose values look like sizes
+      let sizeIdx = opts.findIndex(o => /size/i.test(o.name));
+      if(sizeIdx === -1){
+        // Fallback: find option where majority of values are recognisable sizes
+        sizeIdx = opts.findIndex(o =>
+          o.values.filter(v => normSizeFull(v)).length > o.values.length / 2
+        );
+      }
+      const sizeKey = ['option1','option2','option3'][sizeIdx] || null;
+
+      // ── FIND TYPE OPTION (stitched/unstitched brands like Nureh, Alizeh) ─
+      const typeIdx = opts.findIndex(o => /^(type|item|stitch)/i.test(o.name));
+      const typeKey = ['option1','option2','option3'][typeIdx] || null;
+
+      // ── SELECT RELEVANT VARIANTS ──────────────────────────────────────────
+      let vars = product.variants || [];
+      let avail = vars.filter(v => v.available);
+      if(!avail.length) avail = vars;  // if all sold out, show anyway
+
+      // For brands with type option: prefer stitched over unstitched
+      if(typeKey){
+        const stitched = avail.filter(v => /stitch/i.test(v[typeKey]) && !/unstitch/i.test(v[typeKey]));
+        if(stitched.length) avail = stitched;
+      }
+
+      // ── PRICE ─────────────────────────────────────────────────────────────
+      const refVar = avail[0] || vars[0];
+      if(refVar){
+        const salePrice = parseFloat(refVar.price) || 0;
+        if(salePrice > 0){
+          const priceEl = document.getElementById(`dc_price_${id}`);
+          if(priceEl && !priceEl.value){
+            priceEl.value = Math.round(salePrice); // prices are PKR integers
+            updateDraftPriceHint(id);
+          }
+          // Note about original price
+          const origPrice = parseFloat(refVar.compare_at_price);
+          if(origPrice > salePrice){
+            const cnote = document.getElementById(`dc_cnote_${id}`);
+            if(cnote){
+              const pct = Math.round((1-salePrice/origPrice)*100);
+              cnote.style.display=''; cnote.style.background='#fff0f4';
+              cnote.style.border='1px solid #f5a0b0'; cnote.style.color='#8b0000';
+              cnote.textContent = `🏷️ Sale! Was PKR ${Math.round(origPrice).toLocaleString()} — ${pct}% off`;
+            }
+          }
+        }
+      }
+
+      // ── SIZES ─────────────────────────────────────────────────────────────
+      if(sizeKey && activeCat && !UNSTITCHED_CATS.has(activeCat)){
+        const seen = new Set();
+        const sizesToAdd = [];
+        avail.forEach(v => {
+          const norm = normSizeFull(v[sizeKey]);
+          if(norm && !seen.has(norm)){ seen.add(norm); sizesToAdd.push(norm); }
+        });
+        if(sizesToAdd.length){
+          // Clear any URL-based row that was pre-filled
+          const rowsEl = document.getElementById(`dc_srows_${id}`);
+          if(rowsEl) rowsEl.innerHTML = '';
+          // Add one row per available size (all qty=1, user removes unwanted)
+          sizesToAdd.forEach(sz => addDraftSizeRow(id, sz, 1));
+        }
+      }
+
+      const uniqSizes = sizeKey ? new Set(avail.map(v=>normSizeFull(v[sizeKey])).filter(Boolean)) : new Set();
+      const refPrice  = Math.round(parseFloat((avail[0]||vars[0])?.price)||0);
+      setStatus(`✓ Fetched: ${product.product_type||'product'} · PKR ${refPrice.toLocaleString()}${uniqSizes.size?' · '+uniqSizes.size+' sizes available':''}`, '#2a7a32');
+      hideStatus();
+      checkAddUrlLock();
+
+    } catch(e) {
+      if(e.name==='AbortError')
+        setStatus('⚠️ Fetch timed out — fill in details manually','#aaa');
+      else
+        setStatus('⚠️ Auto-fetch not available for this site — fill in details manually','#aaa');
+    }
+  }
+
+  function buildDraftCard(id, url, brand, isPk){
+    const pkBadge = isPk
+      ? `<span class="draft-badge-pk">🟢 PKR auto</span>`
+      : `<span class="draft-badge-com">💵 Check currency</span>`;
+    return `<div class="draft-card" id="dc_${id}" data-url="${esc(url)}" data-brand="${esc(brand)}">
+      <div class="draft-card-hdr">
+        <div style="flex:1;min-width:0">
+          <div class="url-text">${esc(url)}</div>
+          <div class="badges">
+            ${brand ? `<span class="draft-badge-brand">${esc(brand)}</span>` : ''}
+            ${pkBadge}
+          </div>
+        </div>
+        <button class="draft-remove" onclick="removeDraft(${id})" title="Remove this URL">✕</button>
+      </div>
+      <div id="dc_fetch_${id}" style="display:none;font-size:0.72rem;font-weight:600;padding:5px 10px;background:#fffbf2;border-radius:5px;margin-top:6px"></div>
+      <hr class="draft-divider"/>
+      <div class="row-2">
+        <div class="field">
+          <label>Category *</label>
+          <select id="dc_cat_${id}" onchange="onDraftCatChange(${id})">${CAT_OPTIONS}</select>
+        </div>
+        <div class="field">
+          <label>Price * — <span style="color:#c0392b;font-weight:700">use sale price if shown</span></label>
+          <div class="price-row">
+            <input type="number" id="dc_price_${id}" placeholder="e.g. 4500 PKR" min="0"
+              oninput="updateDraftPriceHint(${id});checkAddUrlLock()"/>
+            <div class="currency-toggle">
+              <button id="dc_pkr_${id}" class="active" onclick="setDraftCurrency(${id},'PKR')">PKR</button>
+              <button id="dc_usd_${id}" onclick="setDraftCurrency(${id},'USD')">USD</button>
+            </div>
+          </div>
+          <div id="dc_cnote_${id}" style="display:none;margin-top:5px;font-size:0.72rem;font-weight:600;padding:4px 8px;border-radius:5px"></div>
+          <div id="dc_phint_${id}" style="font-size:0.72rem;color:#c9a96e;margin-top:3px;min-height:14px"></div>
+        </div>
+      </div>
+      <!-- Sizes section — always visible, content changes with category -->
+      <div style="margin-top:12px;background:#f9f6f2;border-radius:7px;padding:10px 12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+          <label style="font-size:0.76rem;font-weight:600;color:#555">Sizes &amp; Quantities *
+            <span id="dc_sz_note_${id}" style="font-weight:400;color:#aaa;font-size:0.67rem;margin-left:4px">(same price for all adult sizes)</span>
+          </label>
+          <button type="button" id="dc_addsz_${id}" onclick="addDraftSizeRow(${id})"
+            style="display:none;font-size:0.72rem;color:#c9a96e;background:none;border:1.5px solid #c9a96e;
+            border-radius:12px;padding:3px 12px;cursor:pointer;font-weight:700">+ Add size</button>
+        </div>
+        <div id="dc_sz_msg_${id}" style="font-size:0.78rem;color:#bbb;padding:4px 0">
+          ← Select a category first
+        </div>
+        <!-- Unstitched qty (shown instead of size rows for unstitched/accessories) -->
+        <div id="dc_uqty_wrap_${id}" style="display:none;margin-top:4px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <label style="font-size:0.8rem;color:#555;font-weight:600">Quantity</label>
+            <input type="number" id="dc_uqty_${id}" value="1" min="1" max="20"
+              onchange="checkAddUrlLock()"
+              style="width:68px;padding:7px 8px;border:1.5px solid #d9cfc4;border-radius:6px;
+                     font-size:0.9rem;text-align:center;font-weight:700"/>
+            <span style="font-size:0.78rem;color:#888">piece(s)</span>
+          </div>
+        </div>
+        <div id="dc_srows_${id}"></div>
+        <div id="dc_sremind_${id}" style="display:none;margin-top:5px;font-size:0.72rem;font-weight:700;
+          color:#c0392b;background:#fff0f0;border:1px solid #f5c6c6;border-radius:5px;padding:4px 8px">
+          ⚠️ Please select a size in every row before saving.
+        </div>
+      </div>
     </div>`;
   }
 
-  function addSizeRow(size='', qty=1){
-    const id = sizeRowCounter++;
-    document.getElementById('sizeRowsContainer')
-      .insertAdjacentHTML('beforeend', buildSizeRowHTML(id, size, qty));
+  function createDraft(url){
+    const brand = detectBrand(url);
+    const isPk  = /\.(pk|com\.pk)(\/|$)/.test(new URL(url).hostname + '/');
+    const id    = draftIdCtr++;
+    drafts[id]  = { currency: 'PKR', sizeCounter: 0 };
+    document.getElementById('draftCards')
+      .insertAdjacentHTML('beforeend', buildDraftCard(id, url, brand, isPk));
+
+    // Immediate URL-based detection (instant, no network)
+    const cat = detectCategory(url);
+    if(cat){ document.getElementById(`dc_cat_${id}`).value = cat; onDraftCatChange(id); }
+    if(cat && !UNSTITCHED_CATS.has(cat)){
+      // Pre-fill size from URL params while fetch loads
+      const sz = detectSizeFromUrl(url);
+      if(sz) addDraftSizeRow(id, sz);
+    }
+    showDraftCurrencyNote(id, isPk);
+
+    // Network fetch — overwrites with richer data if available
+    fetchProductData(id, url);
+
+    updateSaveAllBtn();
+    checkAddUrlLock();
+    return id;
   }
 
-  function removeSizeRow(id){
-    const container = document.getElementById('sizeRowsContainer');
-    if(container.children.length <= 1) return;
-    document.getElementById('sr_' + id)?.remove();
+  function removeDraft(id){
+    document.getElementById(`dc_${id}`)?.remove();
+    delete drafts[id];
+    updateSaveAllBtn();
+    if(!Object.keys(drafts).length)
+      document.getElementById('draftsContainer').style.display = 'none';
+    else
+      checkAddUrlLock();
   }
 
-  function onSizeRowChange(){
-    const rows = getSizeRows();
-    if(rows.some(r => r.size))
-      document.getElementById('sizeReminder').style.display = 'none';
+  function onDraftCatChange(id){
+    const cat = document.getElementById(`dc_cat_${id}`).value;
+    const msg     = document.getElementById(`dc_sz_msg_${id}`);
+    const rowsEl  = document.getElementById(`dc_srows_${id}`);
+    const addBtn  = document.getElementById(`dc_addsz_${id}`);
+    const note    = document.getElementById(`dc_sz_note_${id}`);
+    document.getElementById(`dc_sremind_${id}`).style.display = 'none';
+
+    // Always hide qty wrap first; re-show only for unstitched
+    const uqtyWrap0 = document.getElementById(`dc_uqty_wrap_${id}`);
+    if(uqtyWrap0) uqtyWrap0.style.display = 'none';
+
+    if(!cat){
+      msg.style.display    = '';
+      msg.textContent      = '← Select a category first';
+      msg.style.color      = '#bbb';
+      addBtn.style.display = 'none';
+    } else if(UNSTITCHED_CATS.has(cat)){
+      msg.style.display    = '';
+      msg.textContent      = '✓ No size needed — enter how many pieces you want:';
+      msg.style.color      = '#2a7a32';
+      addBtn.style.display = 'none';
+      rowsEl.innerHTML     = '';  // clear any leftover size rows
+      if(note) note.style.display = 'none';
+      const uqtyWrap = document.getElementById(`dc_uqty_wrap_${id}`);
+      if(uqtyWrap) uqtyWrap.style.display = '';
+    } else {
+      msg.style.display    = 'none';
+      addBtn.style.display = '';
+      if(note) note.style.display = '';
+      if(!rowsEl.children.length) addDraftSizeRow(id);
+    }
+    checkAddUrlLock();
   }
 
-  function getSizeRows(){
-    const rows = [];
-    document.querySelectorAll('#sizeRowsContainer > div').forEach(row => {
-      const size = row.querySelector('select').value;
-      const qty  = Math.max(1, parseInt(row.querySelector('input').value) || 1);
-      rows.push({ size, qty });
+  // ── LOCK "Add another URL" until current draft card is complete ───────────
+  function checkAddUrlLock(){
+    const ids = Object.keys(drafts).map(Number);
+    const row = document.getElementById('addAnotherRow');
+    const hint = document.getElementById('addUrlLockHint');
+    if(!ids.length || !row) return;
+
+    const lastId = ids[ids.length - 1];
+    const cat    = document.getElementById(`dc_cat_${lastId}`)?.value;
+    const price  = parseFloat(document.getElementById(`dc_price_${lastId}`)?.value);
+    const isUnstitched = UNSTITCHED_CATS.has(cat);
+
+    let complete = !!(cat && price > 0);
+    if(complete && !isUnstitched){
+      const rows = getDraftSizeRows(lastId);
+      complete = rows.length > 0 && rows.some(r => r.size);
+    }
+
+    row.style.opacity       = complete ? '1'    : '0.45';
+    row.style.pointerEvents = complete ? 'auto' : 'none';
+    if(hint) hint.style.display = complete ? 'none' : '';
+  }
+
+  function setDraftCurrency(id, cur){
+    const d = drafts[id]; if(!d) return;
+    const usdRate = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
+    const inp = document.getElementById(`dc_price_${id}`);
+    const val = parseFloat(inp.value);
+    if(val > 0){
+      if(d.currency==='PKR' && cur==='USD') inp.value = (val/usdRate).toFixed(2);
+      else if(d.currency==='USD' && cur==='PKR') inp.value = Math.round(val*usdRate);
+    }
+    d.currency = cur;
+    document.getElementById(`dc_pkr_${id}`).classList.toggle('active', cur==='PKR');
+    document.getElementById(`dc_usd_${id}`).classList.toggle('active', cur==='USD');
+    inp.placeholder = cur==='USD' ? 'e.g. 42 USD' : 'e.g. 4500 PKR';
+    updateDraftPriceHint(id);
+  }
+
+  function updateDraftPriceHint(id){
+    const d = drafts[id]; if(!d) return;
+    const val = parseFloat(document.getElementById(`dc_price_${id}`).value);
+    const hint = document.getElementById(`dc_phint_${id}`);
+    const usdRate = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
+    if(!val || val <= 0){ hint.textContent=''; return; }
+    if(d.currency==='PKR') hint.innerHTML=`≈ <strong>$${(val/usdRate).toFixed(2)} USD</strong>`;
+    else hint.innerHTML=`≈ <strong>PKR ${Math.round(val*usdRate).toLocaleString()}</strong>`;
+  }
+
+  function showDraftCurrencyNote(id, isPk){
+    const note = document.getElementById(`dc_cnote_${id}`);
+    note.style.display = '';
+    if(isPk){
+      note.style.background='#f0faf3'; note.style.border='1px solid #a8dbb0'; note.style.color='#1a5e2a';
+      note.textContent='✓ .pk site — price is in PKR. Use discounted price if a sale is on.';
+    } else {
+      note.style.background='#fff8e7'; note.style.border='1px solid #f0c040'; note.style.color='#5a4000';
+      note.textContent='⚠️ .com site — check if price shows PKR or USD, then use the toggle.';
+    }
+  }
+
+  function addDraftSizeRow(draftId, size='', qty=1){
+    const d = drafts[draftId]; if(!d) return;
+    const rowId = `${draftId}_${d.sizeCounter++}`;
+    const opts  = ['XS','S','M','L','XL','XXL','Free Size']
+      .map(s=>`<option${s===size?' selected':''}>${s}</option>`).join('');
+    document.getElementById(`dc_srows_${draftId}`)
+      .insertAdjacentHTML('beforeend',
+        `<div id="sr_${rowId}" style="display:flex;gap:8px;align-items:center;margin-bottom:7px">
+          <select onchange="onDraftSizeChange(${draftId})"
+            style="flex:1;padding:8px 10px;border:1.5px solid #d9cfc4;border-radius:6px;font-size:0.85rem;background:#fff;min-width:0">
+            <option value="">Pick size</option>${opts}
+          </select>
+          <input type="number" value="${qty}" min="1" max="20" onchange="checkAddUrlLock()"
+            style="width:62px;padding:8px 8px;border:1.5px solid #d9cfc4;border-radius:6px;font-size:0.85rem;text-align:center"/>
+          <button type="button" onclick="removeDraftSizeRow(${draftId},'${rowId}')"
+            style="background:none;border:none;color:#ccc;cursor:pointer;font-size:1rem;padding:2px 5px;border-radius:4px;flex-shrink:0"
+            onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ccc'">✕</button>
+        </div>`);
+    checkAddUrlLock();
+  }
+
+  function removeDraftSizeRow(draftId, rowId){
+    const container = document.getElementById(`dc_srows_${draftId}`);
+    if(container && container.children.length <= 1) return;
+    document.getElementById(`sr_${rowId}`)?.remove();
+    checkAddUrlLock();
+  }
+
+  function onDraftSizeChange(draftId){
+    if(getDraftSizeRows(draftId).some(r=>r.size))
+      document.getElementById(`dc_sremind_${draftId}`).style.display='none';
+    checkAddUrlLock();
+  }
+
+  function getDraftSizeRows(draftId){
+    const rows=[];
+    document.querySelectorAll(`#dc_srows_${draftId} > div`).forEach(row=>{
+      const size=row.querySelector('select').value;
+      const qty=Math.max(1,parseInt(row.querySelector('input').value)||1);
+      rows.push({size,qty});
     });
     return rows;
   }
 
-  function resetSizeRows(){
-    document.getElementById('sizeRowsContainer').innerHTML = '';
-    sizeRowCounter = 0;
+  function updateSaveAllBtn(){
+    const n = Object.keys(drafts).length;
+    const btn = document.getElementById('saveAllBtn');
+    if(btn) btn.textContent = n>1 ? `✓ Save ${n} items to Order List` : '✓ Save to Order List';
   }
-
-  function updateSizeVisibility(catVal){
-    const section = document.getElementById('sizeQtySection');
-    const isUnstitched = UNSTITCHED_CATS.has(catVal);
-    section.style.display = isUnstitched ? 'none' : '';
-    document.getElementById('sizeReminder').style.display = 'none';
-    if(!isUnstitched && catVal){
-      // Ensure at least one row exists
-      if(!document.getElementById('sizeRowsContainer').children.length) addSizeRow();
-    }
-  }
-
-  document.getElementById('det_category').addEventListener('change', function(){
-    updateSizeVisibility(this.value);
-  });
 
   // ── BRAND & CATEGORY AUTO-DETECTION FROM URL ─────────────────────────────
   const BRAND_MAP = {
@@ -975,7 +1288,7 @@
     'mariab.com':'Maria B','mariab.pk':'Maria B',
     'sanasafinaz.com':'Sana Safinaz',
     'nishatlinen.com':'Nishat Linen',
-    'ethnic.com':'Ethnic','ethnc.com':'Ethnic',
+    'pk.ethnc.com':'ETHNC','ethnc.com':'ETHNC',
     'asimjofa.com':'Asim Jofa',
     'baroque.com':'Baroque','baroque.com.pk':'Baroque',
     'elan.com':'Elan','elan.pk':'Elan',
@@ -1058,11 +1371,7 @@
     return '';
   }
 
-  // ── ITEM DETAIL PANEL ────────────────────────────────────────────────────
-  // ── URL ENTRIES (multi-URL queue) ────────────────────────────────────────
-  let urlEntries = [];   // [{id, url, brand}]
-  let urlEntryCounter = 0;
-
+  // ── URL INPUT HANDLERS ───────────────────────────────────────────────────
   function parseUrl(raw){
     let url = raw.trim();
     if(!url) return null;
@@ -1070,126 +1379,78 @@
     try{ new URL(url); return url; }catch(e){ return null; }
   }
 
-  function buildUrlEntryHTML(id, url, brand){
-    const isPk = /\.(pk|com\.pk)(\/|$)/.test(new URL(url).hostname + '/');
-    const badgeStyle = isPk
-      ? 'background:#e8f8ee;border:1px solid #a8dbb0;color:#1a5e2a'
-      : 'background:#fff8e7;border:1px solid #f0c040;color:#7a5000';
-    const badgeText = isPk ? '🟢 PKR' : '💵 Check $';
-    return `<div id="ue_${id}" style="display:flex;align-items:center;gap:8px;margin-bottom:6px;
-        background:#fff;border:1.5px solid #e0d5c8;border-radius:7px;padding:7px 10px">
-      <div style="flex:1;min-width:0">
-        <div style="font-size:0.7rem;color:#888;word-break:break-all;line-height:1.4">${esc(url)}</div>
-        <div style="margin-top:3px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-          ${brand ? `<span style="font-size:0.72rem;font-weight:700;background:#1a1a2e;color:#c9a96e;
-            border-radius:10px;padding:2px 8px">${esc(brand)}</span>` : ''}
-          <span style="font-size:0.68rem;font-weight:600;border-radius:10px;padding:2px 7px;${badgeStyle}">${badgeText}</span>
-        </div>
-      </div>
-      <button type="button" onclick="removeUrlEntry(${id})"
-        style="background:none;border:none;color:#ccc;cursor:pointer;font-size:1rem;
-               padding:2px 5px;border-radius:4px;flex-shrink:0"
-        onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#ccc'">✕</button>
-    </div>`;
-  }
-
-  function addUrlEntry(url){
-    const brand = detectBrand(url);
-    const id = urlEntryCounter++;
-    urlEntries.push({ id, url, brand });
-    document.getElementById('urlEntriesList')
-      .insertAdjacentHTML('beforeend', buildUrlEntryHTML(id, url, brand));
-    updateSaveButtonLabel();
-    return { brand };
-  }
-
-  function removeUrlEntry(id){
-    urlEntries = urlEntries.filter(e => e.id !== id);
-    document.getElementById('ue_' + id)?.remove();
-    updateSaveButtonLabel();
-    if(!urlEntries.length){
-      document.getElementById('detailPanel').classList.remove('active');
-    }
-  }
-
-  function resetUrlEntries(){
-    urlEntries = [];
-    document.getElementById('urlEntriesList').innerHTML = '';
-    updateSaveButtonLabel();
-  }
-
-  function updateSaveButtonLabel(){
-    const n = urlEntries.length;
-    const btn = document.getElementById('saveItemBtn');
-    if(btn) btn.textContent = n > 1 ? `✓ Save ${n} items to Order List` : '✓ Save to Order List';
-  }
-
-  function setCurrencyNoteForEntries(){
-    const currNote = document.getElementById('currencyNote');
-    if(!urlEntries.length){ currNote.style.display='none'; return; }
-    const allPk = urlEntries.every(e => /\.(pk|com\.pk)(\/|$)/.test(new URL(e.url).hostname + '/'));
-    const anyPk = urlEntries.some(e => /\.(pk|com\.pk)(\/|$)/.test(new URL(e.url).hostname + '/'));
-    currNote.style.display = '';
-    if(allPk){
-      setCurrency('PKR');
-      currNote.style.background='#f0faf3'; currNote.style.border='1px solid #a8dbb0'; currNote.style.color='#1a5e2a';
-      currNote.textContent = '✓ All .pk sites — price is in PKR. Use discounted price if a sale is on.';
-    } else if(anyPk){
-      currNote.style.background='#fff8e7'; currNote.style.border='1px solid #f0c040'; currNote.style.color='#5a4000';
-      currNote.textContent = '⚠️ Mixed sites — some show PKR, some may show USD. Enter price in PKR (use toggle to convert).';
-    } else {
-      currNote.style.background='#fff8e7'; currNote.style.border='1px solid #f0c040'; currNote.style.color='#5a4000';
-      currNote.textContent = '⚠️ .com sites — check if price shows in PKR or USD, then use the toggle. Use discounted price if sale is on.';
-    }
-  }
-
-  function processUrl(raw, isFirst){
-    const url = parseUrl(raw);
-    if(!url){ alert('That doesn\'t look like a valid URL:\n' + raw); return false; }
-    const { brand } = addUrlEntry(url);
-    // On first URL: auto-fill category + size hint
-    if(isFirst){
-      const cat = detectCategory(url);
-      const catSel = document.getElementById('det_category');
-      if(cat){ catSel.value = cat; updateSizeVisibility(cat); }
-      else { catSel.value = ''; updateSizeVisibility(''); }
-      if(cat && !UNSTITCHED_CATS.has(cat)){
-        const sz = detectSizeFromUrl(url);
-        if(sz && !document.getElementById('sizeRowsContainer').children.length) addSizeRow(sz);
-      }
-      document.getElementById('fetchStatus').textContent = brand
-        ? '✓ Brand: ' + brand + (detectCategory(url) ? ' · Category auto-filled' : '')
-        : 'Brand not recognised — check the brand badges above.';
-      document.getElementById('fetchStatus').className = 'fetch-status ' + (brand ? 'ok' : 'err');
-    } else {
-      document.getElementById('fetchStatus').textContent = urlEntries.length + ' URLs added.';
-      document.getElementById('fetchStatus').className = 'fetch-status ok';
-    }
-    return true;
-  }
-
   function handleAddUrl(){
     const raw = document.getElementById('urlInput').value.trim();
     if(!raw){ alert('Please paste a product URL first.'); return; }
-    const isFirst = urlEntries.length === 0;
-    if(!processUrl(raw, isFirst)) return;
-    setCurrencyNoteForEntries();
-    document.getElementById('detailPanel').classList.add('active');
+    const url = parseUrl(raw);
+    if(!url){ alert('That doesn\'t look like a valid URL:\n' + raw); return; }
+    document.getElementById('draftsContainer').style.display = '';
+    createDraft(url);
     document.getElementById('urlInput').value = '';
+    document.getElementById('globalFetchStatus').textContent = '';
+    document.getElementById('draftsContainer').scrollIntoView({ behavior:'smooth', block:'nearest' });
   }
 
   function addUrlToPanel(){
     const raw = document.getElementById('panelUrlInput').value.trim();
     if(!raw){ alert('Please paste a URL first.'); return; }
-    processUrl(raw, urlEntries.length === 0);
-    setCurrencyNoteForEntries();
+    const url = parseUrl(raw);
+    if(!url){ alert('That doesn\'t look like a valid URL:\n' + raw); return; }
+    createDraft(url);
     document.getElementById('panelUrlInput').value = '';
+    document.getElementById('globalFetchStatus').textContent = Object.keys(drafts).length + ' URLs ready.';
   }
 
-  // Enter key on both inputs
+  // Enter key on main input
   document.getElementById('urlInput').addEventListener('keydown', function(e){
     if(e.key === 'Enter'){ e.preventDefault(); handleAddUrl(); }
   });
+
+  // ── SAVE ALL DRAFTS → CART ───────────────────────────────────────────────
+  function saveAllDrafts(){
+    const usdRate = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
+    const ids = Object.keys(drafts).map(Number);
+    if(!ids.length){ alert('No items to save.'); return; }
+    let allValid = true;
+    ids.forEach(id => {
+      const cat = document.getElementById(`dc_cat_${id}`)?.value;
+      const priceRaw = parseFloat(document.getElementById(`dc_price_${id}`)?.value);
+      const isUnstitched = UNSTITCHED_CATS.has(cat);
+      if(!cat){ document.getElementById(`dc_cat_${id}`).style.borderColor='#c0392b'; allValid=false; }
+      else document.getElementById(`dc_cat_${id}`).style.borderColor='';
+      if(!priceRaw || priceRaw<=0){ document.getElementById(`dc_price_${id}`).style.borderColor='#c0392b'; allValid=false; }
+      else document.getElementById(`dc_price_${id}`).style.borderColor='';
+      if(!isUnstitched && cat){
+        const rows = getDraftSizeRows(id);
+        if(rows.some(r=>!r.size)){
+          document.getElementById(`dc_sremind_${id}`).style.display='';
+          document.querySelectorAll(`#dc_srows_${id} > div select`).forEach(sel=>{
+            sel.style.borderColor = sel.value ? '' : '#c0392b';
+          });
+          allValid=false;
+        }
+      }
+    });
+    if(!allValid){ alert('Please fill in all required fields (highlighted in red) for each item.'); return; }
+    ids.forEach(id => {
+      const el = document.getElementById(`dc_${id}`);
+      const url = el.dataset.url;
+      const brand = el.dataset.brand || 'Unknown Brand';
+      const cat = document.getElementById(`dc_cat_${id}`).value;
+      const priceRaw = parseFloat(document.getElementById(`dc_price_${id}`).value);
+      const cur = drafts[id].currency;
+      const pkr = cur==='USD' ? Math.round(priceRaw * usdRate) : priceRaw;
+      const isUnstitched = UNSTITCHED_CATS.has(cat);
+      const uQty = isUnstitched ? (Math.max(1, parseInt(document.getElementById(`dc_uqty_${id}`)?.value)||1)) : 1;
+      const sizes = isUnstitched ? [{size:'',qty:uQty}] : getDraftSizeRows(id);
+      cart.push({ url, brand, cat, sizes, pkr, weight: getWeight(cat) });
+    });
+    // Clear all drafts
+    ids.forEach(id => { document.getElementById(`dc_${id}`)?.remove(); delete drafts[id]; });
+    document.getElementById('draftsContainer').style.display = 'none';
+    document.getElementById('urlInput').value = '';
+    renderCart();
+  }
 
   // ── CART ─────────────────────────────────────────────────────────────────
   let cart = [];
@@ -1203,56 +1464,6 @@
     dupatta_only:'Dupatta / Stole', accessories:'Accessories',
   };
 
-  function saveItem(){
-    if(!urlEntries.length){ alert('Please add at least one URL.'); return; }
-
-    const cat        = document.getElementById('det_category').value;
-    const pkrRaw     = parseFloat(document.getElementById('det_pkr').value);
-    const isUnstitched = UNSTITCHED_CATS.has(cat);
-
-    if(!cat){ alert('Please select a category.'); return; }
-    if(!pkrRaw || pkrRaw <= 0){ alert('Please enter the price from the product page.'); return; }
-
-    let sizes;
-    if(isUnstitched){
-      sizes = [{ size: '', qty: 1 }];
-    } else {
-      sizes = getSizeRows();
-      const missing = sizes.some(r => !r.size);
-      if(missing){
-        document.getElementById('sizeReminder').style.display = '';
-        document.querySelectorAll('#sizeRowsContainer > div select').forEach(sel => {
-          sel.style.borderColor = sel.value ? '' : '#c0392b';
-        });
-        return;
-      }
-    }
-
-    const usdRate = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
-    const pkr = selectedCurrency === 'USD' ? Math.round(pkrRaw * usdRate) : pkrRaw;
-
-    // One cart item per URL entry
-    urlEntries.forEach(entry => {
-      cart.push({
-        url   : entry.url,
-        brand : entry.brand || 'Unknown Brand',
-        cat, sizes, pkr,
-        weight: getWeight(cat),
-      });
-    });
-
-    renderCart();
-    // Reset panel
-    document.getElementById('detailPanel').classList.remove('active');
-    document.getElementById('det_category').value = '';
-    document.getElementById('det_pkr').value      = '';
-    document.getElementById('fetchStatus').textContent = '';
-    document.getElementById('currencyNote').style.display = 'none';
-    resetSizeRows();
-    resetUrlEntries();
-    updateSizeVisibility('');
-  }
-
   function removeItem(idx){
     cart.splice(idx, 1);
     renderCart();
@@ -1260,29 +1471,30 @@
 
   function editItem(idx){
     const item = cart[idx];
-    // Restore URL entries list with just this item's URL
-    resetUrlEntries();
-    addUrlEntry(item.url);
-    // Category & price
-    document.getElementById('det_category').value = item.cat;
-    setCurrency('PKR');
-    document.getElementById('det_pkr').value = item.pkr;
-    updatePriceHint();
-    // Size rows
-    resetSizeRows();
-    updateSizeVisibility(item.cat);
-    if(!UNSTITCHED_CATS.has(item.cat)){
-      resetSizeRows();
-      (item.sizes || []).forEach(r => addSizeRow(r.size, r.qty));
-      if(!document.getElementById('sizeRowsContainer').children.length) addSizeRow();
-    }
-    setCurrencyNoteForEntries();
-    document.getElementById('fetchStatus').textContent = '✏️ Editing item #' + (idx+1) + ' — update details and save.';
-    document.getElementById('fetchStatus').className = 'fetch-status';
-    document.getElementById('detailPanel').classList.add('active');
     cart.splice(idx, 1);
     renderCart();
-    document.getElementById('detailPanel').scrollIntoView({ behavior:'smooth', block:'nearest' });
+    // Create a draft card from the old item
+    const isPk = /\.(pk|com\.pk)(\/|$)/.test(new URL(item.url).hostname + '/');
+    const id = draftIdCtr++;
+    drafts[id] = { currency: 'PKR', sizeCounter: 0 };
+    document.getElementById('draftsContainer').style.display = '';
+    document.getElementById('draftCards').insertAdjacentHTML('beforeend', buildDraftCard(id, item.url, item.brand, isPk));
+    // Fill in saved values
+    document.getElementById(`dc_cat_${id}`).value = item.cat;
+    onDraftCatChange(id);
+    document.getElementById(`dc_price_${id}`).value = item.pkr;
+    updateDraftPriceHint(id);
+    showDraftCurrencyNote(id, isPk);
+    if(UNSTITCHED_CATS.has(item.cat)){
+      // Restore unstitched qty
+      const uqtyEl = document.getElementById(`dc_uqty_${id}`);
+      if(uqtyEl && item.sizes?.[0]?.qty) uqtyEl.value = item.sizes[0].qty;
+    } else {
+      document.getElementById(`dc_srows_${id}`).innerHTML = '';
+      (item.sizes || [{size:'',qty:1}]).forEach(r => addDraftSizeRow(id, r.size, r.qty));
+    }
+    updateSaveAllBtn();
+    document.getElementById('draftsContainer').scrollIntoView({ behavior:'smooth', block:'nearest' });
   }
 
   function renderCart(){
@@ -1357,16 +1569,52 @@
   }
 
   // ── SUMMARY MODAL ─────────────────────────────────────────────────────────
-  function openSummary(){
-    if(!cart.length){ alert('Add at least one item to your order.'); return; }
+  // ── STEP NAVIGATION ──────────────────────────────────────────────────────
+  let currentStep = 1;
+
+  function goToStep(n){
+    [1,2,3,4].forEach(i => {
+      const sec = document.getElementById('step' + i);
+      const si  = document.getElementById('si_' + i);
+      if(sec) sec.classList.toggle('active', i === n);
+      if(si){
+        si.classList.remove('active','done');
+        if(i === n)    si.classList.add('active');
+        else if(i < n) si.classList.add('done');
+      }
+    });
+    currentStep = n;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextFromStep1(){
+    if(!cart.length){ alert('Please add at least one item to your order first.'); return; }
+    if(Object.keys(drafts).length){
+      alert('You have unsaved product cards. Click "Save to Order List" to save them, or remove them before continuing.');
+      return;
+    }
+    goToStep(2);
+  }
+
+  function nextFromStep2(){
     const name    = document.getElementById('buyerName').value.trim();
     const wa      = document.getElementById('buyerWA').value.trim();
     const address = document.getElementById('buyerAddress').value.trim();
     if(!name || !wa || !address){
-      alert('Please fill in your name, WhatsApp number, and delivery address.');
+      alert('Please fill in your Name, WhatsApp number, and Delivery Address.');
+      ['buyerName','buyerWA','buyerAddress'].forEach(id => {
+        const el = document.getElementById(id);
+        el.style.borderColor = el.value.trim() ? '' : '#c0392b';
+      });
       return;
     }
+    ['buyerName','buyerWA','buyerAddress'].forEach(id =>
+      document.getElementById(id).style.borderColor = '');
+    buildReviewSummary();
+    goToStep(3);
+  }
 
+  function buildReviewSummary(){
     const r = getRates();
     let totalPkr = 0, totalWeight = 0;
     let siHtml = '';
@@ -1374,7 +1622,6 @@
       const totalQty = (item.sizes || [{qty:1}]).reduce((s,r) => s + r.qty, 0);
       totalPkr    += item.pkr * totalQty;
       totalWeight += item.weight * totalQty;
-      const bdtEach = Math.round(item.pkr * r.CONV_RATE);
       const bdtTotal = Math.round(item.pkr * totalQty * r.CONV_RATE);
       const sizeSummary = (item.sizes || []).filter(r => r.size)
         .map(r => `${r.size}×${r.qty}`).join(', ') || '—';
@@ -1394,26 +1641,20 @@
       </div>`;
     });
     document.getElementById('summaryItems').innerHTML = siHtml;
-
     const logistics = Math.round(totalWeight * r.LOG_RATE);
     const totalBdt  = Math.round(totalPkr * r.CONV_RATE) + logistics + TRANS_FEE;
-    document.getElementById('sum-pkr').textContent      = 'PKR ' + totalPkr.toLocaleString();
+    document.getElementById('sum-pkr').textContent       = 'PKR ' + totalPkr.toLocaleString();
     document.getElementById('sum-logistics').textContent = '৳ ' + logistics.toLocaleString();
-    document.getElementById('sum-total').textContent    = '৳ ' + totalBdt.toLocaleString();
-
-    const email = document.getElementById('buyerEmail').value.trim();
-    const notes = document.getElementById('buyerNotes').value.trim();
+    document.getElementById('sum-total').textContent     = '৳ ' + totalBdt.toLocaleString();
+    const name    = document.getElementById('buyerName').value.trim();
+    const wa      = document.getElementById('buyerWA').value.trim();
+    const email   = document.getElementById('buyerEmail').value.trim();
+    const address = document.getElementById('buyerAddress').value.trim();
+    const notes   = document.getElementById('buyerNotes').value.trim();
     document.getElementById('customerSummary').innerHTML =
       `<strong>${esc(name)}</strong> · ${esc(wa)}` +
-      (email   ? ` · ${esc(email)}`   : '') + `<br>` +
-      `📍 ${esc(address)}` +
-      (notes   ? `<br>📝 ${esc(notes)}` : '');
-
-    document.getElementById('summaryOverlay').classList.add('active');
-  }
-
-  function closeSummary(){
-    document.getElementById('summaryOverlay').classList.remove('active');
+      (email ? ` · ${esc(email)}` : '') + `<br>📍 ${esc(address)}` +
+      (notes ? `<br>📝 ${esc(notes)}` : '');
   }
 
   // ── ORDER SUBMISSION ──────────────────────────────────────────────────────
@@ -1451,17 +1692,17 @@
       return parts.join(' | ');
     }).join('\n');
 
-    document.getElementById('hf_subject').value  = `New Order ${orderId} — ${name}`;
-    document.getElementById('hf_replyto').value  = email || wa;
-    document.getElementById('hf_order_id').value = orderId;
-    document.getElementById('hf_name').value     = name;
-    document.getElementById('hf_wa').value       = wa;
-    document.getElementById('hf_email').value    = email;
-    document.getElementById('hf_address').value  = address;
-    document.getElementById('hf_notes').value    = notes;
-    document.getElementById('hf_total').value    = '৳ ' + totalBdt.toLocaleString();
-    document.getElementById('hf_count').value    = cart.length;
-    document.getElementById('hf_items').value    = itemsText;
+    document.getElementById('hf_subject').value    = `New Order ${orderId} — ${name}`;
+    document.getElementById('hf_replyto').value    = email || wa;
+    document.getElementById('hf_order_id').value   = orderId;
+    document.getElementById('hf_name').value       = name;
+    document.getElementById('hf_wa').value         = wa;
+    document.getElementById('hf_email').value      = email;
+    document.getElementById('hf_address').value    = address;
+    document.getElementById('hf_notes').value      = notes;
+    document.getElementById('hf_total').value      = '৳ ' + totalBdt.toLocaleString();
+    document.getElementById('hf_count').value      = cart.length;
+    document.getElementById('hf_items').value      = itemsText;
     document.getElementById('hf_cart_links').value = cart.map(i => i.url).join('\n');
 
     const form = document.getElementById('hiddenForm');
@@ -1474,35 +1715,48 @@
         document.getElementById('orderRef').textContent = orderId;
         document.getElementById('trackOrderLink').href =
           `tracking.html?order=${orderId}&name=${encodeURIComponent(name)}`;
-        closeSummary();
-        document.getElementById('mainContainer').style.display = 'none';
-        document.getElementById('successScreen').style.display = 'block';
+        goToStep(4);
       } else {
         alert('Submission failed. Please try again or contact us on WhatsApp.');
         btn.disabled = false;
-        btn.textContent = 'Confirm & Submit Order';
+        btn.textContent = '✓ Confirm & Submit Order';
       }
     }).catch(() => {
       alert('Network error. Please check your connection and try again.');
       btn.disabled = false;
-      btn.textContent = 'Confirm & Submit Order';
+      btn.textContent = '✓ Confirm & Submit Order';
     });
   }
 
   function resetForm(){
     cart = [];
-    renderCart();
+    drafts = {};
+    draftIdCtr = 0;
+    document.getElementById('draftCards').innerHTML = '';
+    document.getElementById('draftsContainer').style.display = 'none';
     document.getElementById('buyerNotes').value = '';
-    document.getElementById('mainContainer').style.display = '';
-    document.getElementById('successScreen').style.display = 'none';
+    document.getElementById('confirmSubmitBtn').disabled = false;
+    document.getElementById('confirmSubmitBtn').textContent = '✓ Confirm & Submit Order';
+    renderCart();
+    goToStep(1);
   }
 
   // ── UTILITIES ─────────────────────────────────────────────────────────────
   function toggleBrands(btn){
     const extra = document.getElementById('extraBrands');
-    const shown = extra.style.display !== 'none';
-    extra.style.display = shown ? 'none' : '';
-    btn.textContent = shown ? '+ Show all brands' : '− Show fewer brands';
+    const shown = extra.style.display === 'none' ? false : true;
+    // Initial state is inline display:none, so toggle correctly:
+    const isHidden = extra.style.display === 'none' || extra.style.display === '';
+    if(extra.style.display === 'none'){
+      extra.style.display = 'flex';
+      extra.style.flexWrap = 'wrap';
+      extra.style.gap = '8px';
+      extra.style.width = '100%';
+      btn.textContent = '− Show fewer brands';
+    } else {
+      extra.style.display = 'none';
+      btn.textContent = '+ Show all brands';
+    }
   }
 
   function copyNum(num, btn){

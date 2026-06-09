@@ -295,7 +295,7 @@
     <a class="brand-chip" href="https://mariab.com" target="_blank">Maria B <span>↗</span></a>
     <a class="brand-chip" href="https://www.sanasafinaz.com" target="_blank">Sana Safinaz <span>↗</span></a>
     <a class="brand-chip" href="https://nishatlinen.com" target="_blank">Nishat Linen <span>↗</span></a>
-    <a class="brand-chip" href="https://ethnic.com" target="_blank">Ethnic <span>↗</span></a>
+    <a class="brand-chip" href="https://pk.ethnc.com" target="_blank">ETHNC <span>↗</span></a>
     <a class="brand-chip" href="https://asimjofa.com" target="_blank">Asim Jofa <span>↗</span></a>
 
     <div id="extraBrands" style="display:none">
@@ -867,20 +867,21 @@
   // ── AUTO-FETCH ENGINE (Shopify JSON API) ─────────────────────────────────
   // Maps Shopify product_type strings → our category keys
   const PT_CAT = [
-    [/unstitch/i,                                          'lawn_3pc_unstitch'],
-    [/bridal|velvet/i,                                     'bridal'],
-    [/heavy[\s-]?formal|organza|heavy[\s-]?embroi/i,      'heavy_formal_3pc'],
-    [/formal|chiffon|net[\s-]?embroi/i,                   'formal_emb_3pc'],
-    [/winter|khaddar|karandi/i,                            'winter_3pc'],
-    [/linen/i,                                             'winter_2pc'],
-    [/dupatta|stole|scarf/i,                               'dupatta_only'],
-    [/bag|purse|clutch|jewel|accessories/i,                'accessories'],
-    [/shalwar[\s-]?kameez|rtw|ready[\s-]?to[\s-]?wear/i,  'pret_3pc'],
-    [/pret|stitched/i,                                     'pret_3pc'],
-    [/3[\s-]?pc|3[\s-]?piece|suit/i,                      'pret_3pc'],
-    [/shirt[\s-]?trouser|co[\s-]?ord/i,                   'shirt_trouser_2pc'],
-    [/2[\s-]?pc|2[\s-]?piece|shirt[\s-]?dupatta/i,        'shirt_dupatta_2pc'],
-    [/kurti|kurta|shirt|top/i,                             'kurti_1pc'],
+    [/unstitch/i,                                              'lawn_3pc_unstitch'],
+    [/bridal|velvet/i,                                         'bridal'],
+    [/heavy[\s-]?formal|organza|heavy[\s-]?embroi/i,          'heavy_formal_3pc'],
+    [/formal|chiffon|net[\s-]?embroi/i,                       'formal_emb_3pc'],
+    [/winter|khaddar|karandi/i,                                'winter_3pc'],
+    [/linen/i,                                                 'winter_2pc'],
+    [/dupatta|stole|scarf/i,                                   'dupatta_only'],
+    [/bag|purse|clutch|jewel|accessories/i,                    'accessories'],
+    [/shalwar[\s-]?kameez|rtw|ready[\s-]?to[\s-]?wear/i,      'pret_3pc'],
+    [/pret|stitched|fusion/i,                                  'pret_3pc'],     // afrozeh "Pret", sbs "Fusion"
+    [/3[\s-]?pc|3[\s-]?piece|suit/i,                          'pret_3pc'],
+    [/2[\s-]?pc[\s|]stitch|2[\s-]?pc[\s|]rtw/i,               'shirt_dupatta_2pc'],
+    [/shirt[\s-]?trouser|co[\s-]?ord/i,                       'shirt_trouser_2pc'],
+    [/2[\s-]?pc|2[\s-]?piece|shirt[\s-]?dupatta/i,            'shirt_dupatta_2pc'],
+    [/kurti|kurta|shirt|top/i,                                 'kurti_1pc'],
   ];
   function mapPtToCat(pt){ const s=(pt||'').toLowerCase(); for(const[re,c] of PT_CAT){ if(re.test(s)) return c; } return ''; }
 
@@ -930,7 +931,14 @@
 
       // ── FIND SIZE OPTION ──────────────────────────────────────────────────
       const opts = product.options || [];
-      const sizeIdx = opts.findIndex(o => /size/i.test(o.name));  // 0-based
+      // Primary: option named "size". Fallback: any option whose values look like sizes
+      let sizeIdx = opts.findIndex(o => /size/i.test(o.name));
+      if(sizeIdx === -1){
+        // Fallback: find option where majority of values are recognisable sizes
+        sizeIdx = opts.findIndex(o =>
+          o.values.filter(v => normSizeFull(v)).length > o.values.length / 2
+        );
+      }
       const sizeKey = ['option1','option2','option3'][sizeIdx] || null;
 
       // ── FIND TYPE OPTION (stitched/unstitched brands like Nureh, Alizeh) ─
@@ -1052,6 +1060,17 @@
         <div id="dc_sz_msg_${id}" style="font-size:0.78rem;color:#bbb;padding:4px 0">
           ← Select a category first
         </div>
+        <!-- Unstitched qty (shown instead of size rows for unstitched/accessories) -->
+        <div id="dc_uqty_wrap_${id}" style="display:none;margin-top:4px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <label style="font-size:0.8rem;color:#555;font-weight:600">Quantity</label>
+            <input type="number" id="dc_uqty_${id}" value="1" min="1" max="20"
+              onchange="checkAddUrlLock()"
+              style="width:68px;padding:7px 8px;border:1.5px solid #d9cfc4;border-radius:6px;
+                     font-size:0.9rem;text-align:center;font-weight:700"/>
+            <span style="font-size:0.78rem;color:#888">piece(s)</span>
+          </div>
+        </div>
         <div id="dc_srows_${id}"></div>
         <div id="dc_sremind_${id}" style="display:none;margin-top:5px;font-size:0.72rem;font-weight:700;
           color:#c0392b;background:#fff0f0;border:1px solid #f5c6c6;border-radius:5px;padding:4px 8px">
@@ -1105,6 +1124,10 @@
     const note    = document.getElementById(`dc_sz_note_${id}`);
     document.getElementById(`dc_sremind_${id}`).style.display = 'none';
 
+    // Always hide qty wrap first; re-show only for unstitched
+    const uqtyWrap0 = document.getElementById(`dc_uqty_wrap_${id}`);
+    if(uqtyWrap0) uqtyWrap0.style.display = 'none';
+
     if(!cat){
       msg.style.display    = '';
       msg.textContent      = '← Select a category first';
@@ -1112,11 +1135,13 @@
       addBtn.style.display = 'none';
     } else if(UNSTITCHED_CATS.has(cat)){
       msg.style.display    = '';
-      msg.textContent      = '✓ No size selection needed for unstitched / accessories items';
+      msg.textContent      = '✓ No size needed — enter how many pieces you want:';
       msg.style.color      = '#2a7a32';
       addBtn.style.display = 'none';
-      rowsEl.innerHTML     = '';  // clear any leftover rows
+      rowsEl.innerHTML     = '';  // clear any leftover size rows
       if(note) note.style.display = 'none';
+      const uqtyWrap = document.getElementById(`dc_uqty_wrap_${id}`);
+      if(uqtyWrap) uqtyWrap.style.display = '';
     } else {
       msg.style.display    = 'none';
       addBtn.style.display = '';
@@ -1263,7 +1288,7 @@
     'mariab.com':'Maria B','mariab.pk':'Maria B',
     'sanasafinaz.com':'Sana Safinaz',
     'nishatlinen.com':'Nishat Linen',
-    'ethnic.com':'Ethnic','ethnc.com':'Ethnic',
+    'pk.ethnc.com':'ETHNC','ethnc.com':'ETHNC',
     'asimjofa.com':'Asim Jofa',
     'baroque.com':'Baroque','baroque.com.pk':'Baroque',
     'elan.com':'Elan','elan.pk':'Elan',
@@ -1416,7 +1441,8 @@
       const cur = drafts[id].currency;
       const pkr = cur==='USD' ? Math.round(priceRaw * usdRate) : priceRaw;
       const isUnstitched = UNSTITCHED_CATS.has(cat);
-      const sizes = isUnstitched ? [{size:'',qty:1}] : getDraftSizeRows(id);
+      const uQty = isUnstitched ? (Math.max(1, parseInt(document.getElementById(`dc_uqty_${id}`)?.value)||1)) : 1;
+      const sizes = isUnstitched ? [{size:'',qty:uQty}] : getDraftSizeRows(id);
       cart.push({ url, brand, cat, sizes, pkr, weight: getWeight(cat) });
     });
     // Clear all drafts
@@ -1459,7 +1485,11 @@
     document.getElementById(`dc_price_${id}`).value = item.pkr;
     updateDraftPriceHint(id);
     showDraftCurrencyNote(id, isPk);
-    if(!UNSTITCHED_CATS.has(item.cat)){
+    if(UNSTITCHED_CATS.has(item.cat)){
+      // Restore unstitched qty
+      const uqtyEl = document.getElementById(`dc_uqty_${id}`);
+      if(uqtyEl && item.sizes?.[0]?.qty) uqtyEl.value = item.sizes[0].qty;
+    } else {
       document.getElementById(`dc_srows_${id}`).innerHTML = '';
       (item.sizes || [{size:'',qty:1}]).forEach(r => addDraftSizeRow(id, r.size, r.qty));
     }
