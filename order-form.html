@@ -421,7 +421,7 @@
     </div>
     <div class="row-2">
       <div class="field">
-        <label>Email <span style="color:#aaa;font-weight:400">(optional)</span></label>
+        <label>Email * <span style="color:#aaa;font-weight:400;font-size:0.75rem">(for order confirmation)</span></label>
         <input type="email" id="buyerEmail" placeholder="your@email.com"/>
       </div>
       <div class="field">
@@ -777,6 +777,7 @@
     document.getElementById('savedIndicator').style.display = 'none';
   }
   loadSavedDetails();
+  loadCartFromStorage();
 
   // Show admin panel — via ?admin URL OR Ctrl+Shift+A keyboard shortcut
   function openAdminPanel(){
@@ -1616,6 +1617,24 @@
   // ── CART ─────────────────────────────────────────────────────────────────
   let cart = [];
 
+  // Persist cart to localStorage so a refresh doesn't wipe the basket
+  function saveCartToStorage(){ try{ localStorage.setItem('psb_cart', JSON.stringify(cart)); }catch(e){} }
+  function loadCartFromStorage(){
+    try{
+      const saved = JSON.parse(localStorage.getItem('psb_cart') || '[]');
+      if(Array.isArray(saved) && saved.length){ cart = saved; renderCart(); }
+    }catch(e){}
+  }
+  function clearCartStorage(){ try{ localStorage.removeItem('psb_cart'); }catch(e){} }
+
+  // Warn before leaving / refreshing if basket has items
+  window.addEventListener('beforeunload', function(e){
+    if(cart.length || Object.keys(drafts).length){
+      e.preventDefault();
+      e.returnValue = '';  // triggers browser's generic "Leave site?" dialog
+    }
+  });
+
   const CAT_LABELS = {
     kurti_1pc:'Kurti / 1pc', shirt_dupatta_2pc:'2pc Shirt+Dupatta',
     shirt_trouser_2pc:'2pc Co-ord', lawn_3pc_unstitch:'3pc Unstitched',
@@ -1741,6 +1760,7 @@
     document.getElementById('rt-logistics').textContent = '৳ ' + logistics.toLocaleString();
     document.getElementById('rt-total').textContent = '৳ ' + totalBdt.toLocaleString();
     rtBox.style.display = '';
+    saveCartToStorage();
   }
 
   function esc(s){
@@ -1778,17 +1798,23 @@
   function nextFromStep2(){
     const name    = document.getElementById('buyerName').value.trim();
     const wa      = document.getElementById('buyerWA').value.trim();
+    const email   = document.getElementById('buyerEmail').value.trim();
     const address = document.getElementById('buyerAddress').value.trim();
-    if(!name || !wa || !address){
-      alert('Please fill in your Name, WhatsApp number, and Delivery Address.');
-      ['buyerName','buyerWA','buyerAddress'].forEach(id => {
-        const el = document.getElementById(id);
-        el.style.borderColor = el.value.trim() ? '' : '#c0392b';
-      });
+    const emailOk = !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    let valid = true;
+    if(!name){   document.getElementById('buyerName').style.borderColor='#c0392b';    valid=false; }
+    else         document.getElementById('buyerName').style.borderColor='';
+    if(!wa){     document.getElementById('buyerWA').style.borderColor='#c0392b';      valid=false; }
+    else         document.getElementById('buyerWA').style.borderColor='';
+    if(!email){  document.getElementById('buyerEmail').style.borderColor='#c0392b';   valid=false; }
+    else if(!emailOk){ document.getElementById('buyerEmail').style.borderColor='#c0392b'; valid=false; }
+    else         document.getElementById('buyerEmail').style.borderColor='';
+    if(!address){ document.getElementById('buyerAddress').style.borderColor='#c0392b'; valid=false; }
+    else          document.getElementById('buyerAddress').style.borderColor='';
+    if(!valid){
+      alert('Please fill in all required fields.\nEmail is required for order confirmation.');
       return;
     }
-    ['buyerName','buyerWA','buyerAddress'].forEach(id =>
-      document.getElementById(id).style.borderColor = '');
     buildReviewSummary();
     goToStep(3);
   }
@@ -1894,6 +1920,7 @@
         document.getElementById('orderRef').textContent = orderId;
         document.getElementById('trackOrderLink').href =
           `tracking.html?order=${orderId}&name=${encodeURIComponent(name)}`;
+        clearCartStorage();
         goToStep(4);
       } else {
         alert('Submission failed. Please try again or contact us on WhatsApp.');
@@ -1909,6 +1936,7 @@
 
   function resetForm(){
     cart = [];
+    clearCartStorage();
     drafts = {};
     draftIdCtr = 0;
     document.getElementById('draftCards').innerHTML = '';
