@@ -644,9 +644,51 @@
 
   </div><!-- end payment grid -->
 
+  <!-- ═══ PAYMENT CONFIRMATION — upload slip / message, saved to the order ═══ -->
+  <div id="payConfirmBox" style="background:#fff;border:2px solid #c9a96e;border-radius:14px;padding:18px 16px;margin-bottom:18px">
+    <div style="text-align:center;font-weight:700;color:#12122a;font-size:1.02rem">✅ Already Paid? Confirm Your Payment</div>
+    <div style="text-align:center;font-size:0.78rem;color:#666;margin:5px 0 14px">
+      Attach your payment slip or paste your transaction details — we'll save it against Order
+      <span id="payConfirmOrderId" style="font-weight:700;color:#c9a96e">—</span>
+    </div>
+
+    <!-- Tabs -->
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button type="button" id="payTabReceiptBtn" onclick="switchPayTab('receipt')"
+        style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:#12122a;color:#c9a96e">📷 Upload Receipt</button>
+      <button type="button" id="payTabMsgBtn" onclick="switchPayTab('msg')"
+        style="flex:1;padding:9px;border:none;border-radius:8px;font-size:0.82rem;font-weight:700;cursor:pointer;background:#eee;color:#777">💬 Payment Message</button>
+    </div>
+
+    <!-- Receipt tab -->
+    <div id="payTabReceipt">
+      <label for="payReceiptFile" style="display:block;text-align:center;border:2px dashed #c9a96e;border-radius:10px;padding:18px 10px;cursor:pointer;background:#fffdf8">
+        <div style="font-size:1.6rem">🧾</div>
+        <div style="font-size:0.84rem;font-weight:700;color:#12122a;margin-top:4px">Tap to choose your payment screenshot</div>
+        <div style="font-size:0.72rem;color:#999;margin-top:2px">bKash / Nagad / bank slip — JPG or PNG</div>
+      </label>
+      <input type="file" id="payReceiptFile" accept="image/*" onchange="previewReceipt()" style="display:none"/>
+      <div id="payReceiptPreview" style="display:none;margin-top:10px;text-align:center">
+        <img id="payReceiptImg" style="max-width:100%;max-height:220px;border-radius:8px;border:1px solid #e0d5c8"/>
+        <div id="payReceiptName" style="font-size:0.72rem;color:#666;margin-top:5px"></div>
+      </div>
+    </div>
+
+    <!-- Message tab -->
+    <div id="payTabMsg" style="display:none">
+      <textarea id="payMessage" rows="4" placeholder="e.g. bKash TrxID 8N7X2K9P — sent ৳5,000 from 01XXXXXXXXX on 10 Jun"
+        style="width:100%;border:1.5px solid #d9cfc4;border-radius:8px;padding:10px 12px;font-size:0.88rem;font-family:inherit;resize:vertical"></textarea>
+    </div>
+
+    <button type="button" onclick="submitPaymentConfirmation()" id="payConfirmBtn"
+      style="width:100%;margin-top:14px;background:#c9a96e;border:none;color:#12122a;padding:13px;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:opacity 0.15s"
+      onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">✅ Confirm Payment</button>
+    <div id="payConfirmStatus" style="display:none;margin-top:10px;font-size:0.82rem;text-align:center;padding:9px;border-radius:8px"></div>
+  </div>
+
   <!-- Footer row -->
   <div style="text-align:center;padding:14px;background:#f5f0ea;border-radius:10px;margin-bottom:16px">
-    <div style="font-size:0.82rem;color:#444;font-weight:600">After payment, send your <strong>Transaction ID</strong> on WhatsApp to confirm your order.</div>
+    <div style="font-size:0.82rem;color:#444;font-weight:600">Submit your payment slip above — it's saved directly to your order, no need to message separately.</div>
     <div style="font-size:0.76rem;color:#666;margin-top:4px">Save your Order ID above to track your order status anytime.</div>
   </div>
 
@@ -1977,6 +2019,8 @@
       // recorded even if the email service hiccups — so treat as success.
       if(ok || SHEET_SCRIPT_URL){
         document.getElementById('orderRef').textContent = orderId;
+        document.getElementById('payConfirmOrderId').textContent = orderId;
+        resetPaymentConfirm();
         document.getElementById('trackOrderLink').href =
           `tracking.html?id=${orderId}&name=${encodeURIComponent(name)}`;
         clearCartStorage();
@@ -1990,6 +2034,8 @@
       if(SHEET_SCRIPT_URL){
         // Email service errored but the sheet endpoint likely recorded it.
         document.getElementById('orderRef').textContent = orderId;
+        document.getElementById('payConfirmOrderId').textContent = orderId;
+        resetPaymentConfirm();
         document.getElementById('trackOrderLink').href =
           `tracking.html?id=${orderId}&name=${encodeURIComponent(name)}`;
         clearCartStorage();
@@ -2000,6 +2046,110 @@
         btn.textContent = '✓ Confirm & Submit Order';
       }
     });
+  }
+
+  // ── PAYMENT CONFIRMATION (slip upload / message → saved to the order) ──────
+  function switchPayTab(which){
+    const onReceipt = which === 'receipt';
+    document.getElementById('payTabReceipt').style.display = onReceipt ? '' : 'none';
+    document.getElementById('payTabMsg').style.display     = onReceipt ? 'none' : '';
+    const rBtn = document.getElementById('payTabReceiptBtn');
+    const mBtn = document.getElementById('payTabMsgBtn');
+    rBtn.style.background = onReceipt ? '#12122a' : '#eee';
+    rBtn.style.color      = onReceipt ? '#c9a96e' : '#777';
+    mBtn.style.background = onReceipt ? '#eee' : '#12122a';
+    mBtn.style.color      = onReceipt ? '#777' : '#c9a96e';
+  }
+
+  function previewReceipt(){
+    const f = document.getElementById('payReceiptFile').files[0];
+    const box = document.getElementById('payReceiptPreview');
+    if(!f){ box.style.display='none'; return; }
+    document.getElementById('payReceiptImg').src = URL.createObjectURL(f);
+    document.getElementById('payReceiptName').textContent = f.name + ' (' + Math.round(f.size/1024) + ' KB)';
+    box.style.display = '';
+  }
+
+  // Compress + resize an image file → base64 (keeps uploads small & reliable)
+  function compressImage(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = e => {
+        const img = new Image();
+        img.onerror = reject;
+        img.onload = () => {
+          const maxW = 1280;
+          const scale = Math.min(1, maxW / img.width);
+          const c = document.createElement('canvas');
+          c.width  = Math.round(img.width  * scale);
+          c.height = Math.round(img.height * scale);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          const dataUrl = c.toDataURL('image/jpeg', 0.72);
+          resolve({ base64: dataUrl.split(',')[1], type: 'image/jpeg' });
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function resetPaymentConfirm(){
+    const f = document.getElementById('payReceiptFile'); if(f) f.value = '';
+    const m = document.getElementById('payMessage');     if(m) m.value = '';
+    const p = document.getElementById('payReceiptPreview'); if(p) p.style.display = 'none';
+    const s = document.getElementById('payConfirmStatus'); if(s) s.style.display = 'none';
+    const b = document.getElementById('payConfirmBtn');
+    if(b){ b.disabled = false; b.textContent = '✅ Confirm Payment'; }
+    switchPayTab('receipt');
+  }
+
+  async function submitPaymentConfirmation(){
+    const orderId = document.getElementById('orderRef').textContent.trim();
+    const file    = document.getElementById('payReceiptFile').files[0];
+    const msg     = document.getElementById('payMessage').value.trim();
+    const status  = document.getElementById('payConfirmStatus');
+    const btn     = document.getElementById('payConfirmBtn');
+
+    function showStatus(text, ok){
+      status.style.display = '';
+      status.textContent = text;
+      status.style.background = ok ? '#e8f5e9' : '#fdecea';
+      status.style.color      = ok ? '#1b5e20' : '#b71c1c';
+    }
+
+    if(!file && !msg){
+      showStatus('Please attach your payment slip or type your transaction details first.', false);
+      return;
+    }
+    if(!SHEET_SCRIPT_URL){
+      showStatus('Payment uploads aren’t configured yet. Please send your slip on WhatsApp for now.', false);
+      return;
+    }
+
+    btn.disabled = true; btn.textContent = 'Submitting…';
+    showStatus('Uploading your payment confirmation…', true);
+
+    try{
+      const payload = { type:'payment', order_id: orderId, payment_message: msg };
+      if(file){
+        const { base64, type } = await compressImage(file);
+        payload.receipt_base64 = base64;
+        payload.receipt_type   = type;
+      }
+      // no-cors text/plain = simple request that reaches Apps Script reliably
+      await fetch(SHEET_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      showStatus('✅ Payment confirmation received! We’ll verify and update your order shortly.', true);
+      btn.textContent = '✓ Submitted';
+    }catch(err){
+      showStatus('Upload failed — please check your connection and try again.', false);
+      btn.disabled = false; btn.textContent = '✅ Confirm Payment';
+    }
   }
 
   function resetForm(){
