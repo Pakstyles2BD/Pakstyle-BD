@@ -1082,14 +1082,22 @@
       }
 
       // ── SIZES — show as clickable chips (in-stock sizes only) ────────────
-      if(!allSoldOut && sizeKey && activeCat && !UNSTITCHED_CATS.has(activeCat)){
-        const seen = new Set();
-        const sizesToAdd = [];
+      const seen = new Set();
+      const sizesToAdd = [];
+      if(sizeKey){
         avail.forEach(v => {
           const norm = normSizeFull(v[sizeKey]);
           if(norm && !seen.has(norm)){ seen.add(norm); sizesToAdd.push(norm); }
         });
-        if(sizesToAdd.length){
+      }
+      if(!allSoldOut && sizesToAdd.length){
+        // The product sells in garment sizes ⇒ it's stitched/RTW, even if the
+        // URL said "lawn" and the category auto-detected as unstitched.
+        if(catEl && UNSTITCHED_CATS.has(catEl.value)){
+          catEl.value = 'pret_3pc';
+          onDraftCatChange(id);
+        }
+        {
           showSizeChips(id, sizesToAdd);
           // No size in the pasted link → warn: a highlighted size on the brand
           // page does NOT mean it was selected; customer must tap one here.
