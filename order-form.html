@@ -1757,12 +1757,18 @@
   function detectSizeFromUrl(url){
     try{
       const params = new URL(url).searchParams;
-      for(const key of ['size','Size','SIZE','s','variant','option']){
+      // Only an EXPLICIT size param counts. (Do NOT treat ?s=, ?variant=, ?option=
+      // as sizes — variant is a numeric Shopify ID, and a bare "s" in a handle
+      // like "s26b4569" must not be read as size "S".)
+      for(const key of ['size','Size','SIZE']){
         const v = params.get(key);
-        if(v) return normSize(v);
+        if(v){ const n = normSize(v); if(n) return n; }
       }
-      const m = url.match(/[?&/](xs|s|m|l|xl|xxl|free.?size)[&/\-_]?/i);
-      if(m) return normSize(m[1]);
+      // Path-encoded size, but only when clearly delimited as a size token,
+      // e.g. ".../size-xl" or ".../-m-" — never the first letter of a slug.
+      const m = url.match(/[?&]size=([^&]+)/i)
+             || url.match(/[/_-]size[-_]?(xs|s|m|l|xl|xxl|xxxl)\b/i);
+      if(m) return normSize(decodeURIComponent(m[1]));
     }catch(e){}
     return '';
   }
