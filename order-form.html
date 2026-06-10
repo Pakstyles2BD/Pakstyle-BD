@@ -863,6 +863,13 @@
     bridal            : 2.00,
     dupatta_only      : 0.22,
     accessories       : 0.24,
+    // ── Men ──
+    mens_kurta        : 0.45,
+    mens_shalwar_kameez: 0.72,
+    mens_waistcoat    : 0.40,
+    mens_suit         : 1.15,
+    mens_sherwani     : 1.45,
+    mens_unstitched   : 0.80,
   };
 
   const WEIGHT_LABELS = {
@@ -879,6 +886,12 @@
     bridal            : 'Bridal / Velvet / Full Embroidery',
     dupatta_only      : 'Dupatta / Stole only',
     accessories       : 'Accessories / Jewellery',
+    mens_kurta        : "Men's Kurta / Kameez (1pc)",
+    mens_shalwar_kameez: "Men's Shalwar Kameez (2pc)",
+    mens_waistcoat    : "Men's Waistcoat",
+    mens_suit         : "Men's Suit / Pant-Coat (2pc)",
+    mens_sherwani     : "Men's Sherwani / Prince Coat",
+    mens_unstitched   : "Men's Unstitched Fabric",
   };
 
   function getWeight(key){
@@ -924,7 +937,8 @@
   }
 
   // ── UNSTITCHED categories: no size field required ────────────────────────
-  const UNSTITCHED_CATS = new Set(['lawn_3pc_unstitch', 'dupatta_only', 'accessories']);
+  const UNSTITCHED_CATS = new Set(['lawn_3pc_unstitch', 'dupatta_only', 'accessories', 'mens_unstitched']);
+  const MENS_CATS = new Set(['mens_kurta','mens_shalwar_kameez','mens_waistcoat','mens_suit','mens_sherwani','mens_unstitched']);
 
   // ── DRAFT CARD SYSTEM — each URL gets its own card ───────────────────────
   let drafts      = {};  // id → {currency, sizeCounter}
@@ -932,22 +946,30 @@
 
   const CAT_OPTIONS = `
     <option value="">Select category</option>
-    <optgroup label="☀️ Lawn / Summer / Everyday">
+    <optgroup label="👗 WOMEN — Lawn / Summer / Everyday">
       <option value="kurti_1pc">Kurti / Shirt – 1pc only</option>
       <option value="shirt_dupatta_2pc">2-Piece – Shirt + Dupatta</option>
       <option value="shirt_trouser_2pc">2-Piece Co-ord – Shirt + Trouser</option>
       <option value="lawn_3pc_unstitch">3-Piece Unstitched</option>
       <option value="pret_3pc">3-Piece Pret / Stitched</option>
     </optgroup>
-    <optgroup label="❄️ Winter">
+    <optgroup label="👗 WOMEN — Winter">
       <option value="winter_2pc">Winter 2-Piece (karandi/khaddar/linen)</option>
       <option value="winter_3pc">Winter 3-Piece (karandi/khaddar)</option>
     </optgroup>
-    <optgroup label="✨ Formal / Designer">
+    <optgroup label="👗 WOMEN — Formal / Designer">
       <option value="formal_emb_2pc">Formal Embroidered 2-Piece</option>
       <option value="formal_emb_3pc">Formal Embroidered 3-Piece</option>
       <option value="heavy_formal_3pc">Heavy Formal 3-Piece (organza/silk)</option>
       <option value="bridal">Bridal / Velvet / Full Embroidery</option>
+    </optgroup>
+    <optgroup label="👔 MEN">
+      <option value="mens_kurta">Men's Kurta / Kameez (1pc)</option>
+      <option value="mens_shalwar_kameez">Men's Shalwar Kameez (2pc)</option>
+      <option value="mens_waistcoat">Men's Waistcoat</option>
+      <option value="mens_suit">Men's Suit / Pant-Coat / Blazer (2pc)</option>
+      <option value="mens_sherwani">Men's Sherwani / Prince Coat</option>
+      <option value="mens_unstitched">Men's Unstitched Fabric</option>
     </optgroup>
     <optgroup label="➕ Separates">
       <option value="dupatta_only">Dupatta / Stole / Scarf only</option>
@@ -974,6 +996,39 @@
     [/kurti|kurta|shirt|top/i,                                 'kurti_1pc'],
   ];
   function mapPtToCat(pt){ const s=(pt||'').toLowerCase(); for(const[re,c] of PT_CAT){ if(re.test(s)) return c; } return ''; }
+
+  // Men's product_type / title → men's category
+  const PT_CAT_MEN = [
+    [/sherwani|prince[\s-]?coat/i,                              'mens_sherwani'],
+    [/waist[\s-]?coat|nehru[\s-]?jacket/i,                      'mens_waistcoat'],
+    [/unstitch|fabric|suiting|wash[\s-]?n?[\s-]?wear|gabardine/i,'mens_unstitched'],
+    [/pant[\s-]?coat|coat[\s-]?pant|blazer|2[\s-]?pc[\s-]?suit|formal[\s-]?suit|tuxedo|3[\s-]?pc[\s-]?suit/i,'mens_suit'],
+    [/shalwar[\s-]?kameez|kameez[\s-]?shalwar|shalwar[\s-]?suit|kurta[\s-]?shalwar|kurta[\s-]?pajama/i,'mens_shalwar_kameez'],
+    [/kurta|kameez|shirt|polo|t[\s-]?shirt/i,                   'mens_kurta'],
+    [/suit/i,                                                   'mens_shalwar_kameez'], // generic "suit" on a menswear page = shalwar suit
+  ];
+  function mapPtToCatMen(pt){ const s=(pt||'').toLowerCase(); for(const[re,c] of PT_CAT_MEN){ if(re.test(s)) return c; } return ''; }
+
+  // Decide if a product is Men / Women / Kids. Strongest signal: our brand
+  // directory category; then the URL path; then product type/tags.
+  function detectGender(url, product){
+    try{
+      const host = new URL(url).hostname.replace(/^www\./,'');
+      const b = (typeof BRANDS !== 'undefined') && BRANDS.find(x => { try{ return new URL(x.u).hostname.replace(/^www\./,'') === host; }catch(e){ return false; } });
+      if(b){ if(b.c === 'm') return 'men'; if(b.c === 'k') return 'kids'; if(b.c === 'w' || b.c === 'p') return 'women'; }
+      // 'md' (multi-department) / 'ws' / unknown → fall through to content
+      const path = new URL(url).pathname.toLowerCase();
+      if(/(^|[\/_-])(women|womens|woman|ladies|female|girls)([\/_-]|$)/.test(path)) return 'women';
+      if(/(^|[\/_-])(men|mens|man|gents|gentlemen|male|boys)([\/_-]|$)/.test(path)) return 'men';
+    }catch(e){}
+    const pt   = ((product && (product.type || product.product_type)) || '').toLowerCase();
+    const tags = ((product && product.tags) || []).join(' ').toLowerCase();
+    const hay  = pt + ' ' + tags + ' ' + ((product && product.title) || '').toLowerCase();
+    if(/sherwani|waist[\s-]?coat|prince[\s-]?coat|kurta[\s-]?pajama/.test(hay)) return 'men';
+    if(/(^|[\s\/_-])(men|mens|gents)([\s\/_-]|$)/.test(' '+tags+' ')) return 'men';
+    if(/(^|[\s\/_-])(women|ladies)([\s\/_-]|$)/.test(' '+tags+' ')) return 'women';
+    return 'women'; // default — the catalogue is women-dominated
+  }
 
   // Normalize variant size strings → our dropdown values
   function normSizeFull(raw){
@@ -1024,10 +1079,16 @@
       // .js endpoint reports money in paisa (×100); .json uses decimal strings
       const moneyOf = v0 => hasStockInfo ? (parseFloat(v0)||0)/100 : (parseFloat(v0)||0);
 
-      // ── CATEGORY ──────────────────────────────────────────────────────────
-      const fetchedCat = mapPtToCat(product.product_type || product.type || '');
+      // ── CATEGORY (gender-aware) ───────────────────────────────────────────
+      const gender = detectGender(url, product);
+      const ptStr  = product.product_type || product.type || '';
+      const fetchedCat = gender === 'men'
+        ? (mapPtToCatMen(ptStr) || mapPtToCatMen(product.title || '') || 'mens_shalwar_kameez')
+        : mapPtToCat(ptStr);
       const catEl = document.getElementById(`dc_cat_${id}`);
-      if(catEl && fetchedCat && !catEl.value){
+      // Overwrite a wrong women's auto-guess if this is clearly a men's product
+      const womensGuess = catEl && catEl.value && !MENS_CATS.has(catEl.value);
+      if(catEl && fetchedCat && (!catEl.value || (gender === 'men' && womensGuess))){
         catEl.value = fetchedCat;
         onDraftCatChange(id);
       }
@@ -1097,9 +1158,9 @@
       }
       if(!allSoldOut && sizesToAdd.length){
         // The product sells in garment sizes ⇒ it's stitched/RTW, even if the
-        // URL said "lawn" and the category auto-detected as unstitched.
+        // URL said "lawn"/"fabric" and the category auto-detected as unstitched.
         if(catEl && UNSTITCHED_CATS.has(catEl.value)){
-          catEl.value = 'pret_3pc';
+          catEl.value = (gender === 'men') ? 'mens_shalwar_kameez' : 'pret_3pc';
           onDraftCatChange(id);
         }
         {
@@ -1737,6 +1798,16 @@
 
   function detectCategory(url){
     const s = (url + ' ' + decodeURIComponent(url)).toLowerCase();
+    // ── Men's first (so a men's shalwar kameez isn't read as women's 3pc) ──
+    if(detectGender(url, null) === 'men'){
+      if(/sherwani|prince.?coat/.test(s))           return 'mens_sherwani';
+      if(/waist.?coat|nehru.?jacket/.test(s))       return 'mens_waistcoat';
+      if(/unstitch|fabric|wash.?n.?wear|gabardine/.test(s)) return 'mens_unstitched';
+      if(/pant.?coat|coat.?pant|blazer|tuxedo/.test(s)) return 'mens_suit';
+      if(/shalwar|kameez|suit/.test(s))             return 'mens_shalwar_kameez';
+      if(/kurta|shirt|polo/.test(s))                return 'mens_kurta';
+      return '';   // let the live fetch refine it
+    }
     if(/unstitch/.test(s))                          return 'lawn_3pc_unstitch';
     if(/dupatta|stole|scarf/.test(s) && !/shirt|kurti|suit/.test(s)) return 'dupatta_only';
     if(/accessories|jewel|earring|necklace|ring/.test(s)) return 'accessories';
@@ -1897,6 +1968,9 @@
     formal_emb_2pc:'Formal 2pc', formal_emb_3pc:'Formal 3pc',
     heavy_formal_3pc:'Heavy Formal 3pc', bridal:'Bridal',
     dupatta_only:'Dupatta / Stole', accessories:'Accessories',
+    mens_kurta:"Men's Kurta 1pc", mens_shalwar_kameez:"Men's Shalwar Kameez 2pc",
+    mens_waistcoat:"Men's Waistcoat", mens_suit:"Men's Suit/Pant-Coat",
+    mens_sherwani:"Men's Sherwani", mens_unstitched:"Men's Unstitched",
   };
 
   function removeItem(idx){
