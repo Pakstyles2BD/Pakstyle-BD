@@ -985,6 +985,11 @@
     if(/^(XL|X L|X LARGE|EXTRA LARGE)$/.test(s)) return 'XL';
     if(/^(XXL|XX L|2XL|XX LARGE|DOUBLE XL)$/.test(s)) return 'XXL';
     if(/^(FREE SIZE|FREESIZE|ONE SIZE|OS)$/.test(s)) return 'Free Size';
+    if(/^(XXXL|3XL|XXX L)$/.test(s))     return '3XL';
+    // Numeric garment sizes (Generation, Khaadi etc. use 8/10/12/14/16…)
+    if(/^\d{1,2}$/.test(s))             return s;
+    // Kids sizes like "8-9Y", "10Y", "2-3 YEARS"
+    if(/^\d{1,2}( ?\d{1,2})? ?Y(EARS)?$/.test(s.replace(/-/g,' '))) return raw.trim();
     return null;
   }
 
@@ -1387,7 +1392,10 @@
   function addDraftSizeRow(draftId, size='', qty=1){
     const d = drafts[draftId]; if(!d) return;
     const rowId = `${draftId}_${d.sizeCounter++}`;
-    const opts  = ['XS','S','M','L','XL','XXL','Free Size']
+    const stdSizes = ['XS','S','M','L','XL','XXL','Free Size'];
+    // Brand-specific sizes (numeric 8/10/12, kids 8-9Y…) get added dynamically
+    if(size && !stdSizes.includes(size)) stdSizes.push(size);
+    const opts  = stdSizes
       .map(s=>`<option${s===size?' selected':''}>${s}</option>`).join('');
     document.getElementById(`dc_srows_${draftId}`)
       .insertAdjacentHTML('beforeend',
@@ -1440,6 +1448,9 @@
     for(const row of rows){
       const sel = row.querySelector('select');
       if(sel && !sel.value){
+        // Brand-specific size (numeric/kids) may not be in the standard list
+        if(![...sel.options].some(o => o.value === sz))
+          sel.insertAdjacentHTML('beforeend', `<option>${sz}</option>`);
         sel.value = sz;
         onDraftSizeChange(id);
         return;
