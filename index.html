@@ -999,19 +999,28 @@
       if(!m) return setStatus('ℹ️ Fill details manually — no /products/ path detected','#aaa');
 
       setStatus('🔍 Fetching product details from brand site…','#c9a96e');
-      const apiUrl = `${u.origin}/products/${m[1]}.json`;
-
       const ctrl = new AbortController();
       const tid  = setTimeout(()=>ctrl.abort(), 9000);
-      const res  = await fetch(apiUrl, { signal: ctrl.signal });
-      clearTimeout(tid);
-      if(!res.ok) throw new Error('HTTP '+res.status);
 
-      const { product } = await res.json();
+      // Prefer the storefront .js endpoint — it includes per-size stock
+      // ("available"); the .json endpoint does NOT. Fall back to .json.
+      let product = null, hasStockInfo = false;
+      try{
+        const r1 = await fetch(`${u.origin}/products/${m[1]}.js`, { signal: ctrl.signal });
+        if(r1.ok){ product = await r1.json(); hasStockInfo = true; }
+      }catch(err){ if(err.name === 'AbortError') throw err; }
+      if(!product){
+        const res = await fetch(`${u.origin}/products/${m[1]}.json`, { signal: ctrl.signal });
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        product = (await res.json()).product;
+      }
+      clearTimeout(tid);
       if(!product) throw new Error('empty');
+      // .js endpoint reports money in paisa (×100); .json uses decimal strings
+      const moneyOf = v0 => hasStockInfo ? (parseFloat(v0)||0)/100 : (parseFloat(v0)||0);
 
       // ── CATEGORY ──────────────────────────────────────────────────────────
-      const fetchedCat = mapPtToCat(product.product_type || '');
+      const fetchedCat = mapPtToCat(product.product_type || product.type || '');
       const catEl = document.getElementById(`dc_cat_${id}`);
       if(catEl && fetchedCat && !catEl.value){
         catEl.value = fetchedCat;
@@ -1036,9 +1045,10 @@
       const typeKey = ['option1','option2','option3'][typeIdx] || null;
 
       // ── SELECT RELEVANT VARIANTS ──────────────────────────────────────────
+      // Stock filtering only when the endpoint actually reports availability
       let vars = product.variants || [];
-      let avail = vars.filter(v => v.available);
-      const allSoldOut = vars.length > 0 && avail.length === 0;
+      let avail = hasStockInfo ? vars.filter(v => v.available) : vars.slice();
+      const allSoldOut = hasStockInfo && vars.length > 0 && avail.length === 0;
       if(allSoldOut) avail = vars;  // keep a price reference, but no size chips + warn below
 
       // For brands with type option: prefer stitched over unstitched
@@ -1050,8 +1060,8 @@
       // ── PRICE ─────────────────────────────────────────────────────────────
       const refVar = avail[0] || vars[0];
       if(refVar){
-        const salePrice = parseFloat(refVar.price) || 0;
-        const origPrice = parseFloat(refVar.compare_at_price) || 0;
+        const salePrice = moneyOf(refVar.price);
+        const origPrice = moneyOf(refVar.compare_at_price);
         if(salePrice > 0){
           const priceEl = document.getElementById(`dc_price_${id}`);
           if(priceEl){
@@ -1100,8 +1110,9 @@
       }
 
       const uniqSizes = sizeKey ? new Set(avail.map(v=>normSizeFull(v[sizeKey])).filter(Boolean)) : new Set();
-      const refPrice  = Math.round(parseFloat((avail[0]||vars[0])?.price)||0);
-      setStatus(`✓ Fetched: ${product.product_type||'product'} · PKR ${refPrice.toLocaleString()}${uniqSizes.size?' · '+uniqSizes.size+' sizes in stock':''}`, '#2a7a32');
+      const refPrice  = Math.round(moneyOf((avail[0]||vars[0])?.price));
+      const szWord    = hasStockInfo ? ' sizes in stock' : ' sizes found';
+      setStatus(`✓ Fetched: ${product.product_type||product.type||'product'} · PKR ${refPrice.toLocaleString()}${uniqSizes.size?' · '+uniqSizes.size+szWord:''}`, '#2a7a32');
       hideStatus();
       checkAddUrlLock();
 
