@@ -1254,7 +1254,12 @@
 
     try {
       const u = new URL(url);
-      const m = u.pathname.match(/\/products\/([^/?#]+)/);
+      let m = u.pathname.match(/\/products\/([^/?#]+)/);
+      // Some stores (e.g. Khaadi) use /category/product-id.html — try last path segment as handle
+      if(!m && u.pathname.toLowerCase().endsWith('.html')){
+        const seg = u.pathname.split('/').pop().replace(/\.html$/i,'').toLowerCase();
+        if(seg) m = [null, seg];
+      }
       if(!m){
         if(/\/collections\//.test(u.pathname))
           return setStatus('⚠️ This is a category/collection page — open the brand site, tap a specific product, then copy that product URL','#c9a96e');
@@ -1299,14 +1304,18 @@
 
       // ── FIND SIZE OPTION ──────────────────────────────────────────────────
       const opts = product.options || [];
-      // Find ALL options named "size" (multi-size products like Khaadi have "Shirt Size" + "Trouser Size")
-      let sizeIdxAll = opts.map((o,i) => /size/i.test(o.name) ? i : -1).filter(i => i >= 0);
+      // .js endpoint returns options as strings ["Size","Color"]; .json returns objects {name,values}
+      // Normalise so both formats work: wrap strings into {name, values:[]} objects
+      const normOpts = opts.map(o => typeof o === 'string' ? {name:o, values:[]} : o);
+      // Find ALL options named "size" (multi-size: "Shirt Size" + "Trouser Size")
+      let sizeIdxAll = normOpts.map((o,i) => /size/i.test(o.name) ? i : -1).filter(i => i >= 0);
       if(sizeIdxAll.length === 0){
-        // Fallback: find option where majority of values are recognisable sizes
-        const fb = opts.findIndex(o => o.values.filter(v => normSizeFull(v)).length > o.values.length / 2);
+        // Fallback: find option where majority of values look like sizes (only works with .json)
+        const fb = normOpts.findIndex(o => o.values.length > 0 &&
+          o.values.filter(v => normSizeFull(v)).length > o.values.length / 2);
         if(fb >= 0) sizeIdxAll = [fb];
       }
-      const sizeIdx   = sizeIdxAll[0] ?? -1;
+      const sizeIdx   = sizeIdxAll.length > 0 ? sizeIdxAll[0] : -1;
       const sizeKey   = ['option1','option2','option3'][sizeIdx] || null;
       const multiSize = sizeIdxAll.length >= 2;  // e.g. Khaadi 2-piece shirt+trouser
 
@@ -1389,7 +1398,7 @@
         }
         {
           const chipLabel = multiSize
-            ? sizeIdxAll.map(i => opts[i].name).join(' + ')
+            ? sizeIdxAll.map(i => normOpts[i].name).join(' + ')
             : null;
           showSizeChips(id, sizesToAdd, chipLabel);
           // No size in the pasted link → warn: a highlighted size on the brand
