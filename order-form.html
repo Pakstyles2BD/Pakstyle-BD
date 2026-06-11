@@ -9,12 +9,12 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
   <meta http-equiv="Expires" content="0"/>
-  <title>PakStyle BD – Pakistani Fashion Delivered to Bangladesh</title>
+  <title>PakiPoshak – Pakistani Fashion Delivered to Bangladesh</title>
   <meta name="description" content="Order authentic Pakistani lawn, pret & designer clothes. We purchase from Pakistan and deliver to your door in Bangladesh."/>
   <meta name="theme-color" content="#080E1C"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="PakStyle BD"/>
+  <meta name="apple-mobile-web-app-title" content="PakiPoshak"/>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
   <style>
@@ -367,7 +367,7 @@
     <div class="hdr-logo">
       <span class="hdr-logo-mark">🪡</span>
       <div>
-        <div class="hdr-brand">PakStyle BD</div>
+        <div class="hdr-brand">PakiPoshak</div>
         <div class="hdr-tagline">Pakistani Fashion · Bangladesh Delivery</div>
       </div>
     </div>
@@ -856,7 +856,7 @@
 <!-- iOS install instructions sheet -->
 <div id="iosInstallSheet" onclick="if(event.target===this)psbCloseIos()" style="display:none">
   <div class="ios-card">
-    <div class="ios-title">Install PakStyle BD</div>
+    <div class="ios-title">Install PakiPoshak</div>
     <p>To add this app to your iPhone home screen:</p>
     <ol>
       <li>Tap the <b>Share</b> button <span style="font-size:1.1rem">􀈂</span> at the bottom of Safari</li>
@@ -941,7 +941,7 @@
 
 <!-- Hidden form for Formspree -->
 <form id="hiddenForm" action="https://formspree.io/f/xnjypzyl" method="POST" style="display:none">
-  <input type="hidden" name="_subject" id="hf_subject" value="New PakStyle BD Order"/>
+  <input type="hidden" name="_subject" id="hf_subject" value="New PakiPoshak Order"/>
   <input type="hidden" name="_replyto" id="hf_replyto"/>
   <input type="hidden" name="order_id" id="hf_order_id"/>
   <input type="hidden" name="buyer_name" id="hf_name"/>
@@ -2755,8 +2755,8 @@
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(Object.assign({
           access_key: WEB3FORMS_KEY,
-          subject: `New PakStyle Order ${orderId} — ${name}`,
-          from_name: 'PakStyle BD Orders'
+          subject: `New PakiPoshak Order ${orderId} — ${name}`,
+          from_name: 'PakiPoshak Orders'
         }, payload))
       }).then(r => r.json()).then(j => j.success);
     } else {
@@ -3109,7 +3109,7 @@
     box.innerHTML =
       `<div style="max-width:680px;margin:0 auto">
         <h1 style="color:${allOk?'#4caf50':'#ff5252'};font-size:1.4rem">${allOk?'✅ ALL CHECKS PASSED':'❌ '+(total-pass)+' CHECK(S) FAILED'} <span style="color:#888;font-size:0.9rem">(${pass}/${total})</span></h1>
-        <p style="color:#888;font-size:0.85rem;margin:6px 0 16px">PakStyle BD self-test · run after every change. ${allOk?'Safe to use.':'Fix the red items before relying on the site.'}</p>
+        <p style="color:#888;font-size:0.85rem;margin:6px 0 16px">PakiPoshak self-test · run after every change. ${allOk?'Safe to use.':'Fix the red items before relying on the site.'}</p>
         ${res.map(r=>`<div style="display:flex;gap:10px;padding:9px 12px;border-bottom:1px solid #23233a;align-items:center">
             <span style="font-size:1.1rem">${r.pass?'🟢':'🔴'}</span>
             <span style="flex:1;font-size:0.9rem">${r.n}</span>
@@ -3125,7 +3125,7 @@
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
   const PSB_BUILD = '2026-06-12';
-  console.log('%cPakStyle BD · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
+  console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
     tag.textContent = 'v'+PSB_BUILD;

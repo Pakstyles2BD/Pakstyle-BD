@@ -1,4 +1,4 @@
-/* PakStyle BD service worker.
+/* PakiPoshak service worker.
  *
  * Goals:
  *  - Make the site an installable PWA (Android "Install app", iOS "Add to Home Screen").
@@ -10,7 +10,7 @@
  *  - NEVER touch cross-origin requests (Shopify product fetches, Apps Script order
  *    submission, Formspree). Those must always hit the network untouched.
  */
-const CACHE_VERSION = 'psb-v1';
+const CACHE_VERSION = 'psb-v2';
 const APP_SHELL = [
   './',
   './index.html',

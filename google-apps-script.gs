@@ -1,5 +1,5 @@
 /****************************************************************************
- * PakStyle BD — Order Intake Script
+ * PakiPoshak — Order Intake Script
  * --------------------------------------------------------------------------
  * WHAT THIS DOES
  *   When a customer submits the order form, this script:
@@ -73,7 +73,7 @@ function handleNewOrder(data, sheet, today) {
     data.cart_links  || ''
   ]);
 
-  var subject = 'New PakStyle Order ' + (data.order_id || '') + ' — ' + (data.buyer_name || '');
+  var subject = 'New PakiPoshak Order ' + (data.order_id || '') + ' — ' + (data.buyer_name || '');
   var body =
     'NEW ORDER RECEIVED\n' +
     '====================\n\n' +
@@ -171,5 +171,5 @@ function handlePayment(data, sheet, today) {
 
 // Lets you test the deployment in a browser (visiting the /exec URL)
 function doGet() {
-  return ContentService.createTextOutput('PakStyle order intake is live ✓');
+  return ContentService.createTextOutput('PakiPoshak order intake is live ✓');
 }

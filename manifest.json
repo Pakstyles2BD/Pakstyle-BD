@@ -1,9 +1,9 @@
 {
-  "name": "PakStyle BD",
-  "short_name": "PakStyle BD",
+  "name": "PakiPoshak",
+  "short_name": "PakiPoshak",
   "description": "Order authentic Pakistani fashion delivered to Bangladesh.",
-  "start_url": "/Pakstyle-BD/",
-  "scope": "/Pakstyle-BD/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#080E1C",
