@@ -59,28 +59,14 @@
       color:#fff;border-radius:10px;padding:1px 5px;font-size:0.6rem;font-weight:700;
       min-width:16px;text-align:center}
 
-    /* ── In-app brand browser overlay ── */
-    #inAppBrowser{display:none;position:fixed;inset:0;z-index:400;
-      flex-direction:column;background:#fff}
-    .iab-bar{background:#1a1a2e;display:flex;align-items:center;gap:8px;
-      padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top));
-      flex-shrink:0;min-height:54px}
-    .iab-back{background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);
-      color:#c9a96e;border-radius:8px;padding:7px 14px;font-size:0.82rem;font-weight:700;
-      cursor:pointer;white-space:nowrap;min-height:40px}
-    .iab-title{flex:1;font-size:0.85rem;font-weight:700;color:#fff;
-      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
-    .iab-use{background:#c9a96e;border:none;color:#1a1a2e;border-radius:8px;
-      padding:7px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;
-      white-space:nowrap;min-height:40px}
-    .iab-frame{flex:1;border:none;width:100%}
-    .iab-fallback{display:none;flex:1;flex-direction:column;align-items:center;
-      justify-content:center;padding:32px 24px;text-align:center;gap:12px}
-    .iab-fallback .iab-fb-icon{font-size:3rem}
-    .iab-fallback p{font-size:0.88rem;color:#555;line-height:1.6;max-width:300px}
-    .iab-fallback a{display:inline-block;margin-top:8px;padding:12px 28px;
-      background:#1a1a2e;color:#c9a96e;border-radius:8px;font-weight:700;
-      text-decoration:none;font-size:0.88rem}
+    /* ── Brand browsing tip banner ── */
+    #brandTip{display:none;position:sticky;top:60px;z-index:190;
+      background:#1a1a2e;border-bottom:2px solid #c9a96e;
+      padding:10px 16px;align-items:center;gap:10px}
+    .brand-tip-inner{flex:1;font-size:0.8rem;color:#fff;line-height:1.45}
+    .brand-tip-inner strong{color:#c9a96e}
+    .brand-tip-close{background:none;border:none;color:#888;font-size:1.1rem;
+      cursor:pointer;padding:2px 6px;flex-shrink:0;min-width:32px;min-height:32px}
 
     /* VPN notice bar */
     .vpn-bar{background:#fff8e7;border-bottom:2px solid #f0c040;padding:10px 16px;font-size:0.8rem;color:#5a4000}
@@ -763,24 +749,13 @@
 </div>
 </div>
 
-<!-- IN-APP BRAND BROWSER OVERLAY -->
-<div id="inAppBrowser">
-  <div class="iab-bar">
-    <button class="iab-back" onclick="closeInAppBrowser()">← Back</button>
-    <span class="iab-title" id="iabTitle">Browse</span>
-    <button class="iab-use" onclick="useCurrentIabUrl()" id="iabUseBtn">📋 Use URL</button>
+<!-- BRAND TIP BANNER — shown after user taps a brand link -->
+<div id="brandTip">
+  <div class="brand-tip-inner">
+    🔗 <strong id="brandTipName">Brand</strong> opened in your browser —
+    find your item, <strong>copy the product link</strong>, come back here and paste it below ↓
   </div>
-  <div id="iabFallback" class="iab-fallback">
-    <span class="iab-fb-icon">🔒</span>
-    <p>This brand's site can't be shown inside the app (it blocks external frames).</p>
-    <a id="iabFallbackLink" href="#" target="_blank" rel="noopener">Open in Browser ↗</a>
-    <p style="font-size:0.78rem;color:#999;margin-top:8px">
-      Copy a product URL there, then come back and paste it in the order form below.
-    </p>
-  </div>
-  <iframe class="iab-frame" id="inAppFrame" src="" title="Brand browser"
-    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation-by-user-activation"
-    onload="onIabLoad()" onerror="onIabError()"></iframe>
+  <button class="brand-tip-close" onclick="document.getElementById('brandTip').style.display='none'" title="Dismiss">✕</button>
 </div>
 
 <!-- BOTTOM NAVIGATION BAR -->
@@ -2664,76 +2639,26 @@
     }
   }
 
-  // ── IN-APP BRAND BROWSER ─────────────────────────────────────────────────
-  let _iabUrl = '';
-  let _iabTimer = null;
+  // ── BRAND LINK OPENER ────────────────────────────────────────────────────
+  // Pakistani brand sites (mostly Shopify) block iframe embedding via
+  // X-Frame-Options headers — opening in a new tab is the only reliable method.
+  // We show a sticky tip banner so the user knows to copy the product URL back.
+  let _brandTipTimer = null;
 
   function openBrandInApp(el){
-    const url = el.dataset.url;
+    const url  = el.dataset.url;
     const name = el.dataset.name;
-    _iabUrl = url;
-    document.getElementById('iabTitle').textContent = name;
-    document.getElementById('iabFallbackLink').href = url;
-    const frame = document.getElementById('inAppFrame');
-    const fallback = document.getElementById('iabFallback');
-    frame.style.display = 'block';
-    fallback.style.display = 'none';
-    document.getElementById('iabUseBtn').style.display = '';
-    frame.src = url;
-    document.getElementById('inAppBrowser').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+    // Open the brand site in a new tab
+    window.open(url, '_blank', 'noopener');
+    // Close the search dropdown if open
     const dd = document.getElementById('brandDropdown');
     if(dd) dd.style.display = 'none';
-    // Detect blocked iframes via timeout — cross-origin onload fires but content is empty
-    clearTimeout(_iabTimer);
-    _iabTimer = setTimeout(checkIabBlocked, 4000);
-  }
-
-  function checkIabBlocked(){
-    const frame = document.getElementById('inAppFrame');
-    try{
-      // If same-origin or allowed: contentDocument exists and has a body
-      if(!frame.contentDocument || !frame.contentDocument.body ||
-         frame.contentDocument.body.innerHTML.trim() === ''){
-        onIabError();
-      }
-    }catch(e){
-      // cross-origin SecurityError — frame is blocked
-      onIabError();
-    }
-  }
-
-  function onIabLoad(){
-    clearTimeout(_iabTimer);
-  }
-
-  function onIabError(){
-    clearTimeout(_iabTimer);
-    document.getElementById('inAppFrame').style.display = 'none';
-    document.getElementById('iabFallback').style.display = 'flex';
-    document.getElementById('iabUseBtn').style.display = 'none';
-  }
-
-  function closeInAppBrowser(){
-    clearTimeout(_iabTimer);
-    document.getElementById('inAppBrowser').style.display = 'none';
-    document.getElementById('inAppFrame').src = '';
-    document.body.style.overflow = '';
-  }
-
-  function useCurrentIabUrl(){
-    const frame = document.getElementById('inAppFrame');
-    let url = _iabUrl;
-    try{
-      const live = frame.contentWindow.location.href;
-      if(live && live !== 'about:blank') url = live;
-    }catch(e){ /* cross-origin — use brand homepage */ }
-    if(url){
-      document.getElementById('urlInput').value = url;
-      closeInAppBrowser();
-      document.getElementById('urlInput').scrollIntoView({behavior:'smooth'});
-      document.getElementById('urlInput').focus();
-    }
+    // Show the copy-URL tip banner
+    document.getElementById('brandTipName').textContent = name;
+    const tip = document.getElementById('brandTip');
+    tip.style.display = 'flex';
+    clearTimeout(_brandTipTimer);
+    _brandTipTimer = setTimeout(() => tip.style.display = 'none', 12000);
   }
 
   // ── BOTTOM NAV ───────────────────────────────────────────────────────────
