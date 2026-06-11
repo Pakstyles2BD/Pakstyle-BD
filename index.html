@@ -1272,15 +1272,27 @@
 
       // Prefer the storefront .js endpoint — it includes per-size stock
       // ("available"); the .json endpoint does NOT. Fall back to .json.
+      // CRITICAL: stock filtering depends on .js succeeding. Cross-origin
+      // fetches to PK-hosted Shopify CDNs are occasionally flaky (a CDN edge
+      // node may omit the CORS header, or the cached copy is stale), so we
+      // retry up to 3× with a cache-busting, no-store request to force a
+      // fresh, authoritative stock reading every time.
       let product = null, hasStockInfo = false;
-      try{
-        const r1 = await fetch(`${u.origin}/products/${m[1]}.js`, { signal: ctrl.signal });
-        if(r1.ok){ product = await r1.json(); hasStockInfo = true; }
-      }catch(err){ if(err.name === 'AbortError') throw err; }
+      for(let attempt = 0; attempt < 3 && !product; attempt++){
+        try{
+          // Constructed URL has no query string, so always start with "?".
+          const r1 = await fetch(`${u.origin}/products/${m[1]}.js?_psb=${Date.now()}_${attempt}`,
+            { signal: ctrl.signal, cache: 'no-store' });
+          if(r1.ok){ product = await r1.json(); hasStockInfo = true; }
+        }catch(err){ if(err.name === 'AbortError') throw err; }
+      }
       if(!product){
-        const res = await fetch(`${u.origin}/products/${m[1]}.json`, { signal: ctrl.signal });
+        // Last resort: .json has NO per-size stock — sizes can't be verified.
+        const res = await fetch(`${u.origin}/products/${m[1]}.json`,
+          { signal: ctrl.signal, cache: 'no-store' });
         if(!res.ok) throw new Error('HTTP '+res.status);
         product = (await res.json()).product;
+        hasStockInfo = false;
       }
       clearTimeout(tid);
       if(!product) throw new Error('empty');
@@ -1384,6 +1396,29 @@
           if(norm && !seen.has(norm)){ seen.add(norm); sizesToAdd.push(norm); }
         });
       }
+
+      // Which sizes are SOLD OUT (single-size only)? We show them struck-through
+      // for the operator's confidence AND keep them out of the size dropdown.
+      let soldOutSizes = [];
+      if(hasStockInfo && !multiSize && sizeKey){
+        const inStock = new Set(sizesToAdd), allSeen = new Set();
+        vars.forEach(v => {
+          const n = normSizeFull(v[sizeKey]);
+          if(n && !inStock.has(n) && !allSeen.has(n)){ allSeen.add(n); soldOutSizes.push(n); }
+        });
+      }
+
+      // Persist on the draft so the size dropdown is CONSTRAINED to real in-stock
+      // sizes — the operator must never be able to pick a sold-out size. When
+      // stock could NOT be verified (.js failed → .json fallback) we leave it
+      // empty so the dropdown falls back to all sizes + a loud warning is shown.
+      const d0 = drafts[id];
+      if(d0){
+        d0.stockVerified = hasStockInfo && !allSoldOut;
+        d0.stockSizes    = d0.stockVerified ? sizesToAdd.slice() : [];
+        d0.soldOutSizes  = soldOutSizes.slice();
+      }
+
       if(!allSoldOut && sizesToAdd.length){
         // The product sells in garment sizes ⇒ it's stitched/RTW, even if the
         // URL said "lawn"/"fabric" and the category auto-detected as unstitched.
@@ -1400,15 +1435,17 @@
           const chipLabel = multiSize
             ? sizeIdxAll.map(i => normOpts[i].name).join(' + ')
             : null;
-          showSizeChips(id, sizesToAdd, chipLabel);
-          // No size in the pasted link → warn: a highlighted size on the brand
-          // page does NOT mean it was selected; customer must tap one here.
-          if(!detectSizeFromUrl(url)){
-            const hint = document.querySelector(`#dc_szchips_${id} > div:first-child`);
-            if(hint && !multiSize){
-              hint.innerHTML = '⚠️ <b>Your link doesn\'t include a size.</b> Tap the size(s) you want below — a highlighted size on the brand\'s page does <u>not</u> mean it was selected.';
-              hint.style.cssText = 'font-size:0.75rem;font-weight:600;color:#f0c855;background:rgba(230,168,23,0.12);border:1px solid rgba(230,168,23,0.40);border-radius:6px;padding:6px 10px;margin-bottom:7px';
-            }
+          showSizeChips(id, sizesToAdd, chipLabel, soldOutSizes);
+          const hint = document.querySelector(`#dc_szchips_${id} > div:first-child`);
+          if(hint && !d0?.stockVerified){
+            // Stock could NOT be verified — fail LOUD, never silently allow all.
+            hint.innerHTML = '⚠️ <b>Live stock could NOT be verified</b> for this brand. The sizes below are <u>all listed sizes</u>, not confirmed-in-stock — please check the brand page before ordering.';
+            hint.style.cssText = 'font-size:0.75rem;font-weight:700;color:#ff9a9a;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.45);border-radius:6px;padding:6px 10px;margin-bottom:7px';
+          } else if(hint && !detectSizeFromUrl(url) && !multiSize){
+            // Stock verified, but no size in the pasted link → remind the operator
+            // that a highlighted size on the brand page is NOT a selection.
+            hint.innerHTML = '⚠️ <b>Your link doesn\'t include a size.</b> Tap an <u>in-stock</u> size below — a highlighted size on the brand\'s page does <u>not</u> mean it was selected.';
+            hint.style.cssText = 'font-size:0.75rem;font-weight:600;color:#f0c855;background:rgba(230,168,23,0.12);border:1px solid rgba(230,168,23,0.40);border-radius:6px;padding:6px 10px;margin-bottom:7px';
           }
         }
       }
@@ -1709,7 +1746,12 @@
   function addDraftSizeRow(draftId, size='', qty=1){
     const d = drafts[draftId]; if(!d) return;
     const rowId = `${draftId}_${d.sizeCounter++}`;
-    const stdSizes = ['XS','S','M','L','XL','XXL','Free Size'];
+    // When the fetch verified live stock, the dropdown is CONSTRAINED to the
+    // real in-stock sizes so a sold-out size can never be chosen. Otherwise
+    // (stock unverified / non-Shopify) fall back to the full standard list.
+    const stdSizes = (d.stockSizes && d.stockSizes.length)
+      ? d.stockSizes.slice()
+      : ['XS','S','M','L','XL','XXL','Free Size'];
     // Brand-specific sizes (numeric 8/10/12, kids 8-9Y…) get added dynamically
     if(size && !stdSizes.includes(size)) stdSizes.push(size);
     const opts  = stdSizes
@@ -1731,15 +1773,19 @@
   }
 
   // ── SIZE CHIPS (from auto-fetch) ─────────────────────────────────────────
-  function showSizeChips(id, sizes, groupLabel){
+  function showSizeChips(id, sizes, groupLabel, soldOutSizes){
     const wrap  = document.getElementById(`dc_szchips_${id}`);
     const inner = document.getElementById(`dc_szchips_inner_${id}`);
     if(!wrap || !inner) return;
-    // Remove any empty rows that were auto-created before chips arrived
+    // Remove rows auto-created before chips arrived: empties, and any whose
+    // pre-filled size is now known SOLD OUT (so a stale selection can't slip
+    // through). Surviving in-stock selections are kept.
+    const soldSet = new Set(Array.isArray(soldOutSizes) ? soldOutSizes : []);
     const rowsEl = document.getElementById(`dc_srows_${id}`);
     if(rowsEl){
       [...rowsEl.children].forEach(row => {
-        if(!row.querySelector('select')?.value) row.remove();
+        const val = row.querySelector('select')?.value;
+        if(!val || soldSet.has(val)) row.remove();
       });
     }
     // Update the hint label (first child div of the chips wrapper)
@@ -1760,6 +1806,15 @@
         onmouseover="if(!this.disabled)this.style.background='#c9a96e';if(!this.disabled)this.style.color='#080e1c'"
         onmouseout="if(!this.disabled)this.style.background='var(--gold-dim)';if(!this.disabled)this.style.color='var(--gold)'">${sz}</button>`;
     }).join('');
+    // Show sold-out sizes struck-through (non-clickable) so the operator can
+    // SEE that stock filtering ran and exactly which sizes were excluded.
+    if(Array.isArray(soldOutSizes) && soldOutSizes.length){
+      inner.innerHTML += soldOutSizes.map(sz =>
+        `<span title="Sold out — not available to order"
+          style="padding:5px 14px;border:1.5px solid var(--bdr);border-radius:16px;background:var(--surface);
+                 color:var(--txt-muted);font-size:0.78rem;font-weight:700;cursor:not-allowed;
+                 text-decoration:line-through">${sz}</span>`).join('');
+    }
     wrap.style.display = '';
   }
 
