@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <!-- Always load the freshest version — this file changes often and GitHub
+       Pages otherwise lets browsers cache the HTML for ~10 min, so operators
+       were seeing stale builds after a deploy. -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0"/>
   <title>PakStyle BD – Pakistani Fashion Delivered to Bangladesh</title>
   <meta name="description" content="Order authentic Pakistani lawn, pret & designer clothes. We purchase from Pakistan and deliver to your door in Bangladesh."/>
   <meta name="theme-color" content="#080E1C"/>
@@ -1268,7 +1274,7 @@
 
       setStatus('🔍 Fetching product details from brand site…','#c9a96e');
       const ctrl = new AbortController();
-      const tid  = setTimeout(()=>ctrl.abort(), 14000); // PK-hosted sites can be slow
+      const tid  = setTimeout(()=>ctrl.abort(), 22000); // PK sites are slow from BD; allow for retries
 
       // Prefer the storefront .js endpoint — it includes per-size stock
       // ("available"); the .json endpoint does NOT. Fall back to .json.
@@ -2965,6 +2971,20 @@
       </div>`;
     document.body.appendChild(box);
   }
+
+  // ── BUILD STAMP ──────────────────────────────────────────────────────────
+  // Lets the operator confirm at a glance they're on the latest version. If
+  // the tag in the bottom-right is older than expected, hard-refresh
+  // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
+  const PSB_BUILD = '2026-06-12';
+  console.log('%cPakStyle BD · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
+  document.addEventListener('DOMContentLoaded', () => {
+    const tag = document.createElement('div');
+    tag.textContent = 'v'+PSB_BUILD;
+    tag.style.cssText = 'position:fixed;bottom:74px;right:9px;z-index:40;font-size:0.6rem;'
+      + 'color:var(--txt-muted);opacity:0.55;pointer-events:none;letter-spacing:0.5px';
+    document.body.appendChild(tag);
+  });
 
 </script>
 </body>
