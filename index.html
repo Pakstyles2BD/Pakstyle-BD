@@ -60,13 +60,29 @@
       min-width:16px;text-align:center}
 
     /* ── Brand browsing tip banner ── */
-    #brandTip{display:none;position:sticky;top:60px;z-index:190;
-      background:#1a1a2e;border-bottom:2px solid #c9a96e;
-      padding:10px 16px;align-items:center;gap:10px}
-    .brand-tip-inner{flex:1;font-size:0.8rem;color:#fff;line-height:1.45}
-    .brand-tip-inner strong{color:#c9a96e}
-    .brand-tip-close{background:none;border:none;color:#888;font-size:1.1rem;
-      cursor:pointer;padding:2px 6px;flex-shrink:0;min-width:32px;min-height:32px}
+    /* ── Brand launch bottom sheet ── */
+    #brandSheet{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.55)}
+    .bs-card{position:absolute;bottom:0;left:0;right:0;background:#fff;
+      border-radius:20px 20px 0 0;padding:24px 20px;
+      padding-bottom:calc(20px + env(safe-area-inset-bottom));
+      animation:slideUp 0.22s ease-out}
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    .bs-brand-name{font-weight:700;font-size:1.05rem;color:#1a1a2e;margin-top:6px}
+    .bs-steps{background:#f7f3ef;border-radius:10px;padding:14px;margin:16px 0}
+    .bs-steps-title{font-size:0.78rem;font-weight:700;color:#888;margin-bottom:10px;
+      text-transform:uppercase;letter-spacing:0.5px}
+    .bs-step{display:flex;align-items:flex-start;gap:10px;font-size:0.84rem;
+      color:#333;margin-bottom:8px;line-height:1.4}
+    .bs-step:last-child{margin-bottom:0}
+    .bs-num{background:#1a1a2e;color:#c9a96e;border-radius:50%;width:22px;height:22px;
+      display:flex;align-items:center;justify-content:center;font-size:0.7rem;
+      font-weight:700;flex-shrink:0;margin-top:1px}
+    .bs-open-btn{width:100%;padding:15px;background:#c9a96e;color:#1a1a2e;border:none;
+      border-radius:12px;font-weight:700;font-size:0.95rem;cursor:pointer;margin-bottom:10px;
+      transition:background 0.15s}
+    .bs-open-btn:hover{background:#b8934d}
+    .bs-cancel-btn{width:100%;padding:12px;background:#fff;color:#888;
+      border:1.5px solid #e0d5c8;border-radius:12px;font-size:0.88rem;cursor:pointer}
 
     /* VPN notice bar */
     .vpn-bar{background:#fff8e7;border-bottom:2px solid #f0c040;padding:10px 16px;font-size:0.8rem;color:#5a4000}
@@ -749,13 +765,34 @@
 </div>
 </div>
 
-<!-- BRAND TIP BANNER — shown after user taps a brand link -->
-<div id="brandTip">
-  <div class="brand-tip-inner">
-    🔗 <strong id="brandTipName">Brand</strong> opened in your browser —
-    find your item, <strong>copy the product link</strong>, come back here and paste it below ↓
+<!-- BRAND LAUNCH BOTTOM SHEET -->
+<div id="brandSheet" onclick="if(event.target===this)closeBrandSheet()">
+  <div class="bs-card">
+    <div style="text-align:center">
+      <div style="font-size:2rem">🛍️</div>
+      <div class="bs-brand-name" id="bsBrandName">Brand</div>
+      <div style="font-size:0.78rem;color:#888;margin-top:3px">How to add a product from this brand:</div>
+    </div>
+    <div class="bs-steps">
+      <div class="bs-steps-title">3 quick steps</div>
+      <div class="bs-step">
+        <span class="bs-num">1</span>
+        <span>Tap <strong>Open Brand Site</strong> below — the brand's website opens in your browser</span>
+      </div>
+      <div class="bs-step">
+        <span class="bs-num">2</span>
+        <span>Browse, find your item, then <strong>copy the link</strong> from the address bar at the top</span>
+      </div>
+      <div class="bs-step">
+        <span class="bs-num">3</span>
+        <span><strong>Come back to this tab</strong> and paste the link in the URL box below the brands list</span>
+      </div>
+    </div>
+    <button class="bs-open-btn" id="bsOpenBtn" onclick="launchBrandTab()">
+      Open Brand Site →
+    </button>
+    <button class="bs-cancel-btn" onclick="closeBrandSheet()">Cancel</button>
   </div>
-  <button class="brand-tip-close" onclick="document.getElementById('brandTip').style.display='none'" title="Dismiss">✕</button>
 </div>
 
 <!-- BOTTOM NAVIGATION BAR -->
@@ -2640,25 +2677,45 @@
   }
 
   // ── BRAND LINK OPENER ────────────────────────────────────────────────────
-  // Pakistani brand sites (mostly Shopify) block iframe embedding via
-  // X-Frame-Options headers — opening in a new tab is the only reliable method.
-  // We show a sticky tip banner so the user knows to copy the product URL back.
-  let _brandTipTimer = null;
+  // Pakistani brand sites (Shopify) block iframe embedding — we open in a new
+  // tab. A bottom sheet explains the 3-step flow BEFORE the tab opens so the
+  // user knows exactly what to do when they come back.
+  let _pendingBrandUrl = '';
 
   function openBrandInApp(el){
-    const url  = el.dataset.url;
+    _pendingBrandUrl = el.dataset.url;
     const name = el.dataset.name;
-    // Open the brand site in a new tab
-    window.open(url, '_blank', 'noopener');
-    // Close the search dropdown if open
+    document.getElementById('bsBrandName').textContent = name;
+    document.getElementById('bsOpenBtn').textContent   = 'Open ' + name + ' →';
+    document.getElementById('brandSheet').style.display = 'block';
+    // Close search dropdown if open
     const dd = document.getElementById('brandDropdown');
     if(dd) dd.style.display = 'none';
-    // Show the copy-URL tip banner
-    document.getElementById('brandTipName').textContent = name;
-    const tip = document.getElementById('brandTip');
-    tip.style.display = 'flex';
-    clearTimeout(_brandTipTimer);
-    _brandTipTimer = setTimeout(() => tip.style.display = 'none', 12000);
+  }
+
+  function launchBrandTab(){
+    window.open(_pendingBrandUrl, '_blank', 'noopener');
+    closeBrandSheet();
+    // Highlight the URL input so it's obvious where to paste on return
+    const input = document.getElementById('urlInput');
+    if(input){
+      setTimeout(() => {
+        input.scrollIntoView({behavior:'smooth', block:'center'});
+        input.focus();
+        input.placeholder = '← Paste your copied product link here';
+        input.style.borderColor   = '#c9a96e';
+        input.style.boxShadow     = '0 0 0 3px rgba(201,169,110,0.35)';
+        setTimeout(() => {
+          input.style.borderColor = '';
+          input.style.boxShadow   = '';
+          input.placeholder       = 'https://brand.com/products/product-name';
+        }, 6000);
+      }, 300);
+    }
+  }
+
+  function closeBrandSheet(){
+    document.getElementById('brandSheet').style.display = 'none';
   }
 
   // ── BOTTOM NAV ───────────────────────────────────────────────────────────
