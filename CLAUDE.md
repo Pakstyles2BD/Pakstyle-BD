@@ -181,6 +181,18 @@ Men (all incl. 20% buffer):
 
 ---
 
+## Website → App conversion plan (mobile-first, low-cost, Bangladesh-first)
+Goal: professional mobile website where brand links open in-app, packageable as Android + iPhone apps cheaply.
+
+- [x] **Phase 1 — Mobile redesign** (commit `b7494df`): sticky header, "how it works" strip, bottom nav, in-app brand browser (iframe overlay via `openBrandInApp`), live cart badges (`updateCartBadges`), `manifest.json`.
+- [x] **Phase 2 — True installable PWA**: created app icons (`icon-192.png`, `icon-512.png`, `apple-touch-icon.png` — gold "PB" monogram on navy, maskable-safe); added `sw.js` (service worker) + registration at end of body; `apple-touch-icon` now points to 180px file.
+  - **SW strategy (do NOT make it cache HTML):** page is **network-first** (fresh build always wins; cache is offline fallback only) to preserve the no-cache requirement that fixed stale-build complaints. Static assets cache-first. Cross-origin (Shopify, Apps Script, Formspree) is **never intercepted**. Bump `CACHE_VERSION` in sw.js when an icon changes.
+  - Icons generated from `icon.svg` via sharp (temp dir) — no Python/ImageMagick on this machine; Node only.
+  - **Still to verify on live HTTPS:** actual "Install app" / "Add to Home Screen" prompt (needs GitHub Pages HTTPS, not file://).
+- [ ] **Phase 3 — Professional polish**: loading/empty states, form validation, "How it works" page, trust signals (payments/delivery).
+- [ ] **Phase 4 — Android app (~$25 one-time)**: wrap PWA as TWA via PWABuilder; Danish creates Play Console acct + uploads.
+- [ ] **Phase 5 — iPhone**: free via PWA "Add to Home Screen" (works after Phase 2); App Store optional ($99/yr + Mac).
+
 ## Pending issues (update each session)
 - [x] **Commission calc wired** — `getRates()` now returns `COMM_1/COMM_23/COMM_4P`; `commRate(r, itemCount)` picks the right tier; applied in `renderCart`, `buildReviewSummary`, `submitOrder`
 - [x] **Admin weight chart** — fixed by adding `overflow-y:auto;max-height:85vh` to `#adminPanel` (panel was fixed at bottom, content overflowed off-screen)
