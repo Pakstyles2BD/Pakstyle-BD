@@ -2,18 +2,85 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PakStyle BD – Order</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>PakStyle BD – Pakistani Fashion Delivered to Bangladesh</title>
+  <meta name="description" content="Order authentic Pakistani lawn, pret & designer clothes. We purchase from Pakistan and deliver to your door in Bangladesh."/>
+  <meta name="theme-color" content="#1a1a2e"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="PakStyle BD"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Segoe UI',Arial,sans-serif;background:#f7f3ef;color:#2c2c2c;min-height:100vh}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:#f7f3ef;color:#2c2c2c;min-height:100vh;
+      padding-bottom:70px}
 
-    header{background:#1a1a2e;color:#fff;padding:22px 20px 16px;text-align:center}
-    header h1{font-size:1.7rem;letter-spacing:1px}
-    header p{font-size:0.88rem;color:#c9a96e;margin-top:5px}
+    /* ── Sticky header ── */
+    #appHeader{position:sticky;top:0;z-index:200;background:#1a1a2e;
+      border-bottom:1px solid rgba(201,169,110,0.25)}
+    .hdr-inner{display:flex;align-items:center;justify-content:space-between;
+      padding:12px 16px;max-width:700px;margin:0 auto}
+    .hdr-logo{display:flex;align-items:center;gap:10px}
+    .hdr-logo-mark{font-size:1.5rem;line-height:1}
+    .hdr-brand{font-size:1.1rem;font-weight:700;color:#fff;letter-spacing:0.5px}
+    .hdr-tagline{font-size:0.65rem;color:#c9a96e;margin-top:1px;letter-spacing:0.3px}
+    .hdr-cart-btn{position:relative;background:rgba(201,169,110,0.12);border:1px solid rgba(201,169,110,0.35);
+      color:#c9a96e;border-radius:10px;padding:8px 14px;font-size:1rem;cursor:pointer;
+      display:flex;align-items:center;gap:6px;min-height:44px;min-width:44px;
+      transition:background 0.15s}
+    .hdr-cart-btn:hover{background:rgba(201,169,110,0.22)}
+    .hdr-cart-label{font-size:0.75rem;font-weight:700;color:#c9a96e}
+    .hdr-cart-badge{background:#e74c3c;color:#fff;border-radius:10px;padding:1px 7px;
+      font-size:0.68rem;font-weight:700;min-width:20px;text-align:center}
 
-    .how-bar{background:#c9a96e;display:flex;justify-content:center;flex-wrap:wrap;gap:0}
-    .how-bar span{padding:9px 16px;font-size:0.75rem;color:#1a1a2e;font-weight:700;letter-spacing:0.3px}
+    /* ── How-it-works strip ── */
+    .hiw-strip{background:#c9a96e;padding:9px 16px;overflow-x:auto;
+      scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .hiw-strip::-webkit-scrollbar{display:none}
+    .hiw-inner{display:flex;align-items:center;justify-content:center;gap:0;
+      min-width:max-content;margin:0 auto}
+    .hiw-step{display:flex;align-items:center;gap:5px;padding:0 10px;
+      font-size:0.72rem;font-weight:700;color:#1a1a2e;white-space:nowrap}
+    .hiw-step span.icon{font-size:1rem}
+    .hiw-arrow{color:#1a1a2e;opacity:0.45;font-size:0.9rem;flex-shrink:0}
+
+    /* ── Bottom navigation bar ── */
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:300;
+      background:#1a1a2e;border-top:1px solid rgba(201,169,110,0.25);
+      display:flex;padding-bottom:env(safe-area-inset-bottom)}
+    .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:2px;padding:8px 4px 6px;background:none;border:none;cursor:pointer;
+      color:#888;font-size:0.6rem;font-weight:600;letter-spacing:0.3px;
+      min-height:54px;transition:color 0.15s;position:relative}
+    .bnav-btn .icon{font-size:1.25rem;line-height:1}
+    .bnav-btn.active,.bnav-btn:hover{color:#c9a96e}
+    .bnav-badge{position:absolute;top:4px;right:calc(50% - 18px);background:#e74c3c;
+      color:#fff;border-radius:10px;padding:1px 5px;font-size:0.6rem;font-weight:700;
+      min-width:16px;text-align:center}
+
+    /* ── In-app brand browser overlay ── */
+    #inAppBrowser{display:none;position:fixed;inset:0;z-index:400;
+      flex-direction:column;background:#fff}
+    .iab-bar{background:#1a1a2e;display:flex;align-items:center;gap:8px;
+      padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top));
+      flex-shrink:0;min-height:54px}
+    .iab-back{background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);
+      color:#c9a96e;border-radius:8px;padding:7px 14px;font-size:0.82rem;font-weight:700;
+      cursor:pointer;white-space:nowrap;min-height:40px}
+    .iab-title{flex:1;font-size:0.85rem;font-weight:700;color:#fff;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
+    .iab-use{background:#c9a96e;border:none;color:#1a1a2e;border-radius:8px;
+      padding:7px 12px;font-size:0.75rem;font-weight:700;cursor:pointer;
+      white-space:nowrap;min-height:40px}
+    .iab-frame{flex:1;border:none;width:100%}
+    .iab-fallback{display:none;flex:1;flex-direction:column;align-items:center;
+      justify-content:center;padding:32px 24px;text-align:center;gap:12px}
+    .iab-fallback .iab-fb-icon{font-size:3rem}
+    .iab-fallback p{font-size:0.88rem;color:#555;line-height:1.6;max-width:300px}
+    .iab-fallback a{display:inline-block;margin-top:8px;padding:12px 28px;
+      background:#1a1a2e;color:#c9a96e;border-radius:8px;font-weight:700;
+      text-decoration:none;font-size:0.88rem}
 
     /* VPN notice bar */
     .vpn-bar{background:#fff8e7;border-bottom:2px solid #f0c040;padding:10px 16px;font-size:0.8rem;color:#5a4000}
@@ -259,10 +326,38 @@
 </head>
 <body>
 
-<header>
-  <h1>PakStyle BD</h1>
-  <p>Pakistani Fashion · Delivered to Your Door in Bangladesh</p>
+<header id="appHeader">
+  <div class="hdr-inner">
+    <div class="hdr-logo">
+      <span class="hdr-logo-mark">🪡</span>
+      <div>
+        <div class="hdr-brand">PakStyle BD</div>
+        <div class="hdr-tagline">Pakistani Fashion · Bangladesh Delivery</div>
+      </div>
+    </div>
+    <button class="hdr-cart-btn" onclick="scrollToCart()" id="hdrCartBtn" title="View cart">
+      <span>🛒</span>
+      <span class="hdr-cart-label" id="hdrCartLabel" style="display:none">Cart</span>
+      <span class="hdr-cart-badge" id="hdrCartBadge" style="display:none">0</span>
+    </button>
+  </div>
 </header>
+
+<!-- How it works strip -->
+<div class="hiw-strip">
+  <div class="hiw-inner">
+    <div class="hiw-step"><span class="icon">🔍</span><span>Browse brands</span></div>
+    <span class="hiw-arrow">›</span>
+    <div class="hiw-step"><span class="icon">🔗</span><span>Paste product URL</span></div>
+    <span class="hiw-arrow">›</span>
+    <div class="hiw-step"><span class="icon">💬</span><span>We confirm price</span></div>
+    <span class="hiw-arrow">›</span>
+    <div class="hiw-step"><span class="icon">💳</span><span>Pay via bKash/Nagad</span></div>
+    <span class="hiw-arrow">›</span>
+    <div class="hiw-step"><span class="icon">🚚</span><span>2–3 weeks to your door</span></div>
+  </div>
+</div>
+
 <!-- Step indicator -->
 <div class="steps-bar">
   <div class="step-item active" id="si_1"><div class="step-num">1</div><div class="step-lbl">Add Items</div></div>
@@ -668,9 +763,48 @@
 </div>
 </div>
 
+<!-- IN-APP BRAND BROWSER OVERLAY -->
+<div id="inAppBrowser">
+  <div class="iab-bar">
+    <button class="iab-back" onclick="closeInAppBrowser()">← Back</button>
+    <span class="iab-title" id="iabTitle">Browse</span>
+    <button class="iab-use" onclick="useCurrentIabUrl()" id="iabUseBtn">📋 Use URL</button>
+  </div>
+  <div id="iabFallback" class="iab-fallback">
+    <span class="iab-fb-icon">🔒</span>
+    <p>This brand's site can't be shown inside the app (it blocks external frames).</p>
+    <a id="iabFallbackLink" href="#" target="_blank" rel="noopener">Open in Browser ↗</a>
+    <p style="font-size:0.78rem;color:#999;margin-top:8px">
+      Copy a product URL there, then come back and paste it in the order form below.
+    </p>
+  </div>
+  <iframe class="iab-frame" id="inAppFrame" src="" title="Brand browser"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation-by-user-activation"
+    onload="onIabLoad()" onerror="onIabError()"></iframe>
+</div>
+
+<!-- BOTTOM NAVIGATION BAR -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bnav-btn active" id="bnav-home" onclick="bottomNavGo('home')">
+    <span class="icon">🏠</span><span>Home</span>
+  </button>
+  <button class="bnav-btn" id="bnav-brands" onclick="bottomNavGo('brands')">
+    <span class="icon">🏪</span><span>Brands</span>
+  </button>
+  <button class="bnav-btn" id="bnav-cart" onclick="bottomNavGo('cart')">
+    <span class="icon">🛒</span>
+    <span class="bnav-badge" id="bnavBadge" style="display:none">0</span>
+    <span>Cart</span>
+  </button>
+  <button class="bnav-btn" id="bnav-how" onclick="bottomNavGo('how')">
+    <span class="icon">ℹ️</span><span>How To</span>
+  </button>
+</nav>
+
 <!-- ADMIN PANEL — visible only via ?admin in URL -->
 <div id="adminPanel" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;
-  color:#fff;padding:16px 20px;z-index:999;border-top:3px solid #c9a96e;font-family:inherit">
+  color:#fff;padding:16px 20px;z-index:999;border-top:3px solid #c9a96e;font-family:inherit;
+  overflow-y:auto;max-height:85vh">
   <div style="max-width:500px;margin:0 auto">
     <div style="font-size:0.7rem;letter-spacing:2px;color:#c9a96e;font-weight:700;margin-bottom:10px">
       🔒 ADMIN — RATE SETTINGS (not visible to buyers)
@@ -692,9 +826,19 @@
           style="width:120px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
       </div>
       <div>
-        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Commission (your note)</label>
-        <input id="adm_comm" type="text" placeholder="1pc=20% · 2-3pc=18% · 4+pc=15%"
-          style="width:200px;padding:8px 10px;border-radius:6px;border:none;font-size:0.78rem"/>
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Commission 1pc (%)</label>
+        <input id="adm_comm_1" type="number" step="0.1" min="0" placeholder="20"
+          style="width:80px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Commission 2–3pc (%)</label>
+        <input id="adm_comm_23" type="number" step="0.1" min="0" placeholder="18"
+          style="width:80px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
+      </div>
+      <div>
+        <label style="font-size:0.72rem;color:#aaa;display:block;margin-bottom:4px">Commission 4+pc (%)</label>
+        <input id="adm_comm_4p" type="number" step="0.1" min="0" placeholder="15"
+          style="width:80px;padding:8px 10px;border-radius:6px;border:none;font-size:0.9rem"/>
       </div>
       <button id="saveRatesBtn" onclick="saveRates()"
         style="padding:8px 20px;background:#c9a96e;color:#1a1a2e;border:none;border-radius:6px;
@@ -759,11 +903,18 @@
   // Rates stored in localStorage, editable only via ?admin URL
   function getRates(){
     return {
-      CONV_RATE : parseFloat(localStorage.getItem('psb_conv') || '0.42'),
-      LOG_RATE  : parseFloat(localStorage.getItem('psb_log')  || '1600'),
-      COMM_RATE : 0.10,
-      TRANS_FEE : 100
+      CONV_RATE  : parseFloat(localStorage.getItem('psb_conv')     || '0.42'),
+      LOG_RATE   : parseFloat(localStorage.getItem('psb_log')      || '1600'),
+      COMM_1     : parseFloat(localStorage.getItem('psb_comm_1')   || '20') / 100,
+      COMM_23    : parseFloat(localStorage.getItem('psb_comm_23')  || '18') / 100,
+      COMM_4P    : parseFloat(localStorage.getItem('psb_comm_4p')  || '15') / 100,
+      TRANS_FEE  : 100
     };
+  }
+  function commRate(r, itemCount){
+    if(itemCount <= 1) return r.COMM_1;
+    if(itemCount <= 3) return r.COMM_23;
+    return r.COMM_4P;
   }
 
   // --- REMEMBER ME (localStorage) ---
@@ -812,8 +963,10 @@
     const r = getRates();
     document.getElementById('adm_conv').value    = r.CONV_RATE;
     document.getElementById('adm_log').value     = r.LOG_RATE;
-    document.getElementById('adm_usd_pkr').value = parseFloat(localStorage.getItem('psb_usd_pkr') || '278');
-    document.getElementById('adm_comm').value    = localStorage.getItem('psb_comm') || '1pc=20% · 2-3pc=18% · 4+pc=15%';
+    document.getElementById('adm_usd_pkr').value  = parseFloat(localStorage.getItem('psb_usd_pkr')   || '278');
+    document.getElementById('adm_comm_1').value   = parseFloat(localStorage.getItem('psb_comm_1')    || '20');
+    document.getElementById('adm_comm_23').value  = parseFloat(localStorage.getItem('psb_comm_23')   || '18');
+    document.getElementById('adm_comm_4p').value  = parseFloat(localStorage.getItem('psb_comm_4p')   || '15');
     buildWeightEditor();
     panel.scrollIntoView({ behavior: 'smooth' });
   }
@@ -839,7 +992,12 @@
     localStorage.setItem('psb_conv', conv);
     localStorage.setItem('psb_log',  log);
     if(usdPkr > 0) localStorage.setItem('psb_usd_pkr', usdPkr);
-    localStorage.setItem('psb_comm', document.getElementById('adm_comm').value);
+    const c1  = parseFloat(document.getElementById('adm_comm_1').value);
+    const c23 = parseFloat(document.getElementById('adm_comm_23').value);
+    const c4p = parseFloat(document.getElementById('adm_comm_4p').value);
+    if(c1  >= 0) localStorage.setItem('psb_comm_1',  c1);
+    if(c23 >= 0) localStorage.setItem('psb_comm_23', c23);
+    if(c4p >= 0) localStorage.setItem('psb_comm_4p', c4p);
     const btn = document.getElementById('saveRatesBtn');
     btn.textContent = '✓ Saved!';
     btn.style.background = '#2e7d32';
@@ -1744,7 +1902,7 @@
       if(!list.length) return;
       const openCls = idx === 0 ? ' open' : '';   // first category open by default
       const chips = list.map(b =>
-        `<a class="brand-chip${b.p?' pk-chip':''}" href="${b.u}" target="_blank" rel="noopener">${esc(b.n)} <span>${b.p?'🟢':'💵'}</span></a>`
+        `<button class="brand-chip${b.p?' pk-chip':''}" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)} <span>${b.p?'🟢':'💵'}</span></button>`
       ).join('');
       html += `<div class="brand-cat${openCls}">
         <div class="brand-cat-hdr" onclick="this.parentElement.classList.toggle('open')">
@@ -1770,10 +1928,10 @@
       dd.innerHTML = `<div class="brand-dd-empty">No brand found for “${esc(q)}”. Paste the product link below instead.</div>`;
     } else {
       dd.innerHTML = matches.map(b =>
-        `<a class="brand-dd-item" href="${b.u}" target="_blank" rel="noopener">
+        `<div class="brand-dd-item" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">
            <span>${esc(b.n)}</span>
-           <span class="cur ${b.p?'pkr':'usd'}">${b.p?'PKR ↗':'USD ↗'}</span>
-         </a>`
+           <span class="cur ${b.p?'pkr':'usd'}">${b.p?'PKR':'USD'} ↗</span>
+         </div>`
       ).join('');
     }
     dd.style.display='block';   // must be explicit — CSS default is display:none
@@ -2048,11 +2206,13 @@
       rtBox.style.display = 'none';
       badge.style.display = 'none';
       list.innerHTML = '';
+      updateCartBadges(0);
       return;
     }
     if(empty) empty.style.display = 'none';
     badge.style.display = '';
     badge.textContent = cart.length + (cart.length === 1 ? ' item' : ' items');
+    updateCartBadges(cart.length);
 
     const r = getRates();
     let totalPkr = 0, totalWeight = 0;
@@ -2094,8 +2254,10 @@
     list.innerHTML = html;
 
     // Running total
-    const logistics = Math.round(totalWeight * r.LOG_RATE);
-    const totalBdt  = Math.round(totalPkr * r.CONV_RATE) + logistics + TRANS_FEE;
+    const productBdt = Math.round(totalPkr * r.CONV_RATE);
+    const commission = Math.round(productBdt * commRate(r, cart.length));
+    const logistics  = Math.round(totalWeight * r.LOG_RATE);
+    const totalBdt   = productBdt + commission + logistics + TRANS_FEE;
     document.getElementById('rt-item-count').textContent = cart.length;
     document.getElementById('rt-pkr').textContent  = 'PKR ' + totalPkr.toLocaleString();
     document.getElementById('rt-logistics').textContent = '৳ ' + logistics.toLocaleString();
@@ -2187,8 +2349,10 @@
       </div>`;
     });
     document.getElementById('summaryItems').innerHTML = siHtml;
-    const logistics = Math.round(totalWeight * r.LOG_RATE);
-    const totalBdt  = Math.round(totalPkr * r.CONV_RATE) + logistics + TRANS_FEE;
+    const productBdt = Math.round(totalPkr * r.CONV_RATE);
+    const commission = Math.round(productBdt * commRate(r, cart.length));
+    const logistics  = Math.round(totalWeight * r.LOG_RATE);
+    const totalBdt   = productBdt + commission + logistics + TRANS_FEE;
     document.getElementById('sum-pkr').textContent       = 'PKR ' + totalPkr.toLocaleString();
     document.getElementById('sum-logistics').textContent = '৳ ' + logistics.toLocaleString();
     document.getElementById('sum-total').textContent     = '৳ ' + totalBdt.toLocaleString();
@@ -2216,8 +2380,10 @@
       totalPkr    += item.pkr * totalQty;
       totalWeight += item.weight * totalQty;
     });
-    const logistics = Math.round(totalWeight * r.LOG_RATE);
-    const totalBdt  = Math.round(totalPkr * r.CONV_RATE) + logistics + TRANS_FEE;
+    const productBdt = Math.round(totalPkr * r.CONV_RATE);
+    const commission = Math.round(productBdt * commRate(r, cart.length));
+    const logistics  = Math.round(totalWeight * r.LOG_RATE);
+    const totalBdt   = productBdt + commission + logistics + TRANS_FEE;
 
     const orderId = 'PSB-' + Date.now().toString(36).toUpperCase();
     const name    = document.getElementById('buyerName').value.trim();
@@ -2498,6 +2664,119 @@
     }
   }
 
+  // ── IN-APP BRAND BROWSER ─────────────────────────────────────────────────
+  let _iabUrl = '';
+  let _iabTimer = null;
+
+  function openBrandInApp(el){
+    const url = el.dataset.url;
+    const name = el.dataset.name;
+    _iabUrl = url;
+    document.getElementById('iabTitle').textContent = name;
+    document.getElementById('iabFallbackLink').href = url;
+    const frame = document.getElementById('inAppFrame');
+    const fallback = document.getElementById('iabFallback');
+    frame.style.display = 'block';
+    fallback.style.display = 'none';
+    document.getElementById('iabUseBtn').style.display = '';
+    frame.src = url;
+    document.getElementById('inAppBrowser').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    const dd = document.getElementById('brandDropdown');
+    if(dd) dd.style.display = 'none';
+    // Detect blocked iframes via timeout — cross-origin onload fires but content is empty
+    clearTimeout(_iabTimer);
+    _iabTimer = setTimeout(checkIabBlocked, 4000);
+  }
+
+  function checkIabBlocked(){
+    const frame = document.getElementById('inAppFrame');
+    try{
+      // If same-origin or allowed: contentDocument exists and has a body
+      if(!frame.contentDocument || !frame.contentDocument.body ||
+         frame.contentDocument.body.innerHTML.trim() === ''){
+        onIabError();
+      }
+    }catch(e){
+      // cross-origin SecurityError — frame is blocked
+      onIabError();
+    }
+  }
+
+  function onIabLoad(){
+    clearTimeout(_iabTimer);
+  }
+
+  function onIabError(){
+    clearTimeout(_iabTimer);
+    document.getElementById('inAppFrame').style.display = 'none';
+    document.getElementById('iabFallback').style.display = 'flex';
+    document.getElementById('iabUseBtn').style.display = 'none';
+  }
+
+  function closeInAppBrowser(){
+    clearTimeout(_iabTimer);
+    document.getElementById('inAppBrowser').style.display = 'none';
+    document.getElementById('inAppFrame').src = '';
+    document.body.style.overflow = '';
+  }
+
+  function useCurrentIabUrl(){
+    const frame = document.getElementById('inAppFrame');
+    let url = _iabUrl;
+    try{
+      const live = frame.contentWindow.location.href;
+      if(live && live !== 'about:blank') url = live;
+    }catch(e){ /* cross-origin — use brand homepage */ }
+    if(url){
+      document.getElementById('urlInput').value = url;
+      closeInAppBrowser();
+      document.getElementById('urlInput').scrollIntoView({behavior:'smooth'});
+      document.getElementById('urlInput').focus();
+    }
+  }
+
+  // ── BOTTOM NAV ───────────────────────────────────────────────────────────
+  function bottomNavGo(tab){
+    ['home','brands','cart','how'].forEach(t =>
+      document.getElementById('bnav-'+t).classList.toggle('active', t===tab));
+    if(tab === 'home'){
+      window.scrollTo({top:0, behavior:'smooth'});
+    } else if(tab === 'brands'){
+      const bs = document.querySelector('.brand-section');
+      if(bs) bs.scrollIntoView({behavior:'smooth'});
+    } else if(tab === 'cart'){
+      scrollToCart();
+    } else if(tab === 'how'){
+      document.querySelector('.hiw-strip').scrollIntoView({behavior:'smooth'});
+    }
+  }
+
+  function scrollToCart(){
+    if(document.getElementById('step1').classList.contains('active')){
+      const el = document.getElementById('runningTotal').style.display !== 'none'
+        ? document.getElementById('runningTotal')
+        : document.getElementById('cartList');
+      if(el) el.scrollIntoView({behavior:'smooth'});
+    }
+  }
+
+  // ── CART BADGE SYNC ──────────────────────────────────────────────────────
+  function updateCartBadges(count){
+    const hBadge = document.getElementById('hdrCartBadge');
+    const hLabel = document.getElementById('hdrCartLabel');
+    const bBadge = document.getElementById('bnavBadge');
+    if(count > 0){
+      hBadge.textContent = count; hBadge.style.display = '';
+      hLabel.textContent = 'Cart'; hLabel.style.display = '';
+      bBadge.textContent = count; bBadge.style.display = '';
+    } else {
+      hBadge.style.display = 'none';
+      hLabel.style.display = 'none';
+      bBadge.style.display = 'none';
+    }
+  }
+
   // Restore any saved cart — must run last, after all consts above are initialised.
   loadCartFromStorage();
 
@@ -2531,7 +2810,7 @@
       ok('Size NOT falsely read from handle "s26…"', detectSizeFromUrl('https://x.com/products/s26b4569')==='');
       let admErr=''; try{ buildWeightEditor(); }catch(e){ admErr=e.message; }
       ok('Admin weight editor builds', !admErr, admErr);
-      ok('Commission field editable', (()=>{const c=document.getElementById('adm_comm'); return c && !c.readOnly;})());
+      ok('Commission fields editable', (()=>{const c=document.getElementById('adm_comm_1'); return c && !c.readOnly;})());
       ok('Cart persistence functions exist', typeof saveCartToStorage==='function' && typeof loadCartFromStorage==='function');
       ok('Refresh warning installed', true); // beforeunload handler is registered above
     }catch(e){ ok('FATAL ERROR while testing', false, e.message); }
