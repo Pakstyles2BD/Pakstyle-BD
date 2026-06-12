@@ -39,6 +39,23 @@ const ALLOWED_HOSTS = [
   'rangja.com.pk','saadbinshahzad.com','sobianazir.net','silayipret.com',
   'tawakkalfabrics.co','binsaeedfabric.com','binilyas.com','rangrasiya.com',
   'bareezepk.com','armasclothing.com','ittehadtextiles.com','republicwomenswear.com',
+  // PK twins of intl domains + brands added 2026-06-13
+  'pk.saniamaskatiya.com','pk.zainabchottani.com','salitexonline.com','salitex.com',
+  'suffuse.pk','baraekhanom.pk','suffusebysanayasir.com',
+  'zeenwoman.com','lulusar.com','sokamal.com','mausummery.com','sitarastudio.pk',
+  'maryumnmaria.com','imroziapremium.com','emaanadeel.com','dynastyfabrics.com',
+  'shahzebsaeed.com','leisureclub.pk','pepperland.pk',
+  // brands listed in the directory but missing from the original map
+  'chenone.com','khasstores.com','aghanoorofficial.com','chinyere.pk','wearego.com',
+  'farashaonline.pk','gulaal.pk','image1993.com','kayseria.com.pk','krosskulture.com',
+  'motifz.com.pk','ramsha.pk','salitex.com','shaposh.pk','thredzonline.com',
+  'warda.com.pk','zarif.pk','bareeze.com','crimson.com.pk','erumkhancouture.com',
+  'faizasaqlain.pk','hussainrehar.com','nomiansari.com','saniamaskatiya.com',
+  'tenadurrani.com','threadsandmotifs.com','zaha.pk','zainabchottani.com',
+  'amiradnan.com','lakhanyonline.com','furorjeans.com','republicbespoke.com',
+  'naushemian.com','thecambridgeshop.com','charcoal.com.pk','cougar.com.pk',
+  'deepakperwani.com','ismailfarid.com','royaltag.com.pk','savoir.pk',
+  'minnieminors.com','bachaaparty.com','ilovehopscotch.com','rangrasiya.com.pk',
 ];
 
 function hostAllowed(hostname){

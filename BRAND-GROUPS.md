@@ -15,7 +15,7 @@ session currency (`/cart.js`), product-page structured data (`priceCurrency`), a
 
 | Group | What it is | Brands | Auto today? | Auto after VPS? | Status |
 |---|---|---:|---|---|---|
-| **1** | Shopify, native PKR | 76 | ✅ from PK only | ✅ guaranteed for BD | relay wired |
+| **1** | Shopify, native PKR | 88 | ✅ from PK only | ✅ guaranteed for BD | relay wired |
 | **2** | Twin sites (intl + PK store) | 10 | ✅ either URL now works | ✅ via twin-map + relay | 🔧→✅ twin-map shipped |
 | **3** | USD-native brand (no PKR exists for anyone) | 1 | ✅ auto in USD | ✅ (relay not needed) | ✅ USD_ONLY_BRANDS shipped |
 | **4** | Non-Shopify, no product API | 15 | ❌ | partial (Khaadi/Sapphire scrape) | ⏳ needs VPS |
@@ -53,6 +53,16 @@ Royal Tag, Saad Bin Shahzad, **Salitex** (salitexonline.com), Sana Safinaz, **Sa
 (pk.saniamaskatiya.com), Shahnameh, Sha Posh, Silayi Pret, Sobia Nazir, Tawakkal Fabrics, Tena Durrani,
 Threads & Motifs, Uniworth, WearEgo, **Zainab Chottani** (pk.zainabchottani.com), Zaha, Zara Shahjahan,
 Zarif, Zellbury
+
+**Added 2026-06-13 (all surveyed: Shopify + PKR + stock):** Zeen (zeenwoman.com), Lulusar (lulusar.com),
+So Kamal (sokamal.com), Mausummery (mausummery.com), Sitara Studio (sitarastudio.pk), Maryum N Maria
+(maryumnmaria.com), Imrozia Premium (imroziapremium.com), Emaan Adeel (emaanadeel.com — PKR verified in
+browser), Dynasty Fabrics (dynastyfabrics.com), Shahzeb Saeed (shahzebsaeed.com), Leisure Club
+(leisureclub.pk), Pepperland (pepperland.pk)
+
+**Searched but NOT added (no working online store found):** Firdous (3 domains dead/blocked), Qalamkar,
+Asifa & Nabeel, Brumano, Orient Textiles (orienttextiles.com is for sale; orient.com.pk is Orient
+*Electronics* — different company). Revisit if buyers ask.
 
 > *Barae Khanom, Bareeze, Salitex, Sania Maskatiya, Zainab Chottani: in Group 1 **only via the correct PK
 > domain** — see Group 5 directory fixes and the Group 2 twin-map.
