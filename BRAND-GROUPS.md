@@ -3,9 +3,12 @@
 **Goal:** every brand auto-fetches **Category · PKR Price · In-stock Sizes** for a buyer in Bangladesh.
 (Qty is always the buyer's manual choice — no website can supply it.)
 
-**Survey basis:** all 94 brand domains probed from a Pakistani IP (Karachi) on 2026-06-12 — the same
+**Survey basis:** every brand domain probed from a Pakistani IP (Karachi) on 2026-06-12/13 — the same
 vantage point the VPS relay will have. Checked: Shopify product API (`/products.json`, `/products/{handle}.js`),
 session currency (`/cart.js`), product-page structured data (`priceCurrency`), and redirect/twin domains.
+
+**Directory total: 105 brands** (88 + Baroque + Suffuse + 15 non-Shopify = 105; the 7 Shopify twins are
+counted inside Group 1 via their PK stores; Khaadi & Sapphire are counted in Group 4).
 
 **Status legend:** ✅ done · 🔧 needs build · ⏳ needs VPS · ✋ manual fallback
 
@@ -35,7 +38,7 @@ session currency (`/cart.js`), product-page structured data (`priceCurrency`), a
 
 ---
 
-## GROUP 1 — ✅ Full auto (Shopify, native PKR) — 73 brands
+## GROUP 1 — ✅ Full auto (Shopify, native PKR) — 88 brands
 
 Category, PKR price, in-stock sizes all auto-fill **today** from a Pakistani IP. From **Bangladesh**, some
 geo-switch to USD; the `cart.js` currency check (shipped) detects it per-product and the **relay** silently
@@ -43,33 +46,33 @@ refetches the PKR version. This is the group the VPS makes bulletproof.
 
 **Probable solution:** VPS relay (already wired). No per-brand work — just confirm each from a BD IP after VPS is live.
 
-Afrozeh, Agha Noor, Alizeh, Alkaram, Almirah, Amir Adnan, Armas, Asim Jofa, Bachaa Party, Barae Khanom*,
-Bareeze*, Beechtree, Bin Ilyas, Bin Saeed, Bonanza Satrangi, Breakout, Cambridge, Charcoal, Charizma,
-ChenOne, Chinyere, Crimson, Cross Stitch, Diners, Edenrobe, Elan, ETHNC, Faiza Saqlain, Farasha, Furor,
-Generation, Gulaal, Gul Ahmed, Hopscotch, Hussain Rehar, Ismail Farid, J. Junaid Jamshed, Jazmin, Kayseria,
-Khas Stores, Kross Kulture, Lakhany, Limelight, Maria B, Minnie Minors, Monark, Motifz, MTJ, Mushq,
-Nishat Linen, Nureh, Outfitters, Ramsha, Rang Ja, Rang Rasiya, Republic Menswear, Republic Womenswear,
-Royal Tag, Saad Bin Shahzad, **Salitex** (salitexonline.com), Sana Safinaz, **Sania Maskatiya**
-(pk.saniamaskatiya.com), Shahnameh, Sha Posh, Silayi Pret, Sobia Nazir, Tawakkal Fabrics, Tena Durrani,
-Threads & Motifs, Uniworth, WearEgo, **Zainab Chottani** (pk.zainabchottani.com), Zaha, Zara Shahjahan,
-Zarif, Zellbury
+Afrozeh, Agha Noor, Alizeh, Alkaram Studio, Almirah, Amir Adnan, Armas, Asim Jofa, Bachaa Party,
+Barae Khanom*, Bareeze* (bareezepk.com), Beechtree, Bin Ilyas, Bin Saeed, Bonanza Satrangi, Breakout,
+Cambridge, Charcoal, Charizma, ChenOne, Chinyere, Crimson, Cross Stitch, Diners, Dynasty Fabrics, Edenrobe,
+Ego, Elan, Emaan Adeel, ETHNC* (pk.ethnc.com), Faiza Saqlain, Farasha, Furor, Generation* (generation.com.pk),
+Gulaal, Gul Ahmed, Hopscotch, Hussain Rehar, Imrozia Premium, Ismail Farid, J. Junaid Jamshed, Jazmin,
+Kayseria, Khas Stores, Kross Kulture, Lakhany by LSM, Leisure Club, Limelight, Lulusar, Maria B* (mariab.pk),
+Maryum N Maria, Mausummery, Minnie Minors, Monark, Motifz, MTJ (Tariq Jameel), Mushq, Nishat Linen, Nureh,
+Outfitters, Pepperland, Ramsha, Rang Ja, Rang Rasiya, Republic Menswear, Republic Womenswear, Royal Tag,
+Saad Bin Shahzad, Salitex* (salitexonline.com), Sana Safinaz, Sania Maskatiya* (pk.saniamaskatiya.com),
+Shahnameh, Shahzeb Saeed, Sha Posh, Silayi Pret, Sitara Studio, Sobia Nazir, So Kamal, Tawakkal Fabrics,
+Tena Durrani, Threads & Motifs, Uniworth, Zainab Chottani* (pk.zainabchottani.com), Zaha by Elan,
+Zara Shahjahan, Zarif, Zeen (zeenwoman.com), Zellbury
 
-**Added 2026-06-13 (all surveyed: Shopify + PKR + stock):** Zeen (zeenwoman.com), Lulusar (lulusar.com),
-So Kamal (sokamal.com), Mausummery (mausummery.com), Sitara Studio (sitarastudio.pk), Maryum N Maria
-(maryumnmaria.com), Imrozia Premium (imroziapremium.com), Emaan Adeel (emaanadeel.com — PKR verified in
-browser), Dynasty Fabrics (dynastyfabrics.com), Shahzeb Saeed (shahzebsaeed.com), Leisure Club
-(leisureclub.pk), Pepperland (pepperland.pk)
+> *Starred brands work **only via the correct PK domain** — the Group 2 twin-map redirects their
+> international URLs automatically.
+
+**Added 2026-06-13 (all surveyed: Shopify + PKR + stock):** Zeen, Lulusar, So Kamal, Mausummery,
+Sitara Studio, Maryum N Maria, Imrozia Premium, Emaan Adeel (PKR verified in browser), Dynasty Fabrics,
+Shahzeb Saeed, Leisure Club, Pepperland.
 
 **Searched but NOT added (no working online store found):** Firdous (3 domains dead/blocked), Qalamkar,
 Asifa & Nabeel, Brumano, Orient Textiles (orienttextiles.com is for sale; orient.com.pk is Orient
 *Electronics* — different company). Revisit if buyers ask.
 
-> *Barae Khanom, Bareeze, Salitex, Sania Maskatiya, Zainab Chottani: in Group 1 **only via the correct PK
-> domain** — see Group 5 directory fixes and the Group 2 twin-map.
-
 ---
 
-## GROUP 2 — 👯 Twin websites: separate international + Pakistani stores — 7 brands  ✅ twin-map shipped
+## GROUP 2 — 👯 Twin websites: separate international + Pakistani stores — 10 brands  ✅ twin-map shipped
 
 Two real stores per brand. **Risk (now mitigated):** buyer pastes the *international* URL → would get USD
 price, or a product not carried on the PK store. `TWIN_MAP` now redirects the fetch to the PK twin.
