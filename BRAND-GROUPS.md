@@ -17,7 +17,7 @@ session currency (`/cart.js`), product-page structured data (`priceCurrency`), a
 |---|---|---:|---|---|---|
 | **1** | Shopify, native PKR | 76 | ✅ from PK only | ✅ guaranteed for BD | relay wired |
 | **2** | Twin sites (intl + PK store) | 10 | ✅ either URL now works | ✅ via twin-map + relay | 🔧→✅ twin-map shipped |
-| **3** | No PKR price exists online (USD only) | 1 | ❌ | ❌ (manual USD) | — |
+| **3** | USD-native brand (no PKR exists for anyone) | 1 | ✅ auto in USD | ✅ (relay not needed) | ✅ USD_ONLY_BRANDS shipped |
 | **4** | Non-Shopify, no product API | 15 | ❌ | partial (Khaadi/Sapphire scrape) | ⏳ needs VPS |
 | **5** | Dead / wrong directory links | 0 | — | — | ✅ all fixed |
 
@@ -85,13 +85,20 @@ the 4 Shopify twins; Baroque still needs manual USD (no PKR exists); Khaadi/Sapp
 
 ---
 
-## GROUP 3 — 💵 No PKR price exists anywhere online — 1 brand
+## GROUP 3 — 💵 USD-native brand (no PKR exists for anyone) — 1 brand  ✅ solution shipped
 
-Confirmed USD checkout; any on-screen "PKR" is a client-side converter app, **not** a brand-set price.
+Confirmed USD checkout; on-screen "Rs" is a converter widget (e.g. Saliha shows Rs.43,959**.41** =
+$155.65 × FX rate — the paisa fraction is the giveaway), **not** a brand-set price.
 
 | Brand | Site | Evidence |
 |---|---|---|
-| Suffuse by Sana Yasir | suffuse.pk | Shopify base USD, market=US, checkout USD ($63.60). `?currency=PKR` returns 17,962 = $63.60 × ~282 (converter app, not a real PKR price). No separate PK store found. |
+| Suffuse by Sana Yasir | suffuse.pk | Shopify base USD, market=US, checkout USD — even for Pakistani visitors. No separate PK store exists (pk.suffuse.pk, suffuse.com.pk etc. all dead). |
+
+**Solution (shipped):** `USD_ONLY_BRANDS` set in order-form.html. Key insight: Suffuse's USD price hides no
+cheaper PKR price — it's the true cost for everyone, so auto-filling it is correct, not a compromise.
+Category/sizes/stock auto-fetch (Shopify works); price auto-fills on the USD toggle; converts at the admin
+USD→PKR rate (set it ~2–3% above mid-market to cover card FX fees); calm amber "this brand sells in USD only"
+note instead of the red alarm; relay skipped (pointless). Effectively full-auto, just USD-denominated.
 
 > **Correction (2026-06-12):** Salitex, Sania Maskatiya, Zainab Chottani were WRONGLY placed here earlier —
 > I had tested their international domains (salitex.com / saniamaskatiya.com / zainabchottani.com). Their real
@@ -155,6 +162,6 @@ Done in `order-form.html` `BRANDS`. Barae Khanom & Bareeze gained full auto-fetc
 - [ ] **VPS** Provision CloudVPS.pk, verify PK geolocation, deploy relay + HTTPS — *blocks G1-BD & G4*
 - [ ] **G1** After VPS: confirm each brand from a Dhaka IP; relay handles USD-switchers
 - [ ] **G4** Khaadi + Sapphire JSON-LD scraper on relay (PK IP); retest bot-blocked brands
-- [ ] **G3** Decide: keep Suffuse with manual-USD, or remove (only Group-3 brand left)
+- [x] **G3** Suffuse handled as USD-native brand (`USD_ONLY_BRANDS`) — auto-fetch in USD, admin-rate conversion — *done 2026-06-13*
 
 _Last surveyed: 2026-06-12 from Karachi PK IP. Re-run survey from Dhaka after VPS to validate Group 1 USD-switchers._

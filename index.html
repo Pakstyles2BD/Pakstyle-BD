@@ -1341,6 +1341,14 @@
   // the normal manual-entry path instead.
   const TWIN_NO_API = new Set(['khaadi.com','sapphireonline.pk']);
 
+  // Brands that genuinely price in USD for EVERYONE — including Pakistani
+  // visitors (verified: store currency USD, market US, checkout USD; on-page
+  // "Rs" is a converter widget). Their USD price hides no cheaper PKR price,
+  // so it's the true cost: auto-fill it on the USD toggle with a calm note
+  // instead of the red "real PKR price unknown" alarm, and skip the relay
+  // (a PK IP can't produce a PKR price that doesn't exist).
+  const USD_ONLY_BRANDS = new Set(['suffuse.pk']);
+
   async function fetchProductData(id, url){
     const statusEl = document.getElementById(`dc_fetch_${id}`);
     function setStatus(msg, color){ if(statusEl){ statusEl.style.display=''; statusEl.textContent=msg; statusEl.style.color=color||'#c9a96e'; } }
@@ -1428,7 +1436,7 @@
         else if(sessionCur){
           pkrVia = sessionCur; // foreign — try the relay
           const relay = (localStorage.getItem('psb_relay_url')||'').trim().replace(/\/+$/,'');
-          if(relay){
+          if(relay && !USD_ONLY_BRANDS.has(pastedHost)){
             try{
               setStatus(`🇵🇰 Brand served ${sessionCur} — fetching real PKR price via Pakistan relay…`,'#c9a96e');
               // Send the relay the PK-twin URL so it queries the right store.
@@ -1617,6 +1625,13 @@
       const refPrice  = Math.round(moneyOf((avail[0]||vars[0])?.price));
       const szWord    = hasStockInfo ? ' sizes in stock' : ' sizes found';
       const foreignCur = (pkrVia !== 'direct' && pkrVia !== 'relay' && pkrVia !== 'unknown') ? pkrVia : null;
+      if(foreignCur && USD_ONLY_BRANDS.has(pastedHost)){
+        // USD-native brand: the USD price IS the true price (no PKR exists
+        // anywhere, even for Pakistani buyers) — calm note, not an alarm.
+        setStatus(`ℹ️ This brand sells in ${foreignCur} only — no PKR price exists. ${foreignCur} price auto-filled; it converts at your admin USD→PKR rate.`, '#f0c855');
+        checkAddUrlLock();
+        return;  // keep the note visible (no auto-hide)
+      }
       if(foreignCur){
         // Brand geo-priced this session in a foreign currency and the relay
         // could not get the PKR price — fail LOUD, keep the warning visible.
