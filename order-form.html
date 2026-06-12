@@ -126,17 +126,6 @@
     .bs-cancel-btn{width:100%;padding:12px;background:transparent;color:var(--txt-muted);
       border:1.5px solid var(--bdr-med);border-radius:12px;font-size:0.88rem;cursor:pointer}
 
-    /* VPN notice bar */
-    .vpn-bar{background:#1A2A10;border-bottom:2px solid #4a8a20;padding:10px 16px;font-size:0.8rem;color:#a0d070}
-    .vpn-bar-inner{max-width:700px;margin:0 auto;display:flex;align-items:center;flex-wrap:wrap;gap:8px}
-    .vpn-bar strong{color:#c0f080}
-    .vpn-link{display:inline-block;padding:4px 12px;border-radius:14px;font-size:0.75rem;font-weight:700;text-decoration:none;transition:opacity 0.15s}
-    .vpn-link:hover{opacity:0.85}
-    .vpn-free{background:#25d366;color:#fff}
-    .vpn-paid{background:var(--gold);color:#0A1628}
-    .vpn-dismiss{background:none;border:none;cursor:pointer;color:var(--txt-muted);font-size:1rem;margin-left:auto;padding:0 4px}
-    .vpn-bar.hidden{display:none}
-
     /* Price input with currency toggle */
     .price-row{display:flex;gap:0}
     .price-row input{flex:1;padding:9px 12px;border:1.5px solid var(--bdr-med);border-radius:6px 0 0 6px;
@@ -194,18 +183,32 @@
     .brand-dd-item .cur.pkr{background:rgba(46,204,113,0.15);color:#4caf50}
     .brand-dd-item .cur.usd{background:rgba(249,168,37,0.15);color:#f9a825}
     .brand-dd-empty{padding:14px;text-align:center;color:var(--txt-muted);font-size:0.82rem}
-    .brand-legend{font-size:0.7rem;color:var(--txt-muted);margin:2px 0 12px}
-    .brand-cat{border:1px solid var(--bdr);border-radius:10px;margin-bottom:8px;overflow:hidden;background:var(--surface)}
-    .brand-cat-hdr{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;cursor:pointer;
-      background:var(--raised);font-weight:700;font-size:0.84rem;color:var(--txt);user-select:none}
-    .brand-cat-hdr:hover{background:var(--gold-dim)}
-    .brand-cat-hdr .cnt{font-size:0.68rem;font-weight:600;color:var(--txt-muted)}
-    .brand-cat-hdr .arr{transition:transform .2s;color:var(--gold)}
-    .brand-cat.open .brand-cat-hdr .arr{transform:rotate(90deg)}
-    .brand-cat-body{display:none;flex-wrap:wrap;gap:7px;padding:12px 14px}
-    .brand-cat.open .brand-cat-body{display:flex}
-    .brand-cat-label{font-size:0.68rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
-      color:var(--txt-muted);margin:10px 0 5px;width:100%}
+    /* Brand category bar (mega-menu) + brand columns */
+    .cat-bar{display:flex;overflow-x:auto;gap:2px;border-bottom:1px solid var(--gold-bdr);scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .cat-bar::-webkit-scrollbar{display:none}
+    .cat-tab{flex:0 0 auto;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit;
+      padding:11px 14px;font-size:0.82rem;font-weight:600;color:var(--txt-sec);white-space:nowrap;transition:color .15s}
+    .cat-tab:hover{color:var(--txt)}
+    .cat-tab.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}
+    .cat-panel{background:var(--surface);border:1px solid var(--bdr);border-top:none;border-radius:0 0 10px 10px;padding:14px;margin-bottom:14px}
+    .cat-head{font-size:0.8rem;font-weight:700;color:var(--gold);margin-bottom:10px;letter-spacing:.3px}
+    .cat-head .cnt{color:var(--txt-muted);font-weight:600}
+    .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:2px 8px}
+    .cat-brand{display:block;text-align:left;background:none;border:none;cursor:pointer;font-family:inherit;width:100%;
+      color:var(--txt-sec);font-size:0.83rem;padding:8px;border-radius:8px;transition:background .12s,color .12s}
+    .cat-brand:hover{color:var(--gold);background:var(--gold-dim)}
+    .brand-dd-item .cur-go{color:var(--gold);font-size:0.8rem}
+
+    /* ── Desktop / wide screens: behave like a full website, not a phone column ── */
+    @media (min-width:820px){
+      .hdr-inner{max-width:980px}
+      .hiw-inner{max-width:980px}
+      .container{max-width:980px;padding:30px 32px 44px}
+      body{padding-bottom:30px}
+      .bottom-nav{display:none}
+      #installPill{bottom:24px}
+      .cat-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+    }
     .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
 
     /* ── URL input area — most prominent element ── */
@@ -408,30 +411,23 @@
 <!-- ═══ STEP 1: ADD ITEMS ═══ -->
 <div class="step-section active" id="step1">
 
-<!-- VPN Notice Bar -->
-<div class="vpn-bar" id="vpnBar">
-  <div class="vpn-bar-inner">
-    <span>🇵🇰 <strong>Brand links go directly to Pakistan (.pk) sites</strong> — PKR prices load automatically, no VPN needed.</span>
-    <span style="font-size:0.75rem;color:var(--txt-sec)">Still seeing USD? Use the PKR/USD toggle per item, or browse with a VPN:</span>
-    <a class="vpn-link vpn-paid" href="https://surfshark.com" target="_blank">🔒 Surfshark — ~$2.30/mo</a>
-    <button class="vpn-dismiss" onclick="document.getElementById('vpnBar').classList.add('hidden')" title="Dismiss">✕</button>
-  </div>
-</div>
-
 <div class="container">
 
   <div class="section-label">Browse a Brand</div>
 
   <div class="brand-section">
-    <!-- Search bar with live dropdown -->
+    <!-- Category bar (mega-menu) + brand columns — rendered by JS -->
+    <div class="cat-bar" id="catBar"></div>
+    <div class="cat-panel">
+      <div class="cat-head" id="catHead"></div>
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+    <!-- Search any brand by name -->
     <div class="brand-search-wrap">
-      <input id="brandSearch" class="brand-search" type="text" autocomplete="off" placeholder="🔍 Search 90+ Pakistani brands by name…"
+      <input id="brandSearch" class="brand-search" type="text" autocomplete="off" placeholder="🔍 Search any brand by name…"
         oninput="onBrandSearch()" onfocus="onBrandSearch()"/>
       <div id="brandDropdown" class="brand-dropdown"></div>
     </div>
-    <div class="brand-legend">🟢 = opens in PKR automatically &nbsp;·&nbsp; 💵 = may show USD (switch currency to "Pakistan/PKR" on the site)</div>
-    <!-- Categorised directory (rendered by JS) -->
-    <div id="brandDirectory"></div>
   </div>
 
   <div class="section-label" style="margin-top:28px">Add Products to Your Order</div>
@@ -1471,6 +1467,16 @@
         catEl.value = fetchedCat;
         onDraftCatChange(id);
       }
+      // The brand's own product_type says UNSTITCHED but the pre-fetch URL
+      // guess picked a stitched category (e.g. Zellbury "Luxury Unstitch"
+      // with handle "shirt-shalwar-dupatta" → guessed 2pc). The brand's word
+      // beats our URL guess: unstitched products must never ask for sizes.
+      // (The reverse correction — sizes found ⇒ stitched — happens below.)
+      if(catEl && catEl.value && fetchedCat
+         && UNSTITCHED_CATS.has(fetchedCat) && !UNSTITCHED_CATS.has(catEl.value)){
+        catEl.value = fetchedCat;
+        onDraftCatChange(id);
+      }
       const activeCat = catEl ? catEl.value : fetchedCat;
 
       // ── FIND SIZE OPTION ──────────────────────────────────────────────────
@@ -2115,12 +2121,11 @@
   // ═══ FULL BRAND DIRECTORY (display + search) ═══════════════════════════════
   // p:true = opens in PKR automatically · p:false = .com store (may show USD)
   const BRAND_CATS = {
-    md: '🏢 Multi-Department (Men · Women · Kids)',
-    w:  '👗 Women’s Pret & Unstitched',
-    p:  '👑 Premium Designer & Luxury',
-    m:  '👔 Menswear & Tailoring',
-    k:  '🧸 Kids',
-    ws: '🧵 Wholesale Print / Fabric'
+    md: 'Multi-Department',
+    w:  'Women’s Pret & Unstitched',
+    p:  'Premium & Luxury',
+    m:  'Menswear',
+    k:  'Kids'
   };
   const BRANDS = [
     // ── Multi-department ──
@@ -2230,37 +2235,36 @@
     {n:'Pepperland',u:'https://pepperland.pk',p:true,c:'k'},
     {n:'Bachaa Party',u:'https://bachaaparty.com',p:false,c:'k'},
     {n:'Hopscotch',u:'https://ilovehopscotch.com',p:false,c:'k'},
-    // ── Wholesale print / fabric ──
-    {n:'Bin Saeed',u:'https://binsaeedfabric.com',p:false,c:'ws'},
-    {n:'Tawakkal Fabrics',u:'https://tawakkalfabrics.co',p:false,c:'ws'},
-    {n:'Rang Rasiya',u:'https://rangrasiya.com.pk',p:true,c:'ws'},
+    // ── Fabric / wholesale (folded into Women’s Pret & Unstitched) ──
+    {n:'Bin Saeed',u:'https://binsaeedfabric.com',p:false,c:'w'},
+    {n:'Tawakkal Fabrics',u:'https://tawakkalfabrics.co',p:false,c:'w'},
+    {n:'Rang Rasiya',u:'https://rangrasiya.com.pk',p:true,c:'w'},
   ];
   // Feed every brand's hostname into BRAND_MAP so pasted URLs auto-detect the name
   BRANDS.forEach(b => {
     try{ const h = new URL(b.u).hostname.replace(/^www\./,''); if(!BRAND_MAP[h]) BRAND_MAP[h] = b.n; }catch(e){}
   });
-  renderBrandDirectory();   // build the categorised directory now (DOM above this script exists)
+  let _catActive = Object.keys(BRAND_CATS)[0];   // first category open by default
+  renderCatBar();   // build the category bar + brand columns now (DOM above this script exists)
 
-  function renderBrandDirectory(){
-    const dir = document.getElementById('brandDirectory');
-    if(!dir) return;
-    let html = '';
-    Object.keys(BRAND_CATS).forEach((cat, idx) => {
-      const list = BRANDS.filter(b => b.c === cat);
-      if(!list.length) return;
-      const openCls = idx === 0 ? ' open' : '';   // first category open by default
-      const chips = list.map(b =>
-        `<button class="brand-chip${b.p?' pk-chip':''}" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)} <span>${b.p?'🟢':'💵'}</span></button>`
-      ).join('');
-      html += `<div class="brand-cat${openCls}">
-        <div class="brand-cat-hdr" onclick="this.parentElement.classList.toggle('open')">
-          <span>${BRAND_CATS[cat]} <span class="cnt">${list.length}</span></span>
-          <span class="arr">▸</span>
-        </div>
-        <div class="brand-cat-body">${chips}</div>
-      </div>`;
-    });
-    dir.innerHTML = html;
+  function renderCatBar(){
+    const bar = document.getElementById('catBar');
+    if(!bar) return;
+    bar.innerHTML = Object.keys(BRAND_CATS).map(cat =>
+      `<button class="cat-tab" data-cat="${cat}" onclick="switchCat('${cat}')">${BRAND_CATS[cat]}</button>`
+    ).join('');
+    switchCat(_catActive);
+  }
+  function switchCat(cat){
+    _catActive = cat;
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('on', t.dataset.cat === cat));
+    const list = BRANDS.filter(b => b.c === cat);
+    const head = document.getElementById('catHead');
+    const grid = document.getElementById('catGrid');
+    if(head) head.innerHTML = `${BRAND_CATS[cat]} <span class="cnt">· ${list.length} brands</span>`;
+    if(grid) grid.innerHTML = list.map(b =>
+      `<button class="cat-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`
+    ).join('');
   }
 
   let _bdActive = -1;
@@ -2278,7 +2282,7 @@
       dd.innerHTML = matches.map(b =>
         `<div class="brand-dd-item" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">
            <span>${esc(b.n)}</span>
-           <span class="cur ${b.p?'pkr':'usd'}">${b.p?'PKR':'USD'} ↗</span>
+           <span class="cur-go">↗</span>
          </div>`
       ).join('');
     }
