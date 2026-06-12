@@ -15,9 +15,9 @@ session currency (`/cart.js`), product-page structured data (`priceCurrency`), a
 
 | Group | What it is | Brands | Auto today? | Auto after VPS? | Status |
 |---|---|---:|---|---|---|
-| **1** | Shopify, native PKR | 73 | ✅ from PK only | ✅ guaranteed for BD | relay wired |
-| **2** | Twin sites (intl + PK store) | 7 | ✅ either URL now works | ✅ via twin-map + relay | 🔧→✅ twin-map shipped |
-| **3** | No PKR price exists online (USD only) | 4 | ❌ | ❌ (manual USD) | — |
+| **1** | Shopify, native PKR | 76 | ✅ from PK only | ✅ guaranteed for BD | relay wired |
+| **2** | Twin sites (intl + PK store) | 10 | ✅ either URL now works | ✅ via twin-map + relay | 🔧→✅ twin-map shipped |
+| **3** | No PKR price exists online (USD only) | 1 | ❌ | ❌ (manual USD) | — |
 | **4** | Non-Shopify, no product API | 15 | ❌ | partial (Khaadi/Sapphire scrape) | ⏳ needs VPS |
 | **5** | Dead / wrong directory links | 0 | — | — | ✅ all fixed |
 
@@ -49,10 +49,13 @@ ChenOne, Chinyere, Crimson, Cross Stitch, Diners, Edenrobe, Elan, ETHNC, Faiza S
 Generation, Gulaal, Gul Ahmed, Hopscotch, Hussain Rehar, Ismail Farid, J. Junaid Jamshed, Jazmin, Kayseria,
 Khas Stores, Kross Kulture, Lakhany, Limelight, Maria B, Minnie Minors, Monark, Motifz, MTJ, Mushq,
 Nishat Linen, Nureh, Outfitters, Ramsha, Rang Ja, Rang Rasiya, Republic Menswear, Republic Womenswear,
-Royal Tag, Saad Bin Shahzad, Sana Safinaz, Shahnameh, Sha Posh, Silayi Pret, Sobia Nazir, Tawakkal Fabrics,
-Tena Durrani, Threads & Motifs, Uniworth, WearEgo, Zaha, Zara Shahjahan, Zarif, Zellbury
+Royal Tag, Saad Bin Shahzad, **Salitex** (salitexonline.com), Sana Safinaz, **Sania Maskatiya**
+(pk.saniamaskatiya.com), Shahnameh, Sha Posh, Silayi Pret, Sobia Nazir, Tawakkal Fabrics, Tena Durrani,
+Threads & Motifs, Uniworth, WearEgo, **Zainab Chottani** (pk.zainabchottani.com), Zaha, Zara Shahjahan,
+Zarif, Zellbury
 
-> *Barae Khanom & Bareeze: in Group 1 **only via the correct PK domain** — see Group 5 directory fixes.
+> *Barae Khanom, Bareeze, Salitex, Sania Maskatiya, Zainab Chottani: in Group 1 **only via the correct PK
+> domain** — see Group 5 directory fixes and the Group 2 twin-map.
 
 ---
 
@@ -68,6 +71,9 @@ price, or a product not carried on the PK store. `TWIN_MAP` now redirects the fe
 | Bareeze | bareeze.com (custom/no API) | bareezepk.com | ✅ PKR (Shopify) | ✅ auto PKR |
 | Maria B | mariab.com (bot-walled) | mariab.pk | ✅ PKR (Shopify) | ✅ auto PKR |
 | Baroque | baroque.com (domain for sale) | baroque.com.pk | ❌ USD even to PK | redirects, but still USD → manual |
+| Sania Maskatiya | saniamaskatiya.com (USD) | pk.saniamaskatiya.com | ✅ PKR (Shopify) | ✅ auto PKR (verified) |
+| Zainab Chottani | zainabchottani.com (USD) | pk.zainabchottani.com | ✅ PKR (Shopify) | ✅ auto PKR (verified) |
+| Salitex | salitex.com (USD) | salitexonline.com | ✅ PKR (Shopify) | ✅ auto PKR (verified) |
 | **Khaadi** | khaadi.com (USD) | pk.khaadi.com | — (Salesforce, no API) | redirect only; needs G4 scraper |
 | **Sapphire** | geo-redirect | pk.sapphireonline.pk | — (Salesforce, no API) | redirect only; needs G4 scraper |
 
@@ -79,16 +85,19 @@ the 4 Shopify twins; Baroque still needs manual USD (no PKR exists); Khaadi/Sapp
 
 ---
 
-## GROUP 3 — 💵 No PKR price exists anywhere online — 4 brands
+## GROUP 3 — 💵 No PKR price exists anywhere online — 1 brand
 
-Confirmed USD checkout; any on-screen "PKR" is a client-side converter app, **not** the real price.
+Confirmed USD checkout; any on-screen "PKR" is a client-side converter app, **not** a brand-set price.
 
 | Brand | Site | Evidence |
 |---|---|---|
-| Salitex | salitex.com | `Shopify.currency {active:USD}`, no PKR on page, PK-localized session stays USD |
-| Sania Maskatiya | saniamaskatiya.com | base USD; PK session returns $104.00; visible PKR is app-converted |
-| Zainab Chottani | zainabchottani.com | base USD; PK session returns $77.00; checkout charges USD |
-| Suffuse by Sana Yasir | suffuse.pk | Shopify but base USD even from PK ($63.60); old suffuse.com was offline |
+| Suffuse by Sana Yasir | suffuse.pk | Shopify base USD, market=US, checkout USD ($63.60). `?currency=PKR` returns 17,962 = $63.60 × ~282 (converter app, not a real PKR price). No separate PK store found. |
+
+> **Correction (2026-06-12):** Salitex, Sania Maskatiya, Zainab Chottani were WRONGLY placed here earlier —
+> I had tested their international domains (salitex.com / saniamaskatiya.com / zainabchottani.com). Their real
+> PK stores — **salitexonline.com**, **pk.saniamaskatiya.com**, **pk.zainabchottani.com** — are genuine PKR
+> Shopify stores (cart.js=PKR, checkout in PKR, live stock). All three moved to Group 1 + twin-map. Lesson:
+> always test the actual PK domain, not the international twin.
 
 **Probable solution:** No automated PKR possible. Manual USD entry (form handles loudly), **or** source the
 same article via a PK multi-brand retailer (e.g. LAAM) when available. Candidate for removal if low demand.
@@ -146,6 +155,6 @@ Done in `order-form.html` `BRANDS`. Barae Khanom & Bareeze gained full auto-fetc
 - [ ] **VPS** Provision CloudVPS.pk, verify PK geolocation, deploy relay + HTTPS — *blocks G1-BD & G4*
 - [ ] **G1** After VPS: confirm each brand from a Dhaka IP; relay handles USD-switchers
 - [ ] **G4** Khaadi + Sapphire JSON-LD scraper on relay (PK IP); retest bot-blocked brands
-- [ ] **G3** Decide: keep with manual-USD, or remove Salitex / Sania Maskatiya / Zainab Chottani / Suffuse
+- [ ] **G3** Decide: keep Suffuse with manual-USD, or remove (only Group-3 brand left)
 
 _Last surveyed: 2026-06-12 from Karachi PK IP. Re-run survey from Dhaka after VPS to validate Group 1 USD-switchers._
