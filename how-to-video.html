@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<title>How to Order — PakiPoshak (1-min guide)</title>
+<style>
+  :root{
+    --bg:#080E1C; --surface:#0F1929; --raised:#162035; --input-bg:#0A1320;
+    --gold:#C9A96E; --gold-dim:rgba(201,169,110,0.14); --gold-bdr:rgba(201,169,110,0.4);
+    --txt:#EEE4CE; --txt-sec:#A0B2C8; --txt-muted:#5A6E84; --bdr:#1E2D45; --green:#34d27b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    display:flex;flex-direction:column;align-items:center;overflow:hidden}
+  /* ── top bar ── */
+  .top{width:100%;max-width:480px;padding:12px 14px 6px;display:flex;align-items:center;gap:10px}
+  .top .brand{font-weight:800;color:var(--gold);font-size:0.95rem;letter-spacing:0.5px;flex:1}
+  .lang-tg{display:flex;border:1px solid var(--gold-bdr);border-radius:16px;overflow:hidden}
+  .lang-tg button{background:none;border:none;color:var(--txt-sec);font-weight:700;font-size:0.78rem;
+    padding:5px 13px;cursor:pointer;font-family:inherit}
+  .lang-tg button.on{background:var(--gold);color:#0A1628}
+  .close-x{color:var(--txt-muted);text-decoration:none;font-size:1.3rem;line-height:1;padding:4px 8px}
+  /* ── progress bars (story style) ── */
+  .bars{width:100%;max-width:480px;display:flex;gap:4px;padding:6px 14px}
+  .bar{flex:1;height:3px;background:var(--bdr);border-radius:2px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--gold)}
+  .bar.done i{width:100%}
+  .bar.live i{animation:fill var(--dur) linear forwards}
+  @keyframes fill{from{width:0}to{width:100%}}
+  body.paused .bar.live i{animation-play-state:paused}
+  /* ── stage ── */
+  .stage{position:relative;width:100%;max-width:480px;flex:1;min-height:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .slide{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;
+    justify-content:flex-start;padding:14px 22px;text-align:center}
+  .slide.on{display:flex;animation:pop .45s ease}
+  @keyframes pop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .stepno{font-size:0.7rem;font-weight:800;letter-spacing:2px;color:var(--gold);margin-bottom:4px}
+  .slide h2{font-size:1.25rem;line-height:1.3;margin-bottom:6px}
+  .slide p{font-size:0.9rem;color:var(--txt-sec);line-height:1.5;max-width:340px;margin-bottom:14px}
+  /* ── phone mockup ── */
+  .phone{width:min(250px,62vw);flex:1;min-height:0;max-height:380px;border:2px solid var(--bdr);
+    border-radius:22px;background:var(--surface);padding:12px 10px;overflow:hidden;
+    box-shadow:0 16px 50px rgba(0,0,0,0.5);text-align:left;font-size:0.66rem}
+  .m-row{background:var(--raised);border:1px solid var(--bdr);border-radius:8px;padding:7px 9px;margin-bottom:7px;color:var(--txt-sec)}
+  .m-gold{background:var(--gold);color:#0A1628;font-weight:800;text-align:center;border:none}
+  .m-green{border-color:rgba(52,210,123,.5);color:var(--green)}
+  .m-title{color:var(--gold);font-weight:800;font-size:0.7rem;margin-bottom:7px;letter-spacing:0.6px}
+  .m-chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px}
+  .m-chip{border:1.3px solid var(--gold-bdr);color:var(--gold);background:var(--gold-dim);border-radius:11px;padding:3px 10px;font-weight:700}
+  .m-chip.sel{background:var(--gold);color:#0A1628}
+  .m-chip.out{color:var(--txt-muted);background:var(--surface);border-color:var(--bdr);text-decoration:line-through}
+  .m-input{background:var(--input-bg);border:1.3px solid var(--bdr);border-radius:8px;padding:7px 9px;color:var(--txt-muted);margin-bottom:7px}
+  .m-input.glow{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,169,110,.3);color:var(--txt)}
+  .m-big{font-size:0.92rem;font-weight:800;color:var(--txt)}
+  .m-cur{color:var(--green);font-weight:800}
+  .m-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:7px}
+  .m-brand{background:var(--raised);border:1px solid var(--bdr);border-radius:8px;padding:8px 6px;text-align:center;color:var(--txt-sec);font-weight:600}
+  .m-pulse{animation:pulse 1.4s ease infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,169,110,.5)}50%{box-shadow:0 0 0 7px rgba(201,169,110,0)}}
+  .m-check{color:var(--green);font-weight:800}
+  .m-id{letter-spacing:1.5px;color:var(--gold);font-weight:800;text-align:center;font-size:0.82rem}
+  .truck{font-size:3.2rem;animation:drive 2.6s ease-in-out infinite}
+  @keyframes drive{0%,100%{transform:translateX(-14px)}50%{transform:translateX(14px)}}
+  /* ── bottom controls ── */
+  .ctrl{width:100%;max-width:480px;display:flex;align-items:center;justify-content:center;gap:14px;padding:10px 14px 16px}
+  .ctrl button{background:var(--raised);border:1px solid var(--bdr);color:var(--txt-sec);border-radius:50%;
+    width:42px;height:42px;font-size:1rem;cursor:pointer;font-family:inherit}
+  .ctrl button.play{background:var(--gold);color:#0A1628;border:none;font-size:1.1rem;width:50px;height:50px}
+  .hint{font-size:0.68rem;color:var(--txt-muted);text-align:center;padding-bottom:8px}
+  .cta{display:none;background:var(--gold);color:#0A1628;font-weight:800;border:none;border-radius:22px;
+    padding:11px 26px;font-size:0.95rem;cursor:pointer;font-family:inherit;text-decoration:none;margin-top:10px}
+  .slide.on .cta{display:inline-block}
+</style>
+</head>
+<body>
+  <div class="top">
+    <span class="brand">🪡 PakiPoshak — <span data-t="guide">How to Order</span></span>
+    <div class="lang-tg">
+      <button id="lg-en" onclick="setL('en')">EN</button>
+      <button id="lg-bn" onclick="setL('bn')">বাংলা</button>
+    </div>
+    <a class="close-x" href="./" title="Back to order form">✕</a>
+  </div>
+  <div class="bars" id="bars"></div>
+  <div class="stage" id="stage"></div>
+  <div class="ctrl">
+    <button onclick="step(-1);event.stopPropagation()" title="Previous">⏮</button>
+    <button class="play" id="playBtn" onclick="togglePlay();event.stopPropagation()">⏸</button>
+    <button onclick="step(1);event.stopPropagation()" title="Next">⏭</button>
+  </div>
+  <div class="hint" data-t="hint">Tap right side for next · left for back</div>
+
+<script>
+'use strict';
+const T = {
+  en: {
+    guide:'How to Order', hint:'Tap right side for next · left for back',
+    s1t:'Browse 100+ Pakistani Brands', s1p:'Tap “Brands”, pick a category and choose your favourite brand — Khaadi, Sapphire, Zellbury, Zeen & more.',
+    s2t:'Pick Your Product', s2p:'The brand\'s own website opens. Choose your article and COPY the product link from the address bar.',
+    s3t:'Paste the Link', s3p:'Come back and paste — price (PKR), category and in-stock sizes fill in automatically. Sold-out sizes can\'t be picked.',
+    s4t:'Pick Size & Quantity', s4p:'Tap an in-stock size, set how many pieces you want. Add more products the same way.',
+    s5t:'Your Details', s5p:'Name, WhatsApp number and your delivery address in Bangladesh. Saved on your phone for next time.',
+    s6t:'Review & Submit', s6p:'Check the estimated total in BDT and submit. You instantly get your Order ID.',
+    s7t:'We Confirm, Then You Pay', s7p:'We confirm final price & stock on WhatsApp. Only then pay via bKash / Nagad and upload your receipt.',
+    s8t:'Delivered to Your Door', s8p:'Your order travels from Pakistan to Bangladesh in 2–3 weeks. Track anytime with your Order ID.',
+    cta:'Start My Order →',
+    m_brands:'BRANDS', m_paste:'PASTE PRODUCT LINK', m_price:'Price', m_size:'SIZES IN STOCK', m_qty:'Qty',
+    m_details:'MY DETAILS', m_name:'Full name', m_wa:'WhatsApp number', m_addr:'Delivery address (Dhaka…)',
+    m_review:'ORDER SUMMARY', m_total:'ESTIMATED TOTAL (BDT)', m_submit:'✓ Confirm & Submit',
+    m_orderid:'ORDER ID', m_confirmed:'Price confirmed on WhatsApp ✓', m_pay:'Pay bKash / Nagad', m_receipt:'📷 Upload receipt',
+    m_copy:'Copy link', m_added:'✓ Fetched: PKR 6,490 · 3 sizes in stock',
+  },
+  bn: {
+    guide:'কীভাবে অর্ডার করবেন', hint:'পরের জন্য ডানে ট্যাপ করুন · আগেরটির জন্য বামে',
+    s1t:'১০০+ পাকিস্তানি ব্র্যান্ড ব্রাউজ করুন', s1p:'"ব্র্যান্ড" ট্যাপ করে ক্যাটাগরি বেছে নিন — খাদি, স্যাফায়ার, জেলবারি, জিন আরও অনেক।',
+    s2t:'আপনার পণ্য বেছে নিন', s2p:'ব্র্যান্ডের নিজস্ব ওয়েবসাইট খুলবে। পছন্দের পণ্য বেছে অ্যাড্রেস বার থেকে লিংক কপি করুন।',
+    s3t:'লিংক পেস্ট করুন', s3p:'ফিরে এসে পেস্ট করুন — দাম (PKR), ক্যাটাগরি ও স্টকে থাকা সাইজ স্বয়ংক্রিয়ভাবে চলে আসবে। স্টক-আউট সাইজ নেওয়া যায় না।',
+    s4t:'সাইজ ও পরিমাণ নির্বাচন করুন', s4p:'স্টকে থাকা সাইজ ট্যাপ করুন, কত পিস চান ঠিক করুন। একইভাবে আরও পণ্য যোগ করুন।',
+    s5t:'আপনার তথ্য দিন', s5p:'নাম, হোয়াটসঅ্যাপ নম্বর ও বাংলাদেশে ডেলিভারির ঠিকানা। পরেরবারের জন্য ফোনে সেভ থাকবে।',
+    s6t:'রিভিউ করে সাবমিট করুন', s6p:'টাকায় আনুমানিক মোট দেখে সাবমিট করুন। সাথে সাথেই অর্ডার আইডি পাবেন।',
+    s7t:'আমরা নিশ্চিত করি, তারপর পেমেন্ট', s7p:'হোয়াটসঅ্যাপে চূড়ান্ত দাম ও স্টক নিশ্চিত করি। তারপরই বিকাশ/নগদে পেমেন্ট করে রসিদ আপলোড করুন।',
+    s8t:'আপনার দরজায় ডেলিভারি', s8p:'পাকিস্তান থেকে বাংলাদেশে ২–৩ সপ্তাহে। অর্ডার আইডি দিয়ে যেকোনো সময় ট্র্যাক করুন।',
+    cta:'অর্ডার শুরু করুন →',
+    m_brands:'ব্র্যান্ড', m_paste:'প্রোডাক্ট লিংক পেস্ট করুন', m_price:'দাম', m_size:'স্টকে থাকা সাইজ', m_qty:'পরিমাণ',
+    m_details:'আমার তথ্য', m_name:'পুরো নাম', m_wa:'হোয়াটসঅ্যাপ নম্বর', m_addr:'ডেলিভারি ঠিকানা (ঢাকা…)',
+    m_review:'অর্ডার সারসংক্ষেপ', m_total:'আনুমানিক মোট (টাকা)', m_submit:'✓ নিশ্চিত করে সাবমিট',
+    m_orderid:'অর্ডার আইডি', m_confirmed:'হোয়াটসঅ্যাপে দাম নিশ্চিত ✓', m_pay:'বিকাশ / নগদে পেমেন্ট', m_receipt:'📷 রসিদ আপলোড',
+    m_copy:'লিংক কপি', m_added:'✓ পাওয়া গেছে: PKR 6,490 · ৩টি সাইজ স্টকে',
+  }
+};
+let L = (localStorage.getItem('psb_lang') === 'bn') ? 'bn' : 'en';
+const t = k => (T[L][k] !== undefined ? T[L][k] : T.en[k]);
+
+const DUR = 7000;            // 7s × 8 slides = 56s
+function slides(){ return [
+  {n:1, h:t('s1t'), p:t('s1p'), m:`
+    <div class="m-title">🪡 PakiPoshak — ${t('m_brands')}</div>
+    <div class="m-chips"><span class="m-chip sel">Women</span><span class="m-chip">Men</span><span class="m-chip">Kids</span></div>
+    <div class="m-grid"><div class="m-brand">Khaadi</div><div class="m-brand">Sapphire</div>
+      <div class="m-brand m-pulse" style="border-color:var(--gold);color:var(--gold)">Zellbury</div><div class="m-brand">Zeen</div>
+      <div class="m-brand">Gul Ahmed</div><div class="m-brand">Limelight</div></div>`},
+  {n:2, h:t('s2t'), p:t('s2p'), m:`
+    <div class="m-input" style="font-size:0.6rem">🔒 zellbury.com/products/shirt-…</div>
+    <div class="m-row" style="height:84px;display:flex;align-items:center;justify-content:center;font-size:2rem">👗</div>
+    <div class="m-row"><b style="color:var(--txt)">Embroidered Shirt Shalwar</b><br/>Rs. 6,490</div>
+    <div class="m-row m-gold m-pulse">📋 ${t('m_copy')}</div>`},
+  {n:3, h:t('s3t'), p:t('s3p'), m:`
+    <div class="m-title">${t('m_paste')}</div>
+    <div class="m-input glow" style="font-size:0.6rem">zellbury.com/products/shirt-…</div>
+    <div class="m-row m-green">${t('m_added')}</div>
+    <div class="m-row">${t('m_price')}: <span class="m-big">PKR 6,490</span> <span class="m-check">✓</span></div>`},
+  {n:4, h:t('s4t'), p:t('s4p'), m:`
+    <div class="m-title">${t('m_size')}</div>
+    <div class="m-chips"><span class="m-chip">XS</span><span class="m-chip sel m-pulse">M</span><span class="m-chip">L</span><span class="m-chip out">XL</span></div>
+    <div class="m-row">${t('m_qty')}: <b style="color:var(--txt)">1</b> ➖ ➕</div>
+    <div class="m-row m-gold">+ Add another product</div>`},
+  {n:5, h:t('s5t'), p:t('s5p'), m:`
+    <div class="m-title">${t('m_details')}</div>
+    <div class="m-input glow">${t('m_name')}</div>
+    <div class="m-input">+880 1XXX-XXXXXX</div>
+    <div class="m-input">${t('m_addr')}</div>`},
+  {n:6, h:t('s6t'), p:t('s6p'), m:`
+    <div class="m-title">${t('m_review')}</div>
+    <div class="m-row">1 × Zellbury — M</div>
+    <div class="m-row">${t('m_total')}<br/><span class="m-big m-cur">৳ 4,850</span></div>
+    <div class="m-row m-gold m-pulse">${t('m_submit')}</div>
+    <div class="m-id" style="margin-top:6px">${t('m_orderid')}: PSB-7F3K2</div>`},
+  {n:7, h:t('s7t'), p:t('s7p'), m:`
+    <div class="m-row m-green">💬 ${t('m_confirmed')}</div>
+    <div class="m-row" style="display:flex;gap:6px;justify-content:center">
+      <b style="color:#e2136e">bKash</b> · <b style="color:#f7941d">Nagad</b></div>
+    <div class="m-row m-gold m-pulse">${t('m_pay')}</div>
+    <div class="m-input">${t('m_receipt')}</div>`},
+  {n:8, h:t('s8t'), p:t('s8p'), m:`
+    <div style="text-align:center;padding-top:18px"><div class="truck">🇵🇰 🚚 🇧🇩</div>
+    <div class="m-id" style="margin-top:16px">2–3 ${L==='bn'?'সপ্তাহ':'WEEKS'}</div></div>`, cta:true},
+];}
+
+let idx = 0, timer = null, playing = true;
+const stage = document.getElementById('bars');
+
+function render(){
+  const S = slides();
+  document.getElementById('bars').innerHTML = S.map(()=>`<div class="bar"><i></i></div>`).join('');
+  document.getElementById('stage').innerHTML = S.map((s,i)=>`
+    <div class="slide${i===idx?' on':''}" data-i="${i}">
+      <div class="stepno">${L==='bn'?'ধাপ':'STEP'} ${s.n} / 8</div>
+      <h2>${s.h}</h2><p>${s.p}</p>
+      <div class="phone">${s.m}</div>
+      ${s.cta?`<a class="cta" href="./">${t('cta')}</a>`:''}
+    </div>`).join('');
+  document.querySelector('[data-t="guide"]').textContent = t('guide');
+  document.querySelector('[data-t="hint"]').textContent = t('hint');
+  document.getElementById('lg-en').classList.toggle('on', L==='en');
+  document.getElementById('lg-bn').classList.toggle('on', L==='bn');
+  paint();
+}
+function paint(){
+  document.querySelectorAll('.slide').forEach((el,i)=>el.classList.toggle('on', i===idx));
+  document.querySelectorAll('.bar').forEach((b,i)=>{
+    b.classList.toggle('done', i<idx);
+    b.classList.toggle('live', i===idx);
+    b.style.setProperty('--dur', DUR+'ms');
+    if(i===idx){ const f=b.querySelector('i'); f.style.animation='none'; void f.offsetWidth; f.style.animation=''; }
+  });
+  clearTimeout(timer);
+  if(playing && idx < 7) timer = setTimeout(()=>{ idx++; paint(); }, DUR);
+  if(idx === 7 && playing) timer = setTimeout(()=>{ playing=false; updPlay(); }, DUR);
+}
+function step(d){ idx = Math.max(0, Math.min(7, idx+d)); if(!playing){ playing=true; updPlay(); } paint(); }
+function togglePlay(){ playing = !playing; updPlay(); if(playing) paint(); else clearTimeout(timer); }
+function updPlay(){
+  document.getElementById('playBtn').textContent = playing ? '⏸' : '▶';
+  document.body.classList.toggle('paused', !playing);
+}
+function setL(l){ L=l; localStorage.setItem('psb_lang', l); document.documentElement.lang=l; render(); }
+document.getElementById('stage').addEventListener('click', e=>{
+  const x = e.clientX - e.currentTarget.getBoundingClientRect().left;
+  step(x > e.currentTarget.offsetWidth/2 ? 1 : -1);
+});
+render();
+</script>
+</body>
+</html>
