@@ -408,33 +408,33 @@
 <!-- How it works strip -->
 <div class="hiw-strip">
   <div class="hiw-inner hiw-desktop">
-    <div class="hiw-step"><span class="icon">🔍</span><span>Browse brands</span></div>
+    <div class="hiw-step"><span class="icon">🔍</span><span data-i18n="hiw_browse">Browse brands</span></div>
     <span class="hiw-arrow">›</span>
-    <div class="hiw-step"><span class="icon">🔗</span><span>Paste product URL</span></div>
+    <div class="hiw-step"><span class="icon">🔗</span><span data-i18n="hiw_paste">Paste product URL</span></div>
     <span class="hiw-arrow">›</span>
-    <div class="hiw-step"><span class="icon">💬</span><span>We confirm price</span></div>
+    <div class="hiw-step"><span class="icon">💬</span><span data-i18n="hiw_confirm">We confirm price</span></div>
     <span class="hiw-arrow">›</span>
-    <div class="hiw-step"><span class="icon">💳</span><span>Pay via bKash/Nagad</span></div>
+    <div class="hiw-step"><span class="icon">💳</span><span data-i18n="hiw_pay">Pay via bKash/Nagad</span></div>
     <span class="hiw-arrow">›</span>
-    <div class="hiw-step"><span class="icon">🚚</span><span>2–3 weeks to your door</span></div>
+    <div class="hiw-step"><span class="icon">🚚</span><span data-i18n="hiw_delivery">2–3 weeks to your door</span></div>
   </div>
   <div class="hiw-inner hiw-mobile">
-    <div class="hiw-step"><span class="icon">🔍</span><span>Browse brands</span></div>
-    <div class="hiw-step"><span class="icon">🔗</span><span>Paste product URL</span></div>
-    <div class="hiw-step"><span class="icon">💳</span><span>Confirm price &amp; pay (bKash/Nagad)</span></div>
-    <div class="hiw-step"><span class="icon">🚚</span><span>2–3 weeks to your door</span></div>
+    <div class="hiw-step"><span class="icon">🔍</span><span data-i18n="hiw_browse">Browse brands</span></div>
+    <div class="hiw-step"><span class="icon">🔗</span><span data-i18n="hiw_paste">Paste product URL</span></div>
+    <div class="hiw-step"><span class="icon">💳</span><span data-i18n="hiw_confirm_pay">Confirm price &amp; pay (bKash/Nagad)</span></div>
+    <div class="hiw-step"><span class="icon">🚚</span><span data-i18n="hiw_delivery">2–3 weeks to your door</span></div>
   </div>
 </div>
 
 <!-- Step indicator -->
 <div class="steps-bar">
-  <div class="step-item active" id="si_1"><div class="step-num">1</div><div class="step-lbl">Add Items</div></div>
+  <div class="step-item active" id="si_1"><div class="step-num">1</div><div class="step-lbl" data-i18n="step_additems">Add Items</div></div>
   <div class="step-arrow">›</div>
-  <div class="step-item" id="si_2"><div class="step-num">2</div><div class="step-lbl">My Details</div></div>
+  <div class="step-item" id="si_2"><div class="step-num">2</div><div class="step-lbl" data-i18n="step_details">My Details</div></div>
   <div class="step-arrow">›</div>
-  <div class="step-item" id="si_3"><div class="step-num">3</div><div class="step-lbl">Review</div></div>
+  <div class="step-item" id="si_3"><div class="step-num">3</div><div class="step-lbl" data-i18n="step_review">Review</div></div>
   <div class="step-arrow">›</div>
-  <div class="step-item" id="si_4"><div class="step-num">4</div><div class="step-lbl">Payment</div></div>
+  <div class="step-item" id="si_4"><div class="step-num">4</div><div class="step-lbl" data-i18n="step_payment">Payment</div></div>
 </div>
 
 <!-- ═══ STEP 1: ADD ITEMS ═══ -->
@@ -442,7 +442,7 @@
 
 <div class="container">
 
-  <div class="section-label">Browse a Brand</div>
+  <div class="section-label" data-i18n="lbl_browse">Browse a Brand</div>
 
   <div class="brand-section">
     <!-- Category bar (mega-menu) + brand columns — rendered by JS -->
@@ -453,20 +453,20 @@
     </div>
     <!-- Search any brand by name -->
     <div class="brand-search-wrap">
-      <input id="brandSearch" class="brand-search" type="text" autocomplete="off" placeholder="🔍 Search any brand by name…"
+      <input id="brandSearch" class="brand-search" type="text" autocomplete="off" placeholder="🔍 Search any brand by name…" data-i18n-ph="search_ph"
         oninput="onBrandSearch()" onfocus="onBrandSearch()"/>
       <div id="brandDropdown" class="brand-dropdown"></div>
     </div>
   </div>
 
-  <div class="section-label" style="margin-top:28px">Add Products to Your Order</div>
+  <div class="section-label" style="margin-top:28px" data-i18n="lbl_addproducts">Add Products to Your Order</div>
 
   <div class="url-input-box">
-    <span class="input-label">📋 Copy a product link from any brand site and paste it below:</span>
+    <span class="input-label" data-i18n="url_label">📋 Copy a product link from any brand site and paste it below:</span>
     <!-- FIRST URL input — hidden once draft cards exist -->
     <div id="urlInputRow" class="url-row">
       <input type="url" id="urlInput" placeholder="https://brand.com/products/product-name"/>
-      <button class="add-btn" id="addUrlBtn" onclick="handleAddUrl()">+ Add URL</button>
+      <button class="add-btn" id="addUrlBtn" onclick="handleAddUrl()" data-i18n="btn_addurl">+ Add URL</button>
     </div>
     <div id="urlInputErr" style="display:none;margin-top:9px;padding:10px 14px;border-radius:9px;background:rgba(192,57,43,0.13);border:1px solid rgba(192,57,43,0.40);color:#ff9a9a;font-size:0.82rem;line-height:1.5"></div>
 
@@ -858,18 +858,18 @@
 <!-- BOTTOM NAVIGATION BAR -->
 <nav class="bottom-nav" id="bottomNav">
   <button class="bnav-btn active" id="bnav-home" onclick="bottomNavGo('home')">
-    <span class="icon">🏠</span><span>Home</span>
+    <span class="icon">🏠</span><span data-i18n="nav_home">Home</span>
   </button>
   <button class="bnav-btn" id="bnav-brands" onclick="bottomNavGo('brands')">
-    <span class="icon">🏪</span><span>Brands</span>
+    <span class="icon">🏪</span><span data-i18n="nav_brands">Brands</span>
   </button>
   <button class="bnav-btn" id="bnav-cart" onclick="bottomNavGo('cart')">
     <span class="icon">🛒</span>
     <span class="bnav-badge" id="bnavBadge" style="display:none">0</span>
-    <span>Cart</span>
+    <span data-i18n="nav_cart">Cart</span>
   </button>
   <button class="bnav-btn" id="bnav-how" onclick="bottomNavGo('how')">
-    <span class="icon">ℹ️</span><span>How To</span>
+    <span class="icon">ℹ️</span><span data-i18n="nav_how">How To</span>
   </button>
 </nav>
 
@@ -1109,40 +1109,42 @@
 
   // ── WEIGHT SYSTEM ────────────────────────────────────────────────────────
   // Keys match dropdown option values and detectCategory() returns.
-  // Weights include ~20% packaging allowance.
+  // Weights include ~20% packaging allowance, raised a further +20% across
+  // the board 2026-06-13 (operator margin call) — footwear excluded since
+  // its 1.10kg already covers the shoe box.
   const DEFAULT_WEIGHTS = {
-    kurti_1pc         : 0.34,
-    womens_trouser    : 0.42,   // single women's trouser/pant (~0.35 base +20%)
-    kaftan            : 0.58,   // 1pc long shirt ≈ kurti 0.34 + 70%
-    shirt_dupatta_2pc : 0.46,
-    shirt_trouser_2pc : 0.58,
-    lawn_3pc_unstitch : 0.66,
-    pret_3pc          : 0.74,
-    winter_2pc        : 0.70,
-    winter_3pc        : 0.90,
-    formal_emb_2pc    : 0.86,
-    formal_emb_3pc    : 1.08,
-    heavy_formal_3pc  : 1.32,
-    bridal            : 2.00,
-    dupatta_only      : 0.22,
-    shawl             : 0.56,   // winter shawl 0.45 base + 25% buffer
-    accessories       : 0.24,
-    // ── Men — Western / Casual (base × 1.20 packaging buffer) ──
-    mens_shirt        : 0.36,   // 0.30 base +20%
-    mens_trouser      : 0.54,   // 0.45 base +20%
-    mens_jeans        : 0.70,   // 0.58 base +20%
-    // ── Men — Traditional / Formal (base × 1.20 packaging buffer) ──
-    mens_kurta        : 0.54,   // 0.45 +20%
-    mens_shalwar_kameez: 0.86,  // 0.72 +20%
-    mens_waistcoat    : 0.48,   // 0.40 +20%
-    mens_suit         : 1.38,   // 1.15 +20%
-    mens_sherwani     : 1.74,   // 1.45 +20%
-    mens_unstitched   : 0.96,   // 0.80 +20%
+    kurti_1pc         : 0.41,   // 0.34 +20%
+    womens_trouser    : 0.50,   // 0.42 +20%
+    kaftan            : 0.70,   // 0.58 +20%
+    shirt_dupatta_2pc : 0.55,   // 0.46 +20%
+    shirt_trouser_2pc : 0.70,   // 0.58 +20%
+    lawn_3pc_unstitch : 0.79,   // 0.66 +20%
+    pret_3pc          : 0.89,   // 0.74 +20%
+    winter_2pc        : 0.84,   // 0.70 +20%
+    winter_3pc        : 1.08,   // 0.90 +20%
+    formal_emb_2pc    : 1.03,   // 0.86 +20%
+    formal_emb_3pc    : 1.30,   // 1.08 +20%
+    heavy_formal_3pc  : 1.58,   // 1.32 +20%
+    bridal            : 2.40,   // 2.00 +20%
+    dupatta_only      : 0.26,   // 0.22 +20%
+    shawl             : 0.67,   // 0.56 +20%
+    accessories       : 0.29,   // 0.24 +20%
+    // ── Men — Western / Casual ──
+    mens_shirt        : 0.43,   // 0.36 +20%
+    mens_trouser      : 0.65,   // 0.54 +20%
+    mens_jeans        : 0.84,   // 0.70 +20%
+    // ── Men — Traditional / Formal ──
+    mens_kurta        : 0.65,   // 0.54 +20%
+    mens_shalwar_kameez: 1.03,  // 0.86 +20%
+    mens_waistcoat    : 0.58,   // 0.48 +20%
+    mens_suit         : 1.66,   // 1.38 +20%
+    mens_sherwani     : 2.09,   // 1.74 +20%
+    mens_unstitched   : 1.15,   // 0.96 +20%
     // ── Added 2026-06-13 after brand category survey ──
-    maxi_dress        : 0.50,   // western maxi/dress/jumpsuit (1pc)
-    kids_eastern      : 0.25,   // kids kurta / 2pc eastern
-    kids_western      : 0.30,   // kids tee/jeans/frock
-    footwear          : 1.10,   // shoes/khussa incl. box
+    maxi_dress        : 0.60,   // 0.50 +20%
+    kids_eastern      : 0.30,   // 0.25 +20%
+    kids_western      : 0.36,   // 0.30 +20%
+    footwear          : 1.10,   // shoes/khussa incl. box — NOT raised
   };
 
   const WEIGHT_LABELS = {
@@ -2311,15 +2313,66 @@
   BRANDS.forEach(b => {
     try{ const h = new URL(b.u).hostname.replace(/^www\./,''); if(!BRAND_MAP[h]) BRAND_MAP[h] = b.n; }catch(e){}
   });
+  // ── i18n: English / Bangla (customer-facing) ───────────────────────────────
+  const I18N = {
+    en: {
+      tagline:'Pakistani Fashion · Bangladesh Delivery',
+      hiw_browse:'Browse brands', hiw_paste:'Paste product URL', hiw_confirm:'We confirm price',
+      hiw_pay:'Pay via bKash/Nagad', hiw_delivery:'2–3 weeks to your door',
+      hiw_confirm_pay:'Confirm price & pay (bKash/Nagad)',
+      step_additems:'Add Items', step_details:'My Details', step_review:'Review', step_payment:'Payment',
+      lbl_browse:'Browse a Brand', search_ph:'🔍 Search any brand by name…',
+      lbl_addproducts:'Add Products to Your Order',
+      url_label:'📋 Copy a product link from any brand site and paste it below:',
+      btn_addurl:'+ Add URL',
+      nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To',
+      word_brands:'brands',
+      cat_md:'Multi-Department', cat_w:'Women’s Pret & Unstitched', cat_p:'Premium', cat_m:'Menswear', cat_k:'Kids'
+    },
+    bn: {
+      tagline:'পাকিস্তানি ফ্যাশন · বাংলাদেশে ডেলিভারি',
+      hiw_browse:'ব্র্যান্ড ব্রাউজ করুন', hiw_paste:'প্রোডাক্ট লিংক পেস্ট করুন', hiw_confirm:'আমরা দাম নিশ্চিত করি',
+      hiw_pay:'বিকাশ/নগদে পেমেন্ট করুন', hiw_delivery:'২–৩ সপ্তাহে আপনার দরজায়',
+      hiw_confirm_pay:'দাম নিশ্চিত করে পেমেন্ট (বিকাশ/নগদ)',
+      step_additems:'পণ্য যোগ', step_details:'আপনার তথ্য', step_review:'রিভিউ', step_payment:'পেমেন্ট',
+      lbl_browse:'ব্র্যান্ড ব্রাউজ করুন', search_ph:'🔍 নাম দিয়ে ব্র্যান্ড খুঁজুন…',
+      lbl_addproducts:'অর্ডারে পণ্য যোগ করুন',
+      url_label:'📋 যেকোনো ব্র্যান্ড সাইট থেকে প্রোডাক্টের লিংক কপি করে নিচে পেস্ট করুন:',
+      btn_addurl:'+ লিংক যোগ করুন',
+      nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'কীভাবে',
+      word_brands:'ব্র্যান্ড',
+      cat_md:'মাল্টি-ডিপার্টমেন্ট', cat_w:'মেয়েদের প্রেট ও আনস্টিচড', cat_p:'প্রিমিয়াম', cat_m:'ছেলেদের পোশাক', cat_k:'বাচ্চাদের'
+    }
+  };
+  let _lang = localStorage.getItem('psb_lang') || 'en';
+  function tr(k){ return (I18N[_lang] && I18N[_lang][k]) || I18N.en[k] || k; }
+  function catLabel(cat){ return tr('cat_' + cat); }
+  function setLang(lang){
+    _lang = (lang === 'bn') ? 'bn' : 'en';
+    localStorage.setItem('psb_lang', _lang);
+    document.documentElement.lang = _lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = tr(el.getAttribute('data-i18n')); });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = tr(el.getAttribute('data-i18n-ph')); });
+    document.querySelectorAll('.cat-tab').forEach(tb => { tb.textContent = catLabel(tb.dataset.cat); });
+    if(_catOpen){
+      const h = document.getElementById('catHead');
+      if(h) h.innerHTML = `${catLabel(_catActive)} <span class="cnt">· ${BRANDS.filter(b=>b.c===_catActive).length} ${tr('word_brands')}</span>`;
+    }
+    const lb = document.getElementById('hdrLangBtn');
+    if(lb) lb.textContent = (_lang === 'en') ? 'বাংলা' : 'EN';
+  }
+  function toggleLang(){ setLang(_lang === 'en' ? 'bn' : 'en'); }
+
   let _catActive = Object.keys(BRAND_CATS)[0];   // first category open by default
   let _catOpen = false;                          // flips true on the initial render below
   renderCatBar();   // build the category bar + brand columns now (DOM above this script exists)
+  setLang(_lang);   // apply the saved language to all tagged elements
 
   function renderCatBar(){
     const bar = document.getElementById('catBar');
     if(!bar) return;
     bar.innerHTML = Object.keys(BRAND_CATS).map(cat =>
-      `<button class="cat-tab" data-cat="${cat}" onclick="switchCat('${cat}')">${BRAND_CATS[cat]}</button>`
+      `<button class="cat-tab" data-cat="${cat}" onclick="switchCat('${cat}')">${catLabel(cat)}</button>`
     ).join('');
     switchCat(_catActive);
   }
@@ -2339,7 +2392,7 @@
     const list = BRANDS.filter(b => b.c === cat);
     const head = document.getElementById('catHead');
     const grid = document.getElementById('catGrid');
-    if(head) head.innerHTML = `${BRAND_CATS[cat]} <span class="cnt">· ${list.length} brands</span>`;
+    if(head) head.innerHTML = `${catLabel(cat)} <span class="cnt">· ${list.length} ${tr('word_brands')}</span>`;
     if(grid) grid.innerHTML = list.map(b =>
       `<button class="cat-brand" onclick="openBrandInApp(this)" data-url="${esc(b.u)}" data-name="${esc(b.n)}">${esc(b.n)}</button>`
     ).join('');
