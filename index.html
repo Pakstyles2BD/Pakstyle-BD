@@ -220,6 +220,10 @@
       .cat-panel{border-radius:12px;border-top:1px solid var(--bdr)}
       .cat-head{font-size:0.92rem}
       .cat-brand{font-size:0.92rem;padding:11px 10px}
+      /* how-it-works strip wraps so all steps are visible (no horizontal scroll) */
+      .hiw-strip{overflow-x:visible}
+      .hiw-inner{flex-wrap:wrap;min-width:0;row-gap:2px}
+      .hiw-step{padding:3px 8px}
     }
     .show-more-btn{font-size:0.75rem;color:var(--gold);background:none;border:none;cursor:pointer;font-weight:600;padding:4px 0;text-decoration:underline}
 
@@ -336,16 +340,16 @@
     .wa-note a{color:#25d366;font-weight:600;text-decoration:none}
 
     /* ── Step indicator ── */
-    .steps-bar{background:var(--surface);border-bottom:1px solid var(--bdr-med);display:flex;justify-content:center;align-items:center;padding:8px 16px;gap:0}
-    .step-item{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:default;opacity:0.35;transition:opacity 0.2s;min-width:44px}
+    .steps-bar{background:var(--surface);border-bottom:1px solid var(--bdr-med);display:flex;justify-content:center;align-items:center;padding:14px 16px;gap:0}
+    .step-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:default;opacity:0.35;transition:opacity 0.2s;min-width:60px}
     .step-item.active{opacity:1}
     .step-item.done{opacity:0.65;cursor:pointer}
     .step-item.done:hover{opacity:1}
-    .step-num{width:22px;height:22px;border-radius:50%;border:2px solid var(--gold-bdr);color:var(--gold);font-weight:700;font-size:0.72rem;display:flex;align-items:center;justify-content:center;background:transparent;transition:all 0.2s}
+    .step-num{width:28px;height:28px;border-radius:50%;border:2px solid var(--gold-bdr);color:var(--gold);font-weight:700;font-size:0.8rem;display:flex;align-items:center;justify-content:center;background:transparent;transition:all 0.2s}
     .step-item.active .step-num{background:var(--gold);color:#0A1628;border-color:var(--gold)}
     .step-item.done .step-num{background:#2a7a32;border-color:#2a7a32;color:#fff}
-    .step-lbl{font-size:0.55rem;color:var(--gold);font-weight:600;letter-spacing:0.3px;text-align:center;white-space:nowrap}
-    .step-arrow{color:var(--txt-muted);font-size:1.05rem;padding:0 1px;padding-bottom:11px;line-height:1}
+    .step-lbl{font-size:0.6rem;color:var(--gold);font-weight:600;letter-spacing:0.4px;text-align:center;white-space:nowrap}
+    .step-arrow{color:var(--txt-muted);font-size:1.4rem;padding:0 2px;padding-bottom:14px;line-height:1}
 
     /* ── Step sections ── */
     .step-section{display:none}
@@ -370,8 +374,8 @@
       .url-row{flex-direction:column}
       .add-btn{width:100%}
       .cart-item{flex-wrap:wrap}
-      .step-lbl{font-size:0.5rem}
-      .step-item{min-width:40px}
+      .step-lbl{font-size:0.56rem}
+      .step-item{min-width:50px}
     }
   </style>
 </head>
