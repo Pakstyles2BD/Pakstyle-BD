@@ -135,6 +135,33 @@
     .bs-cancel-btn{width:100%;padding:12px;background:transparent;color:var(--txt-muted);
       border:1.5px solid var(--bdr-med);border-radius:12px;font-size:0.88rem;cursor:pointer}
 
+    /* ── In-app product picker ── */
+    #productPicker{display:none;position:fixed;inset:0;z-index:450;background:var(--bg)}
+    .pp-card{position:absolute;inset:0;display:flex;flex-direction:column;
+      max-width:980px;margin:0 auto;padding:14px 14px 0}
+    .pp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:6px 2px 10px}
+    .pp-brand{font-weight:800;font-size:1.15rem;color:var(--gold)}
+    .pp-sub{font-size:0.74rem;color:var(--txt-muted);margin-top:2px}
+    .pp-close{background:var(--raised);border:1px solid var(--bdr-med);color:var(--txt);
+      width:38px;height:38px;border-radius:50%;font-size:1rem;cursor:pointer;flex-shrink:0}
+    .pp-search{width:100%;padding:12px 14px;border:1.5px solid var(--bdr-med);border-radius:10px;
+      background:var(--input-bg);color:var(--txt);font-size:0.95rem;margin-bottom:10px;font-family:inherit}
+    .pp-search:focus{outline:none;border-color:var(--gold)}
+    .pp-status{color:var(--txt-sec);font-size:0.9rem;text-align:center;padding:30px 0}
+    .pp-grid{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:2px 2px 12px;align-content:start}
+    .pp-item{background:var(--surface);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;
+      cursor:pointer;padding:0 0 9px;text-align:left;font-family:inherit;display:flex;flex-direction:column;transition:border-color .15s}
+    .pp-item:hover{border-color:var(--gold)}
+    .pp-img{width:100%;aspect-ratio:3/4;object-fit:cover;background:var(--raised);display:block}
+    .pp-name{font-size:0.76rem;color:var(--txt);line-height:1.3;padding:8px 9px 2px;
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .pp-price{font-size:0.82rem;font-weight:800;color:var(--gold);padding:0 9px}
+    .pp-empty{grid-column:1/-1;text-align:center;color:var(--txt-muted);padding:40px 0;font-size:0.9rem}
+    .pp-site-btn{margin:0 0 calc(12px + env(safe-area-inset-bottom));padding:12px;background:transparent;
+      color:var(--txt-sec);border:1.5px solid var(--bdr-med);border-radius:10px;font-size:0.85rem;
+      cursor:pointer;font-family:inherit;flex-shrink:0}
+
     /* Price input with currency toggle */
     .price-row{display:flex;gap:0}
     .price-row input{flex:1;padding:9px 12px;border:1.5px solid var(--bdr-med);border-radius:6px 0 0 6px;
@@ -869,6 +896,24 @@
       Open Brand Site →
     </button>
     <button class="bs-cancel-btn" onclick="closeBrandSheet()">Cancel</button>
+  </div>
+</div>
+
+<!-- IN-APP PRODUCT PICKER — browse a brand's products without leaving the app -->
+<div id="productPicker">
+  <div class="pp-card">
+    <div class="pp-head">
+      <div>
+        <div class="pp-brand" id="ppBrandName">Brand</div>
+        <div class="pp-sub" data-i18n="pp_tap">Tap a product to add it — no copy-paste needed</div>
+      </div>
+      <button class="pp-close" onclick="closeProductPicker()" aria-label="Close">✕</button>
+    </div>
+    <input id="ppSearch" class="pp-search" type="text" autocomplete="off"
+      placeholder="🔍 Search this brand…" data-i18n-ph="pp_search" oninput="filterProducts()"/>
+    <div id="ppStatus" class="pp-status"></div>
+    <div id="ppGrid" class="pp-grid"></div>
+    <button class="pp-site-btn" onclick="pickerOpenSite()" data-i18n="pp_site">🌐 Open full brand site instead</button>
   </div>
 </div>
 
@@ -2341,7 +2386,7 @@
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search any brand by name…',
       lbl_addproducts:'Add Products to Your Order',
       url_label:'📋 Copy a product link from any brand site and paste it below:',
-      btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill',
+      btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead',
       nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To',
       word_brands:'brands',
       cat_md:'Multi-Department', cat_w:'Women’s Pret & Unstitched', cat_p:'Premium', cat_m:'Menswear', cat_k:'Kids',
@@ -2382,7 +2427,7 @@
       lbl_addproducts:'অর্ডারে পণ্য যোগ করুন',
       url_label:'📋 যেকোনো ব্র্যান্ড সাইট থেকে প্রোডাক্টের লিংক কপি করে নিচে পেস্ট করুন:',
       btn_addurl:'+ লিংক যোগ করুন',
-      btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল',
+      btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল', pp_tap:'পণ্যে ট্যাপ করে যোগ করুন — কপি-পেস্ট লাগবে না', pp_search:'🔍 এই ব্র্যান্ডে খুঁজুন…', pp_site:'🌐 বদলে সম্পূর্ণ ব্র্যান্ড সাইট খুলুন',
       nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'কীভাবে',
       word_brands:'ব্র্যান্ড',
       cat_md:'মাল্টি-ডিপার্টমেন্ট', cat_w:'মেয়েদের প্রেট ও আনস্টিচড', cat_p:'প্রিমিয়াম', cat_m:'ছেলেদের পোশাক', cat_k:'বাচ্চাদের',
@@ -3316,12 +3361,104 @@
   function openBrandInApp(el){
     _pendingBrandUrl = el.dataset.url;
     const name = el.dataset.name;
+    const dd = document.getElementById('brandDropdown');
+    if(dd) dd.style.display = 'none';
+    // NEW: try to browse the brand's products INSIDE the app (no copy-paste).
+    // Falls back to the open-site sheet for non-Shopify brands.
+    browseBrandProducts(_pendingBrandUrl, name);
+  }
+
+  // Show the old "open the brand site + paste" sheet (fallback for brands we
+  // can't list in-app: Khaadi, Sapphire and other non-Shopify stores).
+  function showBrandSheet(name){
     document.getElementById('bsBrandName').textContent = name;
     document.getElementById('bsOpenBtn').textContent   = 'Open ' + name + ' →';
     document.getElementById('brandSheet').style.display = 'block';
-    // Close search dropdown if open
-    const dd = document.getElementById('brandDropdown');
-    if(dd) dd.style.display = 'none';
+  }
+
+  // ── IN-APP PRODUCT PICKER ────────────────────────────────────────────────
+  // Fetches the brand's catalog (Shopify /products.json — readable cross-origin
+  // via GET) and shows a tappable grid. Picking a product runs the SAME add
+  // pipeline as pasting a link, so currency/stock/category handling is identical.
+  const _ppCache = {};            // origin → product array (per-session cache)
+  let _ppProducts = [], _ppOrigin = '', _ppName = '';
+
+  async function browseBrandProducts(url, name){
+    let origin;
+    try{ origin = new URL(url).origin; }catch(e){ return showBrandSheet(name); }
+    _ppOrigin = origin; _ppName = name;
+    document.getElementById('ppBrandName').textContent = name;
+    document.getElementById('ppSearch').value = '';
+    document.getElementById('ppGrid').innerHTML = '';
+    const status = document.getElementById('ppStatus');
+    status.style.display = ''; status.innerHTML = '⏳ Loading ' + esc(name) + ' products…';
+    document.getElementById('productPicker').style.display = 'block';
+
+    if(_ppCache[origin]){ _ppProducts = _ppCache[origin]; renderProducts(_ppProducts); status.style.display='none'; return; }
+    try{
+      const ctrl = new AbortController();
+      const tid  = setTimeout(()=>ctrl.abort(), 16000);
+      const r = await fetch(`${origin}/products.json?limit=250`, { signal: ctrl.signal, cache:'no-store' });
+      clearTimeout(tid);
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      const j = await r.json();
+      const items = (j.products||[]).filter(p => p.variants && p.variants.length && p.handle);
+      if(!items.length) throw new Error('empty');
+      _ppCache[origin] = items; _ppProducts = items;
+      renderProducts(items); status.style.display = 'none';
+    }catch(e){
+      // Non-Shopify / blocked / offline → fall back to the open-site sheet.
+      closeProductPicker();
+      showBrandSheet(name);
+    }
+  }
+
+  function ppImg(p){
+    const im = p.images && p.images[0];
+    return im ? (typeof im === 'string' ? im : im.src) : '';
+  }
+  function ppPrice(p){
+    const v = p.variants && p.variants[0];
+    return v ? Math.round(parseFloat(v.price) || 0) : 0;   // .json price = decimal rupees
+  }
+
+  function renderProducts(list){
+    const grid = document.getElementById('ppGrid');
+    if(!list.length){ grid.innerHTML = '<div class="pp-empty">No matching products.</div>'; return; }
+    grid.innerHTML = list.slice(0, 300).map(p => {
+      const price = ppPrice(p);
+      return `<button class="pp-item" onclick="pickProduct('${esc(p.handle)}')">
+        <img class="pp-img" loading="lazy" src="${esc(ppImg(p))}" alt=""/>
+        <div class="pp-name">${esc(p.title)}</div>
+        <div class="pp-price">${price ? 'PKR '+price.toLocaleString() : ''}</div>
+      </button>`;
+    }).join('');
+  }
+
+  function filterProducts(){
+    const q = document.getElementById('ppSearch').value.trim().toLowerCase();
+    if(!q){ renderProducts(_ppProducts); return; }
+    renderProducts(_ppProducts.filter(p => (p.title||'').toLowerCase().includes(q)
+      || (p.product_type||'').toLowerCase().includes(q)));
+  }
+
+  function pickProduct(handle){
+    const url = _ppOrigin + '/products/' + handle;
+    closeProductPicker();
+    document.getElementById('urlInputRow').style.display = 'none';
+    document.getElementById('draftsContainer').style.display = '';
+    createDraft(url);              // SAME pipeline as paste — currency/stock/category
+    document.getElementById('draftsContainer').scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+
+  function closeProductPicker(){
+    document.getElementById('productPicker').style.display = 'none';
+  }
+
+  // From inside the picker: user wants the full brand site instead (paste flow).
+  function pickerOpenSite(){
+    closeProductPicker();
+    showBrandSheet(_ppName);
   }
 
   // Are we running as the INSTALLED app (standalone), not a browser tab?
@@ -3480,7 +3617,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-13d';
+  const PSB_BUILD = '2026-06-13e';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
