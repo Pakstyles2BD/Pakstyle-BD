@@ -3519,8 +3519,16 @@
     if(isAndroid && isInstalledApp()){
       try{
         const u = new URL(url);
+        // Canonical browsable intent, forced to the Chrome package, so Android
+        // opens a real Chrome TAB (full address bar + Share) rather than the
+        // app's own in-app webview. action+category are REQUIRED for Android to
+        // route it to a browser; package pins it to Chrome; browser_fallback_url
+        // covers phones whose Chrome uses a different package.
         const intent = 'intent://' + u.host + u.pathname + u.search +
           '#Intent;scheme=' + u.protocol.replace(':','') +
+          ';action=android.intent.action.VIEW' +
+          ';category=android.intent.category.BROWSABLE' +
+          ';package=com.android.chrome' +
           ';S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
         window.location.href = intent;
         opened = true;
@@ -3654,7 +3662,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-13j';
+  const PSB_BUILD = '2026-06-13k';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
