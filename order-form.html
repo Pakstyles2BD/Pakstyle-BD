@@ -3389,7 +3389,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-12';
+  const PSB_BUILD = '2026-06-13b';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
@@ -3405,9 +3405,21 @@
      offline. Guarded to http/https so local file:// previews don't throw. */
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('sw.js').catch(function (err) {
+      navigator.serviceWorker.register('sw.js').then(function (reg) {
+        // Check for a newer SW on every load and apply it promptly.
+        reg.update();
+      }).catch(function (err) {
         console.warn('SW registration failed:', err);
       });
+    });
+    // When a new service worker takes control (a new build deployed), reload
+    // ONCE so the user is never stuck on a stale page. The flag guards against
+    // a reload loop.
+    var _psbReloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (_psbReloaded) return;
+      _psbReloaded = true;
+      location.reload();
     });
   }
 
