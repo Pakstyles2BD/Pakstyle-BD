@@ -959,13 +959,8 @@
 <!-- iOS install instructions sheet -->
 <div id="iosInstallSheet" onclick="if(event.target===this)psbCloseIos()" style="display:none">
   <div class="ios-card">
-    <div class="ios-title">Install PakiPoshak</div>
-    <p>To add this app to your iPhone home screen:</p>
-    <ol>
-      <li>Tap the <b>Share</b> button <span style="font-size:1.1rem">􀈂</span> at the bottom of Safari</li>
-      <li>Scroll down and tap <b>“Add to Home Screen”</b></li>
-      <li>Tap <b>Add</b> — the PB icon appears on your home screen</li>
-    </ol>
+    <div class="ios-title" id="installHelpTitle">Install PakiPoshak</div>
+    <div id="installHelpBody"></div>
     <button class="ios-close" onclick="psbCloseIos()">Got it</button>
   </div>
 </div>
@@ -2911,6 +2906,10 @@
       badge.style.display = 'none';
       list.innerHTML = '';
       updateCartBadges(0);
+      // CRITICAL: persist the now-empty cart too. Without this, deleting the
+      // last item left the OLD cart in localStorage and a refresh brought every
+      // "deleted" product back.
+      saveCartToStorage();
       return;
     }
     if(empty) empty.style.display = 'none';
@@ -3655,7 +3654,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-13i';
+  const PSB_BUILD = '2026-06-13j';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
@@ -3720,18 +3719,37 @@
     // iOS never fires beforeinstallprompt, so surface the pill manually.
     if (isIOS && isSafari) pill.style.display = 'flex';
 
+    function showInstallHelp() {
+      var title = 'Install PakiPoshak', body;
+      if (isIOS) {
+        body = '<p>To add this app to your iPhone home screen:</p>'
+          + '<ol><li>Tap the <b>Share</b> button at the bottom of Safari</li>'
+          + '<li>Scroll down and tap <b>“Add to Home Screen”</b></li>'
+          + '<li>Tap <b>Add</b></li></ol>';
+      } else {
+        body = '<p>To install PakiPoshak as an app:</p>'
+          + '<ol><li>Tap the <b>⋮ menu</b> (top-right in Chrome)</li>'
+          + '<li>Tap <b>“Install app”</b> (or <b>“Add to Home screen”</b>)</li>'
+          + '<li>Tap <b>Install</b></li></ol>'
+          + '<p style="font-size:0.85rem;color:var(--txt-muted)">Already installed? Just open '
+          + '<b>PakiPoshak</b> from your home screen.</p>';
+      }
+      document.getElementById('installHelpTitle').textContent = title;
+      document.getElementById('installHelpBody').innerHTML = body;
+      document.getElementById('iosInstallSheet').style.display = 'flex';
+    }
+
     window.psbInstall = function () {
-      if (deferred) {                       // Android path
+      if (deferred) {                       // Android: native install prompt
         deferred.prompt();
         deferred.userChoice.finally(function () {
           deferred = null;
           pill.style.display = 'none';
         });
-      } else if (isIOS) {                    // iOS path
-        var sheet = document.getElementById('iosInstallSheet');
-        if (sheet) sheet.style.display = 'flex';
-      }
-    };
+      } else {                               // No prompt available (iOS, already
+        showInstallHelp();                   // installed, or not yet ready) →
+      }                                      // always show manual steps, never a
+    };                                       // dead button.
     window.psbCloseIos = function () {
       var sheet = document.getElementById('iosInstallSheet');
       if (sheet) sheet.style.display = 'none';
