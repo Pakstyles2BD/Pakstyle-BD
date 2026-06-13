@@ -889,18 +889,18 @@
       <div style="font-size:0.78rem;color:var(--txt-muted);margin-top:3px">How to add a product from this brand:</div>
     </div>
     <div class="bs-steps">
-      <div class="bs-steps-title">3 quick steps</div>
+      <div class="bs-steps-title">How to copy the product link</div>
       <div class="bs-step">
         <span class="bs-num">1</span>
-        <span>Tap <strong>Open Brand Site</strong> below — the brand's website opens in your browser</span>
+        <span>Tap <strong>Open Brand Site</strong> below, then browse and open the product you want.</span>
       </div>
       <div class="bs-step">
         <span class="bs-num">2</span>
-        <span>Find your item, then tap the browser's <strong>Share</strong> button → <strong>PakiPoshak</strong> — the link comes straight back here. <em>(Or long-press the link → Copy.)</em></span>
+        <span>At the <strong>top-right</strong> of that page, tap the <strong>⋮ three-dots menu</strong> → tap <strong>“Copy link”</strong>.<br><em style="color:var(--txt-muted)">(No three dots? Tap the site name/address at the very top, then Copy.)</em></span>
       </div>
       <div class="bs-step">
         <span class="bs-num">3</span>
-        <span><strong>Come back</strong> and tap <strong>📋 Paste Link &amp; Auto-Fill</strong> — price &amp; sizes load automatically. No typing.</span>
+        <span>Tap <strong>‹ back</strong> to return here, then tap the gold <strong>📋 Paste link</strong> button — price &amp; sizes fill in automatically.</span>
       </div>
     </div>
     <button class="bs-open-btn" id="bsOpenBtn" onclick="launchBrandTab()">
@@ -3392,16 +3392,13 @@
 
   function openBrandInApp(el){
     _pendingBrandUrl = el.dataset.url;
+    const name = el.dataset.name || 'this brand';
     const dd = document.getElementById('brandDropdown');
     if(dd) dd.style.display = 'none';
-    // Open the brand's OWN website (its full, native product layout — images,
-    // colours, fabric/size details) in the REAL browser, where the address bar
-    // and Share button work. The customer picks their item there, then sends it
-    // back via Share → PakiPoshak (or copy → 📋 Paste). Done synchronously in
-    // this tap so the browser doesn't block it as a non-gesture popup.
-    // (The in-app product grid was removed: our generic cards couldn't match
-    // each brand's presentation and large images loaded poorly from BD.)
-    launchBrandTab();
+    // Show the quick how-to-copy sheet, THEN open the brand (a Chrome Custom
+    // Tab, which has ⋮ → Copy link / Share). The sheet teaches where the copy
+    // option is, since that's the step users get stuck on.
+    showBrandSheet(name);
   }
 
   // Show the old "open the brand site + paste" sheet (fallback for brands we
@@ -3507,30 +3504,15 @@
   function launchBrandTab(){
     const url = _pendingBrandUrl;
     closeBrandSheet();
-    const isAndroid = /Android/i.test(navigator.userAgent);
 
-    // THE FIX: inside the installed Android app, a normal window.open lands in
-    // a stripped in-app WebView with no address bar and no Share — so the link
-    // can't be copied. An Android `intent:` URL hands the page to the REAL
-    // browser (full address bar + Share button), exactly like the website
-    // version that already works. Falls back to window.open if the intent is
-    // refused or we're not on installed Android.
-    let opened = false;
-    if(isAndroid && isInstalledApp()){
-      try{
-        const u = new URL(url);
-        // Open in the DEFAULT browser (Chrome on this phone). Do NOT pin a
-        // package — v13k pinned com.android.chrome and that broke it on phones
-        // whose Chrome registers under another package, silently falling back
-        // to the bare in-app webview. This minimal form is what worked before.
-        const intent = 'intent://' + u.host + u.pathname + u.search +
-          '#Intent;scheme=' + u.protocol.replace(':','') +
-          ';S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
-        window.location.href = intent;
-        opened = true;
-      }catch(e){ /* fall through */ }
-    }
-    if(!opened) window.open(url, '_blank', 'noopener');
+    // Always use window.open(_blank). In the installed app this opens a Chrome
+    // CUSTOM TAB — which DOES have a top toolbar with a ⋮ menu containing
+    // "Copy link" and "Share". (The old intent:// + browser_fallback_url
+    // approach was WORSE: when it couldn't launch external Chrome it loaded the
+    // fallback in-place as a bare webview with NO toolbar, so nothing could be
+    // copied. That was the regression.) In a normal Chrome tab this opens a new
+    // tab with the full address bar.
+    window.open(url, '_blank', 'noopener');
 
     // Highlight the URL input so it's obvious where to paste on return
     const input = document.getElementById('urlInput');
@@ -3658,7 +3640,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-13m';
+  const PSB_BUILD = '2026-06-13n';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
