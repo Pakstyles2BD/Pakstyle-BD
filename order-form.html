@@ -953,7 +953,7 @@
 
 <!-- INSTALL APP — floating pill, hidden until installable (or iOS Safari) -->
 <button id="installPill" onclick="psbInstall()" style="display:none">
-  <span style="font-size:1.05rem">⬇️</span> Install App
+  <span style="font-size:1.05rem">⭐</span> Add to Home
 </button>
 
 <!-- iOS install instructions sheet -->
@@ -3658,7 +3658,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-13l';
+  const PSB_BUILD = '2026-06-13m';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
@@ -3720,23 +3720,29 @@
       pill.style.display = 'none';
     });
 
-    // iOS never fires beforeinstallprompt, so surface the pill manually.
-    if (isIOS && isSafari) pill.style.display = 'flex';
+    // The manifest uses display:"browser" so the home-screen icon is a CHROME
+    // SHORTCUT (opens in Chrome) rather than a standalone app — that's what
+    // keeps brand links opening in real Chrome. So beforeinstallprompt won't
+    // fire; surface the pill manually on any mobile, and the help sheet tells
+    // the user to "Add to Home screen" (which makes the Chrome shortcut).
+    var isMobile = /android|iphone|ipad|ipod/i.test(navigator.userAgent);
+    if (isMobile) pill.style.display = 'flex';
 
     function showInstallHelp() {
-      var title = 'Install PakiPoshak', body;
+      var title = 'Add PakiPoshak to your home screen', body;
       if (isIOS) {
-        body = '<p>To add this app to your iPhone home screen:</p>'
+        body = '<p>Adds a one-tap icon that opens in Safari:</p>'
           + '<ol><li>Tap the <b>Share</b> button at the bottom of Safari</li>'
           + '<li>Scroll down and tap <b>“Add to Home Screen”</b></li>'
           + '<li>Tap <b>Add</b></li></ol>';
       } else {
-        body = '<p>To install PakiPoshak as an app:</p>'
+        body = '<p>Adds a one-tap icon that opens in Chrome (so brands open in Chrome too):</p>'
           + '<ol><li>Tap the <b>⋮ menu</b> (top-right in Chrome)</li>'
-          + '<li>Tap <b>“Install app”</b> (or <b>“Add to Home screen”</b>)</li>'
-          + '<li>Tap <b>Install</b></li></ol>'
-          + '<p style="font-size:0.85rem;color:var(--txt-muted)">Already installed? Just open '
-          + '<b>PakiPoshak</b> from your home screen.</p>';
+          + '<li>Tap <b>“Add to Home screen”</b></li>'
+          + '<li>Tap <b>Add</b></li></ol>'
+          + '<p style="font-size:0.85rem;color:#ff9a9a">⚠️ If you previously installed PakiPoshak as an '
+          + '<b>app</b>, delete that old icon first — the old one opens brand links in a stuck in-app '
+          + 'window. The new “Add to Home screen” icon opens them in Chrome.</p>';
       }
       document.getElementById('installHelpTitle').textContent = title;
       document.getElementById('installHelpBody').innerHTML = body;
