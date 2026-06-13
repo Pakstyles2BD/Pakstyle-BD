@@ -282,6 +282,17 @@
       font-weight:800;font-size:0.95rem;cursor:pointer;transition:background 0.15s}
     .paste-btn:hover{background:rgba(201,169,110,0.22)}
     .paste-btn.flash{background:var(--gold);color:#0A1628}
+    /* Floating Paste button — fixed, always reachable on the add-products step */
+    #pasteFab{position:fixed;left:14px;bottom:78px;z-index:350;display:none;align-items:center;gap:7px;
+      background:var(--gold);color:#0A1628;border:none;border-radius:24px;padding:11px 17px;
+      font-family:inherit;font-weight:800;font-size:0.9rem;cursor:pointer;
+      box-shadow:0 6px 20px rgba(0,0,0,0.45)}
+    #pasteFab.show{display:inline-flex}
+    #pasteFab .pf-ic{font-size:1.05rem}
+    #pasteFab.pulse{animation:fabPulse 1.1s ease infinite}
+    @keyframes fabPulse{0%,100%{box-shadow:0 6px 20px rgba(0,0,0,.45),0 0 0 0 rgba(201,169,110,.55)}
+      50%{box-shadow:0 6px 20px rgba(0,0,0,.45),0 0 0 12px rgba(201,169,110,0)}}
+    @media (min-width:820px){ #pasteFab{bottom:96px} }
 
     /* Item details panel */
     .item-detail-panel{display:none;background:var(--raised);border:1.5px dashed var(--gold-bdr);border-radius:8px;padding:14px;margin-top:12px}
@@ -916,6 +927,11 @@
     <button class="pp-site-btn" onclick="pickerOpenSite()" data-i18n="pp_site">🌐 Open full brand site instead</button>
   </div>
 </div>
+
+<!-- FLOATING PASTE BUTTON — always reachable; tap after copying a link in Chrome -->
+<button id="pasteFab" onclick="pasteAndAdd('urlInput', handleAddUrl)" aria-label="Paste copied product link">
+  <span class="pf-ic">📋</span><span class="pf-tx" data-i18n="fab_paste">Paste link</span>
+</button>
 
 <!-- BOTTOM NAVIGATION BAR -->
 <nav class="bottom-nav" id="bottomNav">
@@ -2386,7 +2402,7 @@
       lbl_browse:'Browse a Brand', search_ph:'🔍 Search any brand by name…',
       lbl_addproducts:'Add Products to Your Order',
       url_label:'📋 Copy a product link from any brand site and paste it below:',
-      btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead',
+      btn_addurl:'+ Add URL', btn_paste:'📋 Paste Link & Auto-Fill', pp_tap:'Tap a product to add it — no copy-paste needed', pp_search:'🔍 Search this brand…', pp_site:'🌐 Open full brand site instead', fab_paste:'Paste link',
       nav_home:'Home', nav_brands:'Brands', nav_cart:'Cart', nav_how:'How To',
       word_brands:'brands',
       cat_md:'Multi-Department', cat_w:'Women’s Pret & Unstitched', cat_p:'Premium', cat_m:'Menswear', cat_k:'Kids',
@@ -2427,7 +2443,7 @@
       lbl_addproducts:'অর্ডারে পণ্য যোগ করুন',
       url_label:'📋 যেকোনো ব্র্যান্ড সাইট থেকে প্রোডাক্টের লিংক কপি করে নিচে পেস্ট করুন:',
       btn_addurl:'+ লিংক যোগ করুন',
-      btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল', pp_tap:'পণ্যে ট্যাপ করে যোগ করুন — কপি-পেস্ট লাগবে না', pp_search:'🔍 এই ব্র্যান্ডে খুঁজুন…', pp_site:'🌐 বদলে সম্পূর্ণ ব্র্যান্ড সাইট খুলুন',
+      btn_paste:'📋 লিংক পেস্ট করে অটো-ফিল', pp_tap:'পণ্যে ট্যাপ করে যোগ করুন — কপি-পেস্ট লাগবে না', pp_search:'🔍 এই ব্র্যান্ডে খুঁজুন…', pp_site:'🌐 বদলে সম্পূর্ণ ব্র্যান্ড সাইট খুলুন', fab_paste:'লিংক পেস্ট',
       nav_home:'হোম', nav_brands:'ব্র্যান্ড', nav_cart:'কার্ট', nav_how:'কীভাবে',
       word_brands:'ব্র্যান্ড',
       cat_md:'মাল্টি-ডিপার্টমেন্ট', cat_w:'মেয়েদের প্রেট ও আনস্টিচড', cat_p:'প্রিমিয়াম', cat_m:'ছেলেদের পোশাক', cat_k:'বাচ্চাদের',
@@ -2975,7 +2991,24 @@
     });
     currentStep = n;
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    updatePasteFab();
   }
+
+  // Floating Paste button: only useful while adding products (step 1).
+  function updatePasteFab(){
+    const fab = document.getElementById('pasteFab');
+    if(!fab) return;
+    fab.classList.toggle('show', currentStep === 1);
+  }
+  // When the user switches BACK to PakiPoshak (e.g. after copying a link in
+  // Chrome), pulse the Paste button so it's obvious where to tap next.
+  document.addEventListener('visibilitychange', () => {
+    if(document.visibilityState === 'visible' && currentStep === 1){
+      const fab = document.getElementById('pasteFab');
+      if(fab){ fab.classList.add('pulse'); setTimeout(() => fab.classList.remove('pulse'), 6000); }
+    }
+  });
+  document.addEventListener('DOMContentLoaded', updatePasteFab);
 
   function nextFromStep1(){
     if(!cart.length){ alert(tr('js_add_item_first')); return; }
@@ -3622,7 +3655,7 @@
   // Lets the operator confirm at a glance they're on the latest version. If
   // the tag in the bottom-right is older than expected, hard-refresh
   // (Ctrl+Shift+R / pull-to-refresh) to clear a stale cached page.
-  const PSB_BUILD = '2026-06-13g';
+  const PSB_BUILD = '2026-06-13h';
   console.log('%cPakiPoshak · build '+PSB_BUILD, 'color:#c9a96e;font-weight:700;font-size:13px');
   document.addEventListener('DOMContentLoaded', () => {
     const tag = document.createElement('div');
