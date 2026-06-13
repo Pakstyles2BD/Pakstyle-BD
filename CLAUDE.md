@@ -198,6 +198,7 @@ Goal: professional mobile website where brand links open in-app, packageable as 
 - [x] **Commission calc wired** — `getRates()` now returns `COMM_1/COMM_23/COMM_4P`; `commRate(r, itemCount)` picks the right tier; applied in `renderCart`, `buildReviewSummary`, `submitOrder`
 - [x] **Admin weight chart** — fixed by adding `overflow-y:auto;max-height:85vh` to `#adminPanel` (panel was fixed at bottom, content overflowed off-screen)
 - [x] **Commission field** — split into 3 numeric inputs (`adm_comm_1/23/4p`), saved to `psb_comm_1/23/4p` in localStorage
+- [x] **Copy-link flow polish (build `p`)** — root cause of "⋮ menu has *Open in Chrome* but no *Copy link*" is viewing PakiPoshak inside an **in-app browser** (FB/IG/Messenger/WhatsApp), where Copy link is hidden AND `navigator.clipboard` is blocked. Added `detectInAppBrowser()` + a dismissible `#iabBanner` that tells the user to reopen in Chrome (the only thing that fixes the whole chain). Also rewrote the brand-sheet steps to lead with the universal **address-bar → Copy** method and handle the "only see Open in Chrome" case. Direction chosen by Danish: **polish copy/paste** (rejected re-enabling zero-copy picker — product detail too poor; rejected leaning on Share — `manifest.json display:"browser"` means the Web Share Target doesn't register on Android).
 
 ---
 
